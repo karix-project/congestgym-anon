@@ -1,4 +1,4 @@
-# carla-gymnasium
+# carla-gym
 
 <p align="center">
   <img src=".github/carla-logo.png" height="auto" width="150"> <br>
