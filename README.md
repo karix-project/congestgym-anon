@@ -1,10 +1,21 @@
 # carla-gym
 
-<p align="center">
-  <img src=".github/carla-logo.png" height="auto" width="150"> <br>
-</p>
+[![PyPI - Version](https://img.shields.io/pypi/v/carla-gym.svg)](https://pypi.org/project/carla-gym)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/carla-gym.svg)](https://pypi.org/project/carla-gym)
 
-<p align="center"> A Gymnasium environment for Reinforcement Learning Agents in Congested SDNs</p>
+-----
 
+## Table of Contents
 
+- [Installation](#installation)
+- [License](#license)
 
+## Installation
+
+```console
+pip install carla-gym
+```
+
+## License
+
+`carla-gym` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
