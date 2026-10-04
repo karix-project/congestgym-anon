@@ -25,6 +25,7 @@ class CarlaGymEnv(gym.Env):
                  load_scale: float = 1.0, max_steps: int = 200,
                  k: float = 0.5, c: float = 1.0, delay_reference: float = 10.0,
                  bandwidth_budget: float | None = None,
+                 traffic=None,
                  render_mode: str | None = None, seed: int | None = None):
         """
         bandwidth_budget : if set (0, 1], the agent may only spend that
@@ -42,7 +43,8 @@ class CarlaGymEnv(gym.Env):
         self.network = NetworkModel(topology=topology, num_nodes=num_nodes,
                                     link_capacity=link_capacity,
                                     node_buffer=node_buffer, seed=seed)
-        self.traffic = TrafficGenerator(nodes=list(self.network.graph.nodes()),
+        # `traffic`: optional pre-built generator (e.g. TraceTrafficGenerator).
+        self.traffic = traffic or TrafficGenerator(nodes=list(self.network.graph.nodes()),
                                         load_scale=load_scale, seed=seed)
         self.reward_calc = RewardCalculator(k=k, c=c, delay_reference=delay_reference)
 

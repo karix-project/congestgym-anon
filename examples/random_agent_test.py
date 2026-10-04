@@ -27,20 +27,27 @@ from carla_gym.env import CarlaGymEnv
 
 # ---------------------------------------------------------------------- #
 # Reference policies
+#
+# `rng` defaults to None (and is unused by every policy except the random
+# one) so these can be called either as fn(env, obs, rng) -- this file's
+# own run_policy() -- or as fn(env, obs) -- examples/train_ppo.py's
+# rollout(), which evaluates PPO against these same baselines and doesn't
+# thread an rng through. Keep that compatibility if you add a new policy.
 # ---------------------------------------------------------------------- #
-def policy_random(env, obs, rng):
+def policy_random(env, obs, rng=None):
+    rng = rng if rng is not None else np.random.default_rng()
     return rng.uniform(0.0, 1.0, size=env.num_edges)
 
 
-def policy_max(env, obs, rng):
+def policy_max(env, obs, rng=None):
     return np.ones(env.num_edges)
 
 
-def policy_min(env, obs, rng):
+def policy_min(env, obs, rng=None):
     return np.full(env.num_edges, 0.05)
 
 
-def policy_queue_proportional(env, obs, rng):
+def policy_queue_proportional(env, obs, rng=None):
     """Allocate bandwidth in proportion to each link's pending demand."""
     pending = obs[env.num_edges:2 * env.num_edges]
     if pending.max() <= 1e-9:
