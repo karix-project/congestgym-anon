@@ -176,7 +176,7 @@ def test_trace_driven_env_conserves_packet_units(tmp_path):
     rng = np.random.default_rng(0)
     offered = delivered = dropped = 0.0
     for _ in range(50):
-        _, _, _, _, info = env.step(rng.uniform(0, 1, env.num_edges))
+        _, _, _, _, info = env.step(rng.uniform(0, 1, 2 * env.num_edges))
         offered += info["offered_units"]
         delivered += info["delivered_units"]
         dropped += info["dropped_units"]
@@ -196,7 +196,7 @@ def test_reference_policies_callable_with_and_without_rng():
     for fn in (policy_max, policy_min, policy_queue_proportional, policy_random):
         a1 = fn(env, obs)          # train_ppo.py call style
         a2 = fn(env, obs, rng)     # random_agent_test.py call style
-        assert a1.shape == (env.num_edges,) and a2.shape == (env.num_edges,)
+        assert a1.shape == (2 * env.num_edges,) and a2.shape == (2 * env.num_edges,)
 
 
 def test_rollout_works_with_monitor_wrapped_env():
@@ -235,10 +235,11 @@ def test_bandwidth_budget_changes_outcome_on_real_trace(tmp_path):
                 total += reward
         return total
 
-    uniform = lambda e, o: np.ones(e.num_edges)
+    uniform = lambda e, o: np.ones(2 * e.num_edges)
     def queue_prop(e, o):
         pending = o[e.num_edges:2 * e.num_edges]
-        return np.clip(pending / max(pending.max(), 1e-9), 0.05, 1.0)
+        bw = np.clip(pending / max(pending.max(), 1e-9), 0.05, 1.0)
+        return np.concatenate([bw, np.ones(e.num_edges)])
 
     r_uniform = run(uniform, budget=0.5)
     r_queue_prop = run(queue_prop, budget=0.5)

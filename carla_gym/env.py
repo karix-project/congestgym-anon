@@ -51,8 +51,8 @@ class CarlaGymEnv(gym.Env):
         self.num_edges = self.network.num_edges()
         self.num_nodes = self.network.num_nodes
 
-        # Action: per-link bandwidth allocation weight, scaling service rate.
-        self.action_space = spaces.Box(0.0, 1.0, shape=(self.num_edges,), dtype=np.float32)
+        # Action: per-link bandwidth weight (E), followed by per-link routing weight (E)
+        self.action_space = spaces.Box(0.0, 1.0, shape=(2 * self.num_edges,), dtype=np.float32)
         # Observation: [link utilization (E) | link pending demand (E) | node occupancy (N)]
         self.observation_space = spaces.Box(
             0.0, 1.0, shape=(2 * self.num_edges + self.num_nodes,), dtype=np.float32)
@@ -72,11 +72,17 @@ class CarlaGymEnv(gym.Env):
 
     def step(self, action):
         action = np.clip(np.asarray(action, dtype=np.float32), 0.0, 1.0)
-        action = self._apply_budget(action)
+        
+        # Split action into bandwidth allocation (first E) and routing weights (last E)
+        bw_action = self._apply_budget(action[:self.num_edges])
+        routing_action = action[self.num_edges:]
+        
+        # Apply routing weights so admit() routes dynamically
+        self.network.update_routing(routing_action)
 
         packets = self.traffic.generate(self._step_count)
         offered, admit_dropped = self.network.admit(packets)
-        stats = self.network.forward(action, self._step_count)
+        stats = self.network.forward(bw_action, self._step_count)
 
         dropped = admit_dropped + stats["dropped_units"]
         delivered = stats["delivered_units"]

@@ -49,7 +49,6 @@ class NetworkModel:
         self.num_nodes = self.graph.number_of_nodes()
         self._edges = list(self.graph.edges())
         self._edge_index = {self._key(u, v): i for i, (u, v) in enumerate(self._edges)}
-        self._path_cache: dict[tuple[int, int], list[int]] = {}
         self.reset()
 
     # ------------------------------------------------------------------ #
@@ -93,16 +92,31 @@ class NetworkModel:
         for n in self.graph.nodes():
             self.graph.nodes[n]["buffer_size"] = self.node_buffer
             self.graph.nodes[n]["queue"] = 0.0
+            
+        # Initialize default uniform routing weights
+        self.update_routing(np.ones(len(self._edges)))
+
+    def update_routing(self, routing_weights: np.ndarray) -> None:
+        """Update edge routing weights and recompute shortest paths (Phase 2 dynamic routing)."""
+        for i, (u, v) in enumerate(self._edges):
+            # A small epsilon prevents zero-weight cycles if action is 0
+            self.graph[u][v]["routing_weight"] = float(routing_weights[i]) + 1e-4
+
+        # Precompute all pairs shortest path for the current step using the learned link weights
+        self._current_paths = dict(nx.all_pairs_dijkstra_path(self.graph, weight="routing_weight"))
 
     def path(self, src: int, dst: int) -> list[int]:
-        """Rigid shortest-path routing (Phase 1). Cached: topology is static."""
-        key = (src, dst)
-        if key not in self._path_cache:
+        """Dynamic shortest-path routing based on learned link weights."""
+        if not hasattr(self, '_current_paths'):
             try:
-                self._path_cache[key] = nx.shortest_path(self.graph, src, dst)
+                return nx.shortest_path(self.graph, src, dst)
             except nx.NetworkXNoPath:
-                self._path_cache[key] = []
-        return self._path_cache[key]
+                return []
+        
+        try:
+            return self._current_paths[src][dst]
+        except KeyError:
+            return []
 
     def _occupancy(self, node: int) -> float:
         return sum(p.size for p in self.buffers[node])

@@ -36,23 +36,28 @@ from carla_gym.env import CarlaGymEnv
 # ---------------------------------------------------------------------- #
 def policy_random(env, obs, rng=None):
     rng = rng if rng is not None else np.random.default_rng()
-    return rng.uniform(0.0, 1.0, size=env.num_edges)
+    return rng.uniform(0.0, 1.0, size=2 * env.num_edges)
 
 
 def policy_max(env, obs, rng=None):
-    return np.ones(env.num_edges)
+    return np.ones(2 * env.num_edges)
 
 
 def policy_min(env, obs, rng=None):
-    return np.full(env.num_edges, 0.05)
+    return np.full(2 * env.num_edges, 0.05)
 
 
 def policy_queue_proportional(env, obs, rng=None):
-    """Allocate bandwidth in proportion to each link's pending demand."""
+    """Allocate bandwidth in proportion to each link's pending demand.
+    Keep routing weights uniform for the baseline."""
     pending = obs[env.num_edges:2 * env.num_edges]
     if pending.max() <= 1e-9:
-        return np.full(env.num_edges, 0.5)
-    return np.clip(pending / pending.max(), 0.05, 1.0)
+        bw = np.full(env.num_edges, 0.5)
+    else:
+        bw = np.clip(pending / pending.max(), 0.05, 1.0)
+    
+    routing = np.ones(env.num_edges)
+    return np.concatenate([bw, routing])
 
 
 POLICIES = {

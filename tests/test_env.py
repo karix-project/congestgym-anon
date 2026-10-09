@@ -32,7 +32,7 @@ def test_reset_returns_valid_observation():
 def test_reset_is_deterministic_given_seed():
     a = CarlaGymEnv(seed=0); a.reset(seed=7)
     b = CarlaGymEnv(seed=0); b.reset(seed=7)
-    act = np.full(a.num_edges, 0.5, dtype=np.float32)
+    act = np.full(2 * a.num_edges, 0.5, dtype=np.float32)
     for _ in range(10):
         oa, ra, *_ = a.step(act)
         ob, rb, *_ = b.step(act)
@@ -61,7 +61,7 @@ def test_packet_units_are_conserved():
     offered = delivered = dropped = 0.0
     rng = np.random.default_rng(3)
     for _ in range(60):
-        _, _, _, _, info = env.step(rng.uniform(0, 1, env.num_edges))
+        _, _, _, _, info = env.step(rng.uniform(0, 1, 2 * env.num_edges))
         offered += info["offered_units"]
         delivered += info["delivered_units"]
         dropped += info["dropped_units"]
@@ -73,7 +73,7 @@ def test_node_buffers_never_exceed_capacity():
     env = CarlaGymEnv(max_steps=80, seed=4)
     env.reset(seed=4)
     for _ in range(80):
-        env.step(np.zeros(env.num_edges, dtype=np.float32))  # worst case
+        env.step(np.zeros(2 * env.num_edges, dtype=np.float32))  # worst case
         occ = env.network.get_node_occupancy()
         assert np.all(occ <= env.network.node_buffer + 1e-6)
 
@@ -85,7 +85,7 @@ def test_node_occupancy_is_a_live_observable():
     env = CarlaGymEnv(max_steps=40, seed=5)
     obs, _ = env.reset(seed=5)
     for _ in range(40):
-        obs, *_ = env.step(np.full(env.num_edges, 0.2, dtype=np.float32))
+        obs, *_ = env.step(np.full(2 * env.num_edges, 0.2, dtype=np.float32))
     node_slice = obs[-env.num_nodes:]
     assert node_slice.max() > 0.0, "node occupancy stuck at zero"
 
@@ -98,7 +98,7 @@ def test_reward_terms_are_commensurate():
     rng = np.random.default_rng(6)
     t, d, l = [], [], []
     for _ in range(40):
-        _, _, _, _, info = env.step(rng.uniform(0, 1, env.num_edges))
+        _, _, _, _, info = env.step(rng.uniform(0, 1, 2 * env.num_edges))
         t.append(info["reward_throughput"]); d.append(info["reward_delay"])
         l.append(info["reward_loss"])
     for series in (t, d, l):
@@ -115,7 +115,7 @@ def test_observation_always_within_bounds_under_stress():
     env = CarlaGymEnv(load_scale=4.0, max_steps=60, seed=7)
     obs, _ = env.reset(seed=7)
     for _ in range(60):
-        obs, *_ = env.step(np.zeros(env.num_edges, dtype=np.float32))
+        obs, *_ = env.step(np.zeros(2 * env.num_edges, dtype=np.float32))
         assert env.observation_space.contains(obs)
 
 
@@ -127,7 +127,7 @@ def test_more_bandwidth_yields_no_worse_throughput():
         env.reset(seed=8)
         tput = 0.0
         for _ in range(60):
-            _, _, _, _, info = env.step(np.full(env.num_edges, weight, dtype=np.float32))
+            _, _, _, _, info = env.step(np.full(2 * env.num_edges, weight, dtype=np.float32))
             tput += info["delivered_units"]
         return tput
 
@@ -138,7 +138,7 @@ def test_starved_network_builds_backlog():
     env = CarlaGymEnv(max_steps=50, seed=9)
     env.reset(seed=9)
     for _ in range(50):
-        env.step(np.zeros(env.num_edges, dtype=np.float32))
+        env.step(np.zeros(2 * env.num_edges, dtype=np.float32))
     assert env.network.backlog_units() > 0.0
 
 
