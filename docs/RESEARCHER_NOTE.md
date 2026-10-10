@@ -69,9 +69,11 @@ Queued packets now count.
 Points for your judgement:
 
 * The terms are per-step ratios combined linearly with hand-chosen weights.
-  NetworkGym uses a log-ratio style reward; a comparison or a justification
-  of the linear form would strengthen the paper. No sensitivity analysis over
-  k, c, m was run.
+  A justification of the linear form, or a comparison with the reward used in
+  a published environment, would strengthen the paper. No sensitivity
+  analysis over k, c, m was run. (An earlier version of this note said
+  NetworkGym uses a log-ratio reward. That was repeated from the handoff
+  without a source and has been removed; the Researcher could not confirm it.)
 * T is clipped at 1, so the reward does not credit clearing a backlog beyond
   steady state. D is what distinguishes the two.
 * D mixes delivered and queued traffic in one average and is weighted by

@@ -265,3 +265,42 @@ After round 3: `python -m pytest -q` -> **122 passed** (`tests/test_env.py` 80,
 `tests/test_dataset_pipeline.py` 23, `tests/test_marl_env.py` 19).
 No dynamics, reward or observation code changed in rounds 2 and 3, so the
 trained agents and the benchmark were not re-run.
+
+## 12. Round 4: the three inconsistencies from `docs/RESEARCHER_REVIEW.md` (section 4)
+
+| # | Inconsistency | What changed | Guard |
+|---|---|---|---|
+| 1 | Reported `throughput` / `loss` are means of per-step reward terms, not the fraction of traffic delivered / dropped | New `carla_gym/utils/qos.py` (`EpisodeQoS`) aggregates the raw counters. `scripts/run_benchmark.py` records delivered and dropped fraction, delay of delivered packets and deadline misses per delivered packet for every episode and writes `results/benchmark/qos.md`. New `scripts/evaluate_saved.py` produces the same for the saved agents and baselines (`results/grid_b08/qos.csv`, `qos.md`). `examples/random_agent_test.py` prints `delivered_frac` / `dropped_frac`. README and notebook 02 say which number is which. | `test_episode_qos_matches_raw_totals_and_differs_from_mean_of_step_ratios`, `test_episode_qos_empty_is_finite` |
+| 2 | Benchmark table bolded a "best" policy in every row, including statistical ties | `summary.md` bolds a policy only when its 95% interval overlaps no other; tied leaders are marked `~`; a legend line explains both. README text says most rows are ties and that the far-below-zero rows are overloaded regimes. | n/a (presentation) |
+| 3 | `docs/RESEARCHER_NOTE.md` said NetworkGym uses a log-ratio reward, without a source | Sentence removed and the removal noted in place. It had been copied from the handoff. | n/a |
+
+Things to know:
+
+* No reward, observation or dynamics code changed. The agents were not
+  retrained. `evaluate_saved.py` re-evaluates the saved models; its rewards
+  equal `results/grid_b08/summary.csv` exactly for PPO, SAC and the five
+  deterministic baselines. Its `random` row differs slightly (-0.898 against
+  -0.901) because it draws its own actions; the table says so.
+* Trained agents in network terms (test seeds, steps 20 to 199): PPO delivers
+  92.2 +/- 0.5 % and drops 7.7 +/- 0.5 %; `queue_proportional` 87.0 +/- 1.4 %
+  and 13.0 +/- 1.4 %; SAC 87.6 +/- 0.9 % and 12.3 +/- 0.9 %. Delay of delivered
+  packets: PPO 3.89, `queue_proportional` 3.88, SAC 4.30 steps.
+* The aggregate view exposes how overloaded BOTH trace scenarios are: 54 to
+  69% of offered traffic is dropped under every heuristic (pcap and cs448b,
+  budgets 0.5 and 0.8), while the per-step loss term is far lower, because
+  the traces are bursty and a per-step ratio weighs a quiet step as much as
+  a heavy one. The cs448b scenario even has a positive reward (+0.41) with
+  57% of traffic dropped. The README states this. It does not change any
+  ranking, but anyone quoting "loss" for the trace scenarios must use the
+  aggregate figure.
+* The benchmark was re-run in full to add the new columns. All 2,100
+  episodes reproduce the previously saved reward, throughput, loss, latency
+  and deadline values with zero difference. The new table has 9 rows with a
+  clear best policy and 26 rows marked as ties.
+
+After round 4: `python -m pytest -q` -> **124 passed** (`tests/test_env.py` 82,
+`tests/test_dataset_pipeline.py` 23, `tests/test_marl_env.py` 19).
+
+Not addressed (out of scope for round 4): the experiments in section 5 of the
+researcher review, the presentation claims in its section 6, and the user's
+dataset decision.
