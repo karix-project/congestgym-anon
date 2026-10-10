@@ -399,3 +399,46 @@ def test_gymnasium_api_conformance_with_render():
     matplotlib.use("Agg")
     env = CarlaGymEnv(max_steps=20, render_mode="rgb_array", seed=0)
     check_env(env.unwrapped)
+
+
+# ---------------------------------------------------------------- node bottlenecks
+def test_default_env_is_unchanged_by_bottleneck_support():
+    a = CarlaGymEnv(max_steps=30, seed=17)
+    b = CarlaGymEnv(max_steps=30, seed=17, bottlenecks={})
+    assert np.all(a.network.get_edge_capacities() == a.network.link_capacity)
+    assert np.all(a.network.get_node_buffers() == a.network.node_buffer)
+    a.reset(seed=17); b.reset(seed=17)
+    act = np.full(2 * a.num_edges, 0.7, dtype=np.float32)
+    assert [a.step(act)[1] for _ in range(30)] == [b.step(act)[1] for _ in range(30)]
+
+
+def test_bottleneck_scales_incident_links_and_buffer():
+    net = NetworkModel("grid", 9, link_capacity=30.0, node_buffer=120.0, bottlenecks={4: 0.5})
+    caps = net.get_edge_capacities()
+    for i, (u, v) in enumerate(net.edge_list()):
+        assert caps[i] == pytest.approx(15.0 if 4 in (u, v) else 30.0)
+    bufs = net.get_node_buffers()
+    assert bufs[4] == pytest.approx(60.0) and bufs[0] == pytest.approx(120.0)
+
+
+def test_bottleneck_hurts_and_is_respected():
+    def run(bottlenecks):
+        env = CarlaGymEnv(max_steps=100, bandwidth_budget=None, bottlenecks=bottlenecks, seed=18)
+        obs, _ = env.reset(seed=18)
+        act = np.ones(2 * env.num_edges, dtype=np.float32)
+        rewards = []
+        for _ in range(100):
+            obs, r, *_ = env.step(act)
+            rewards.append(r)
+            assert env.observation_space.contains(obs)
+            assert np.all(env.network.get_node_occupancy() <= env.network.get_node_buffers() + 1e-6)
+            assert np.all(env.network._served <= env.network.get_edge_capacities() + 1e-6)
+        return float(np.mean(rewards[20:]))
+
+    assert run({4: 0.3}) < run(None) - 0.05
+
+
+@pytest.mark.parametrize("bad", [{99: 0.5}, {4: 0.0}, {4: 1.5}])
+def test_invalid_bottleneck_rejected(bad):
+    with pytest.raises(ValueError, match="bottleneck"):
+        CarlaGymEnv(bottlenecks=bad)

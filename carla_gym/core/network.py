@@ -37,7 +37,15 @@ class NetworkModel:
 
     def __init__(self, topology: str = "grid", num_nodes: int = 9,
                  link_capacity: float = 30.0, node_buffer: float = 120.0,
-                 edge_prob: float = 0.35, seed: int | None = None):
+                 edge_prob: float = 0.35, seed: int | None = None,
+                 bottlenecks: dict[int, float] | None = None):
+        """
+        bottlenecks : optional {node id: scale in (0, 1]}. A bottleneck node
+            keeps only `scale` of its buffer, and every link touching it keeps
+            only `scale` of its capacity (the smaller scale wins on a link
+            between two bottleneck nodes). Models a degraded or under-
+            provisioned node that traffic should be steered around.
+        """
         if topology not in self.SUPPORTED_TOPOLOGIES:
             raise ValueError(f"Unknown topology '{topology}'. "
                              f"Choose from {self.SUPPORTED_TOPOLOGIES}")
@@ -59,6 +67,17 @@ class NetworkModel:
         self.num_nodes = self.graph.number_of_nodes()
         self._edges = list(self.graph.edges())
         self._edge_index = {self._key(u, v): i for i, (u, v) in enumerate(self._edges)}
+
+        self.bottlenecks = dict(bottlenecks or {})
+        for n, scale in self.bottlenecks.items():
+            if n not in self.graph:
+                raise ValueError(f"bottleneck node {n} is not in the topology")
+            if not 0.0 < scale <= 1.0:
+                raise ValueError(f"bottleneck scale must be in (0, 1], got {scale} for node {n}")
+        scale = {n: self.bottlenecks.get(n, 1.0) for n in self.graph.nodes()}
+        self._edge_capacity = np.array(
+            [self.link_capacity * min(scale[u], scale[v]) for u, v in self._edges])
+        self._node_buffer = {n: self.node_buffer * scale[n] for n in self.graph.nodes()}
         self.reset()
 
     # ------------------------------------------------------------------ #
@@ -96,11 +115,11 @@ class NetworkModel:
     def reset(self) -> None:
         self.buffers: dict[int, list[Packet]] = {n: [] for n in self.graph.nodes()}
         self._served = np.zeros(len(self._edges), dtype=np.float64)
-        for u, v in self._edges:
-            self.graph[u][v]["capacity"] = self.link_capacity
+        for i, (u, v) in enumerate(self._edges):
+            self.graph[u][v]["capacity"] = float(self._edge_capacity[i])
             self.graph[u][v]["utilization"] = 0.0
         for n in self.graph.nodes():
-            self.graph.nodes[n]["buffer_size"] = self.node_buffer
+            self.graph.nodes[n]["buffer_size"] = self._node_buffer[n]
             self.graph.nodes[n]["queue"] = 0.0
 
         # Initialize default uniform routing weights
@@ -145,7 +164,7 @@ class NetworkModel:
             if len(route) < 2:
                 dropped += pkt.size
                 continue
-            if occ[pkt.src] + pkt.size > self.node_buffer:
+            if occ[pkt.src] + pkt.size > self._node_buffer[pkt.src]:
                 dropped += pkt.size          # admission overflow
                 continue
             pkt.path = route
@@ -159,7 +178,7 @@ class NetworkModel:
         and downstream buffer space. `allocation` is one weight per edge in
         the canonical edge order (see edge_list())."""
         alloc = np.clip(np.asarray(allocation, dtype=np.float64), 0.0, 1.0)
-        budget = {self._key(u, v): self.link_capacity * alloc[i]
+        budget = {self._key(u, v): self._edge_capacity[i] * alloc[i]
                   for i, (u, v) in enumerate(self._edges)}
 
         retained: dict[int, list[Packet]] = {n: [] for n in self.graph.nodes()}
@@ -221,7 +240,7 @@ class NetworkModel:
                     if delay > pkt.deadline and not pkt.missed:
                         pkt.missed = True
                         deadline_misses += 1
-                elif occ(nxt) + pkt.size > self.node_buffer:
+                elif occ(nxt) + pkt.size > self._node_buffer[nxt]:
                     dropped_units += pkt.size          # downstream overflow
                 else:
                     pkt.hop_index += 1
@@ -250,8 +269,7 @@ class NetworkModel:
                     pkt.missed = True
                     queue_expired += 1
 
-        caps = np.array([self.graph[u][v]["capacity"] for u, v in self._edges])
-        util = np.clip(self._served / np.maximum(caps, 1e-9), 0.0, 1.0)
+        util = np.clip(self._served / np.maximum(self._edge_capacity, 1e-9), 0.0, 1.0)
         for i, (u, v) in enumerate(self._edges):
             self.graph[u][v]["utilization"] = float(util[i])
         for n in self.graph.nodes():
@@ -287,6 +305,13 @@ class NetworkModel:
 
     def get_node_occupancy(self) -> np.ndarray:
         return np.array([self._occupancy(n) for n in self.graph.nodes()],
+                        dtype=np.float32)
+
+    def get_edge_capacities(self) -> np.ndarray:
+        return self._edge_capacity.astype(np.float32)
+
+    def get_node_buffers(self) -> np.ndarray:
+        return np.array([self._node_buffer[n] for n in self.graph.nodes()],
                         dtype=np.float32)
 
     def backlog_units(self) -> float:

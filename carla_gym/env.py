@@ -27,11 +27,14 @@ class CarlaGymEnv(gym.Env):
                  k: float = 0.5, c: float = 1.0, m: float = 0.5,
                  delay_reference: float = 10.0,
                  bandwidth_budget: float | None = 0.8,
-                 traffic=None,
+                 traffic=None, bottlenecks: dict[int, float] | None = None,
                  render_mode: str | None = None, seed: int | None = None):
         """
         k, c, m : reward coefficients for delay, packet loss and deadline
             misses (see utils/reward.py).
+        bottlenecks : optional {node id: scale in (0, 1]} of degraded nodes;
+            see NetworkModel. Observations stay normalised to each link's and
+            node's own (possibly reduced) capacity.
         bandwidth_budget : if set (0, 1], the agent may only spend that
             fraction of total link capacity per step; actions summing above
             it are rescaled down. Without this constraint the optimal policy
@@ -53,7 +56,8 @@ class CarlaGymEnv(gym.Env):
 
         self.network = NetworkModel(topology=topology, num_nodes=num_nodes,
                                     link_capacity=link_capacity,
-                                    node_buffer=node_buffer, seed=seed)
+                                    node_buffer=node_buffer, seed=seed,
+                                    bottlenecks=bottlenecks)
         # `traffic`: optional pre-built generator (e.g. TraceTrafficGenerator).
         self.traffic = traffic or TrafficGenerator(nodes=list(self.network.graph.nodes()),
                                         load_scale=load_scale, seed=seed)
@@ -139,7 +143,7 @@ class CarlaGymEnv(gym.Env):
 
     def _observe(self) -> np.ndarray:
         util = np.clip(self.network.get_edge_utilization(), 0.0, 1.0)
-        pending = np.clip(self._pending / max(self.network.link_capacity, 1e-9), 0.0, 1.0)
-        occ = np.clip(self.network.get_node_occupancy() / max(self.network.node_buffer, 1e-9),
+        pending = np.clip(self._pending / self.network.get_edge_capacities(), 0.0, 1.0)
+        occ = np.clip(self.network.get_node_occupancy() / self.network.get_node_buffers(),
                       0.0, 1.0)
         return np.concatenate([util, pending, occ]).astype(np.float32)

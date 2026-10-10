@@ -38,7 +38,7 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
                  load_scale: float = 1.0, max_steps: int = 200,
                  k: float = 0.5, c: float = 1.0, m: float = 0.5, delay_reference: float = 10.0,
                  bandwidth_budget: float | None = 0.8,
-                 traffic=None, seed: int | None = None):
+                 traffic=None, bottlenecks: dict[int, float] | None = None, seed: int | None = None):
         if not _HAS_PETTINGZOO:
             raise ImportError(
                 "MultiAgentCarlaGymEnv needs PettingZoo. Install it with "
@@ -52,7 +52,8 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
 
         self.network = NetworkModel(topology=topology, num_nodes=num_nodes,
                                     link_capacity=link_capacity,
-                                    node_buffer=node_buffer, seed=seed)
+                                    node_buffer=node_buffer, seed=seed,
+                                    bottlenecks=bottlenecks)
         self.traffic = traffic or TrafficGenerator(nodes=list(self.network.graph.nodes()),
                                                    load_scale=load_scale, seed=seed)
         self.reward_calc = RewardCalculator(k=k, c=c, m=m, delay_reference=delay_reference)
@@ -163,6 +164,6 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
 
     def _observe(self) -> np.ndarray:
         util = np.clip(self.network.get_edge_utilization(), 0.0, 1.0)
-        pending = np.clip(self._pending / max(self.network.link_capacity, 1e-9), 0.0, 1.0)
-        occ = np.clip(self.network.get_node_occupancy() / max(self.network.node_buffer, 1e-9), 0.0, 1.0)
+        pending = np.clip(self._pending / self.network.get_edge_capacities(), 0.0, 1.0)
+        occ = np.clip(self.network.get_node_occupancy() / self.network.get_node_buffers(), 0.0, 1.0)
         return np.concatenate([util, pending, occ]).astype(np.float32)

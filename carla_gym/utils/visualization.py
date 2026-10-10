@@ -32,8 +32,7 @@ class NetworkVisualizer:
             edge_widths.append(1.0 + 4.0 * util)
 
         occ = self.model.get_node_occupancy()
-        cap = max(self.model.node_buffer, 1e-9)
-        node_util = np.clip(occ / cap, 0.0, 1.0)
+        node_util = np.clip(occ / self.model.get_node_buffers(), 0.0, 1.0)
 
         fig, ax = plt.subplots(figsize=(7.5, 6))
         nx.draw_networkx_edges(g, self._pos, edge_color=edge_colors,
