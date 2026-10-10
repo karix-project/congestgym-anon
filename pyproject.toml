@@ -4,11 +4,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "carla-gym"
-version = "0.2.0"
-description = "Modular network-simulation RL environment for QoS-aware resource allocation"
+version = "0.3.0"
+description = "Gymnasium environment for reinforcement learning on congested network traffic: bandwidth allocation and routing with QoS-aware reward"
+readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["gymnasium>=0.29", "networkx>=3.0", "numpy>=1.24",
+dependencies = ["gymnasium>=1.0", "networkx>=3.0", "numpy>=1.24",
                 "pandas>=2.0", "matplotlib>=3.7"]
+
+[project.optional-dependencies]
+rl = ["torch>=2.0", "stable-baselines3>=2.3"]
+marl = ["pettingzoo>=1.24"]
+notebooks = ["jupyter>=1.0", "nbformat>=5.9", "nbconvert>=7.0", "ipykernel>=6.25"]
+dev = ["pytest>=7.4"]
+all = ["carla-gym[rl,marl,notebooks,dev]"]
 
 [tool.setuptools.packages.find]
 include = ["carla_gym*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
