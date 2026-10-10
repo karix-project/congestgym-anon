@@ -148,3 +148,43 @@ is the documented start-of-step rule, recorded as T6.
 
 Still open: T3 to T10 (section 2), none of which blocks correctness of the
 reported results. Whether to fix or document them is a Developer/user call.
+
+## 9. Confirmation pass on T3 to T10 (commits `b5d2cee`, `129ab50`)
+
+Script and log: `qa/retest/confirm_t3_t10.py`, `qa/retest/confirm_t3_t10.log`.
+26 checks, 0 problems.
+
+| ID | Developer's decision | Confirmed? |
+|---|---|---|
+| T3 | Fixed | Yes. Six invalid parameter sets are rejected at construction by both envs; zero values and a tiny `delay_reference` still run; explicit defaults behave exactly like implicit ones. |
+| T4 | Fixed | Yes. Missing, extra and misnamed agents are rejected on all five topologies; a full action dict is accepted afterwards and the episode ends cleanly. |
+| T5 | Documented | Yes, in `utils/reward.py` and the README limitations. One wording residue: the README reward section still ends the DeadlineMiss bullet with "Each packet is counted once", which is true of misses but reads oddly next to the limitation about the denominator. Cosmetic. |
+| T6 | Documented | Yes. |
+| T7 | Documented | Yes. |
+| T8 | Fixed | Yes. No "Sprint"/"Phase" or informal wording in tracked code, README or notebooks; the sanity script prints "Sanity checks" and passes 6/6. |
+| T9 | Documented | Yes. |
+| T10 | Fixed | Yes. Pooled baselines recomputed from the ten raw `final_eval.csv` files equal `summary.csv` and the README; only `random` moved (-0.908 to -0.901); PPO and SAC rows unchanged; notebook 04 shows the pooled value with 0 errors. |
+
+I agree with documenting T5, T7 and T9 rather than changing them: the code
+diff for rounds 2 and 3 touches only validation and docstrings
+(`traffic.py` +2 lines, `marl_env.py` +5, `reward.py` +14 of which 4 are
+checks), so the trained models and tables remain valid, and the benchmark
+determinism and saved-model probes still reproduce to 1e-15.
+
+Regression: **122 passed** here and in a fresh clone (working tree clean
+afterwards).
+
+Note on `qa/retest/probes_round3.log`: it shows two "FAIL" lines. Neither is
+a defect. One is my mis-specified probe from the first pass (T6). The other is
+the "agent missing from the action dict" probe, which expected the old silent
+acceptance and now hits the T4 `ValueError`, as intended.
+
+### Tester/QA status
+
+No open defects from this role. Remaining before submission, none of which
+is a code-correctness issue:
+
+* the user's four decisions (raw datasets with real IP addresses in the
+  public repository, the email in `LICENSE`, the project name, push / PR);
+* environments this machine cannot test (Python 3.10 to 3.13, Linux, macOS);
+* the Researcher pass.
