@@ -1,0 +1,45 @@
+== 1. Paired comparison on identical test seeds (agent minus baseline)
+  PPO - queue_proportional : mean diff +0.090 +/- 0.013 (95% CI over 5 training seeds), range over seeds [+0.077, +0.106], wins 100% of 50 (seed, episode) pairs
+  PPO - congestion_aware   : mean diff +0.108 +/- 0.013 (95% CI over 5 training seeds), range over seeds [+0.094, +0.124], wins 100% of 50 (seed, episode) pairs
+  PPO - max_bandwidth      : mean diff +0.177 +/- 0.013 (95% CI over 5 training seeds), range over seeds [+0.163, +0.193], wins 100% of 50 (seed, episode) pairs
+  SAC - queue_proportional : mean diff -0.021 +/- 0.028 (95% CI over 5 training seeds), range over seeds [-0.044, +0.012], wins 26% of 50 (seed, episode) pairs
+  SAC - congestion_aware   : mean diff -0.003 +/- 0.028 (95% CI over 5 training seeds), range over seeds [-0.027, +0.029], wins 52% of 50 (seed, episode) pairs
+  SAC - max_bandwidth      : mean diff +0.066 +/- 0.028 (95% CI over 5 training seeds), range over seeds [+0.043, +0.099], wins 98% of 50 (seed, episode) pairs
+
+== 2. Is the baseline's absolute level small next to the gap? Relative gains
+  PPO vs queue_proportional: +0.494 vs +0.404; gap +0.090 = 6.9% of the random-to-best-heuristic span
+  PPO vs max_bandwidth: +0.494 vs +0.317; gap +0.177 = 13.6% of the random-to-best-heuristic span
+  SAC vs max_bandwidth: +0.383 vs +0.317; gap +0.066 = 5.1% of the random-to-best-heuristic span
+
+== 3. Does the learned policy use the observation, or is it a good static allocation?
+algo  seed  feedback_policy  constant_mean_action  own_actions_shuffled  action_std_over_time
+ ppo     0            0.500                 0.334                 0.359                 0.235
+ ppo     1            0.514                 0.276                 0.341                 0.232
+ ppo     2            0.499                 0.338                 0.331                 0.227
+ ppo     3            0.495                 0.293                 0.332                 0.264
+ ppo     4            0.481                 0.277                 0.319                 0.247
+ sac     0            0.414                 0.310                 0.287                 0.325
+ sac     1            0.388                 0.287                 0.283                 0.301
+ sac     2            0.362                 0.173                 0.208                 0.332
+ sac     3            0.356                 0.247                 0.234                 0.335
+ sac     4            0.384                 0.284                 0.268                 0.336
+      feedback_policy  constant_mean_action  own_actions_shuffled
+algo                                                             
+ppo             0.498                 0.303                 0.336
+sac             0.381                 0.260                 0.256
+
+== 4. A tuned static baseline: best uniform bandwidth level, and PPO's mean action used as a fixed allocation
+  uniform bandwidth 0.7, uniform routing: +0.071
+  uniform bandwidth 0.8, uniform routing: +0.317
+  uniform bandwidth 0.9, uniform routing: +0.317
+  uniform bandwidth 1.0, uniform routing: +0.317
+
+== 5. Reward decomposition on test seeds (which term carries the PPO gain?)
+  ppo  T 0.844  -0.5D 0.188  -L 0.078  -0.5M 0.083  => R +0.496 | episode-aggregate delivered/offered 0.921, dropped/offered 0.078
+  qp   T 0.809  -0.5D 0.186  -L 0.133  -0.5M 0.087  => R +0.404 | episode-aggregate delivered/offered 0.869, dropped/offered 0.130
+  max  T 0.792  -0.5D 0.210  -L 0.174  -0.5M 0.090  => R +0.317 | episode-aggregate delivered/offered 0.826, dropped/offered 0.173
+
+== 6. Scenario matrix: how often is the best heuristic clearly best?
+  best policy separated from the runner-up by non-overlapping 95% CIs in 9 of 35 scenarios
+  scenarios where the four real heuristics span less than 0.03 reward (no discrimination): 8
+  scenarios where every heuristic scores below -1.0 (overloaded regime): 6
