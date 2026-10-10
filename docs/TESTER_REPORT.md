@@ -137,7 +137,7 @@ seeds (0 to 4) per algorithm. Learning curves use validation seeds 1000 to
 | SAC | RL agent | +0.383 ± 0.028 | 5 | training seeds |
 | load_aware_routing | baseline | +0.378 ± 0.026 | 10 | test episodes |
 | max_bandwidth | baseline | +0.317 ± 0.030 | 10 | test episodes |
-| random | baseline | -0.908 ± 0.026 | 10 | test episodes |
+| random | baseline | -0.901 ± 0.026 | 10 | test episodes |
 | min_bandwidth | baseline | -1.803 ± 0.008 | 10 | test episodes |
 
 * **PPO** (500,000 steps): held-out reward rose from -0.487 at the first checkpoint
@@ -241,3 +241,27 @@ to 1e-15 and the saved PPO/SAC models reproduce their saved rewards).
 
 Not addressed in round 2, by instruction (only T1 and T2 were requested):
 T3 to T10 in `docs/QA_RETEST_REPORT.md`.
+
+## 11. Round 3: T3 to T10 from the QA re-test
+
+| ID | Decision | What changed | Guard |
+|---|---|---|---|
+| T3 | Fixed | `RewardCalculator` rejects negative `k`, `c`, `m` and `delay_reference <= 0`; `TrafficGenerator` rejects negative `load_scale`. Zero is allowed for all four. | `test_invalid_reward_and_load_parameters_rejected` (6 cases), `test_zero_coefficients_and_zero_load_are_valid` |
+| T4 | Fixed | `MultiAgentCarlaGymEnv.step` raises unless it gets exactly one action per live agent. | `test_step_requires_an_action_for_every_live_agent` |
+| T5 | Documented, not changed | Deadline-term denominator can include a packet on two steps; expiry is recorded one step late. Described in `utils/reward.py` and the README limitations. | n/a |
+| T6 | Documented | No backpressure; consequence spelled out in the README limitations. | n/a |
+| T7 | Documented, not changed | Zero throughput credit in steps with no offered traffic. README limitations and `utils/reward.py`. | n/a |
+| T8 | Fixed | "Sprint"/"Phase" wording removed from `examples/random_agent_test.py` and `tests/test_env.py` (the printed heading is now "Sanity checks"). | n/a |
+| T9 | Documented, not changed | Pending-demand observation counts a part-sent packet at full size. README limitations. | n/a |
+| T10 | Fixed | `scripts/summarize_training.py` and notebook 04 now average each baseline over all ten run directories instead of taking training-seed 0's run. Only the `random` row moves: -0.908 -> -0.901 (+/- 0.026). No other number changes. | Tester probe updated to the same method |
+
+Why T5, T7 and T9 were documented rather than changed: each alters the reward
+or the observation. Changing them would invalidate every trained model and
+every table (about two hours of retraining and a full regeneration) for
+effects the re-test measured as negligible at the loads used. If the
+Researcher wants them changed, that is a deliberate re-run, not a patch.
+
+After round 3: `python -m pytest -q` -> **122 passed** (`tests/test_env.py` 80,
+`tests/test_dataset_pipeline.py` 23, `tests/test_marl_env.py` 19).
+No dynamics, reward or observation code changed in rounds 2 and 3, so the
+trained agents and the benchmark were not re-run.

@@ -187,7 +187,8 @@ around the degraded node or prioritise its links.
 `MultiAgentCarlaGymEnv` exposes the same simulator through the PettingZoo
 parallel API. Each link is controlled by exactly one of its endpoint nodes;
 nodes that control no link are not agents. Agents share the global
-observation and a cooperative reward. It needs the `marl` extra.
+observation and a cooperative reward. `step()` needs one action for every
+live agent and raises otherwise. It needs the `marl` extra.
 
 ## Baselines
 
@@ -225,7 +226,8 @@ for `S` in 0..4. Agents train on a `[-1, 1]` action space
 episode, learning curves use validation seeds (1000+), and the table uses test
 seeds (2000 to 2009) that neither training nor the curves saw. For RL agents
 the interval is over the five training seeds; for baselines it is over the ten
-test episodes.
+test episodes, each averaged over the ten run directories (this only matters
+for `random`, whose actions differ per run).
 
 <!-- RESULTS:training:start -->
 | Policy | Kind | Reward (mean ± 95% CI) | n | CI over |
@@ -236,7 +238,7 @@ test episodes.
 | SAC | RL agent | +0.383 ± 0.028 | 5 | training seeds |
 | load_aware_routing | baseline | +0.378 ± 0.026 | 10 | test episodes |
 | max_bandwidth | baseline | +0.317 ± 0.030 | 10 | test episodes |
-| random | baseline | -0.908 ± 0.026 | 10 | test episodes |
+| random | baseline | -0.901 ± 0.026 | 10 | test episodes |
 | min_bandwidth | baseline | -1.803 ± 0.008 | 10 | test episodes |
 <!-- RESULTS:training:end -->
 
@@ -341,7 +343,7 @@ python -m pytest -q
 ```
 
 <!-- RESULTS:tests:start -->
-Last run: **114 passed**.
+Last run: **122 passed**.
 <!-- RESULTS:tests:end -->
 
 The suite covers Gymnasium API conformance (`check_env`, including rendering),
@@ -359,6 +361,18 @@ reward terms, the baselines, and the dataset pipeline against the real files.
   node. QoS classes differ only in size, deadline and reward weight.
 * A packet's route is fixed at admission; routing weights do not re-route
   packets already queued.
+* There is no backpressure. A packet that has crossed a link is dropped if the
+  next node's buffer was full at the start of the step, even if that node
+  emptied during the step; two full neighbours sending to each other lose
+  traffic. Space freed in a step is usable from the next step.
+* The pending-demand observation counts a part-transmitted packet at its full
+  size.
+* Deadline misses are counted once per packet, but a packet that expires in a
+  queue and is delivered later appears in the deadline term's denominator on
+  both steps. Expiry is recorded one step after the miss became unavoidable.
+* In a step with no offered traffic (for example after a non-looping trace
+  ends) the throughput term is 0, so draining a backlog then earns no
+  throughput credit.
 * The per-step throughput term is clipped at 1, so a draining backlog and
   steady state look the same to that term (the delay term separates them).
 * The multi-agent environment gives every agent the global observation.

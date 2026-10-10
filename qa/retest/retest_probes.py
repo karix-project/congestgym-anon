@@ -378,7 +378,8 @@ def _():
         rows[algo.upper()] = (np.mean(per), ci95(per), len(per))
     f0 = pd.read_csv("results/grid_b08/ppo_seed0/final_eval.csv")
     for pol in ("queue_proportional", "congestion_aware", "load_aware_routing", "max_bandwidth", "random", "min_bandwidth"):
-        v = f0[f0.policy == pol].reward
+        # pooled over all run directories, as scripts/summarize_training.py does since round 3
+        v = pd.concat(pd.read_csv(q) for q in glob.glob("results/grid_b08/*_seed*/final_eval.csv")).query("policy == @pol").groupby("test_seed").reward.mean()
         rows[pol] = (v.mean(), ci95(v), len(v))
     readme = open("README.md", encoding="utf-8").read()
     for name, (m, c, n) in rows.items():

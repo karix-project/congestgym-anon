@@ -15,8 +15,9 @@ How the intervals are formed:
   * RL agents: one number per TRAINING seed (that seed's mean over the test
     episodes); the CI is over training seeds, so it reflects run-to-run
     variation of training itself.
-  * Baselines: deterministic given the traffic, so the CI is over the test
-    episodes (they are identical in every run directory).
+  * Baselines: the CI is over the test episodes. Each test episode's value
+    is averaged over all run directories; the deterministic baselines are
+    identical in every run, the `random` baseline is not.
 """
 from __future__ import annotations
 
@@ -63,9 +64,12 @@ def main():
                      "reward_ci95": ci95(per_seed), "n": len(per_seed),
                      "ci_over": "training seeds",
                      "per_seed": " ".join(f"{v:+.3f}" for v in per_seed)})
-    one_run = finals[(finals.algo == algos[0])
-                     & (finals.train_seed == finals[finals.algo == algos[0]].train_seed.min())]
-    for name, g in one_run[~one_run.policy.isin(algos)].groupby("policy"):
+    # Pool every run directory: one value per test seed, averaged over runs.
+    # Deterministic baselines are identical in every run; `random` is not
+    # (its action RNG is seeded per run), so no single run is singled out.
+    pooled = (finals[~finals.policy.isin(algos)]
+              .groupby(["policy", "test_seed"], as_index=False)["reward"].mean())
+    for name, g in pooled.groupby("policy"):
         rows.append({"policy": name, "kind": "baseline", "reward_mean": g["reward"].mean(),
                      "reward_ci95": ci95(g["reward"]), "n": len(g),
                      "ci_over": "test episodes", "per_seed": ""})
