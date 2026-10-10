@@ -2,8 +2,10 @@
 carla_gym/marl_env.py
 
 Multi-agent version of CarlaGymEnv using PettingZoo ParallelEnv API.
-Each node is an independent agent controlling the bandwidth and routing weights
-for its outgoing links.
+Each agent is a node controlling the bandwidth and routing weights of the
+links assigned to it. Every link has exactly one controlling agent; nodes that
+control no link are not agents. All agents share the global observation and a
+single cooperative reward. Requires the optional PettingZoo dependency.
 """
 from __future__ import annotations
 
@@ -13,8 +15,12 @@ from gymnasium import spaces
 
 try:
     from pettingzoo import ParallelEnv
+    _HAS_PETTINGZOO = True
 except ImportError:
-    # Fallback/mock if pettingzoo is not installed
+    # Keeps `import carla_gym` working without the optional dependency; the
+    # multi-agent env itself refuses to build without it (see __init__).
+    _HAS_PETTINGZOO = False
+
     class ParallelEnv:
         pass
 
@@ -33,7 +39,13 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
                  k: float = 0.5, c: float = 1.0, m: float = 0.5, delay_reference: float = 10.0,
                  bandwidth_budget: float | None = 0.8,
                  traffic=None, seed: int | None = None):
+        if not _HAS_PETTINGZOO:
+            raise ImportError(
+                "MultiAgentCarlaGymEnv needs PettingZoo. Install it with "
+                "`pip install pettingzoo` or `pip install carla-gym[marl]`.")
         super().__init__()
+        if bandwidth_budget is not None and not 0.0 < bandwidth_budget <= 1.0:
+            raise ValueError(f"bandwidth_budget must be None or in (0, 1], got {bandwidth_budget}")
         self.max_steps = max_steps
         self.bandwidth_budget = bandwidth_budget
         self._seed = seed
@@ -45,24 +57,27 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
                                                    load_scale=load_scale, seed=seed)
         self.reward_calc = RewardCalculator(k=k, c=c, m=m, delay_reference=delay_reference)
 
-        self.possible_agents = [f"node_{i}" for i in self.network.graph.nodes()]
-        self.agents = self.possible_agents[:]
+        # Each undirected link shares one budget, so exactly one endpoint
+        # controls it. Links go to the endpoint that currently controls fewer
+        # (ties: lower degree, then lower id), which spreads control as evenly
+        # as the topology allows. A node left with no link has nothing to
+        # decide and is not an agent (e.g. the hub of a star: 8 links, 9 nodes).
+        degree = dict(self.network.graph.degree())
+        owned: dict[int, list[int]] = {n: [] for n in self.network.graph.nodes()}
+        edges = self.network.edge_list()
+        for i in sorted(range(len(edges)),
+                        key=lambda i: (min(degree[edges[i][0]], degree[edges[i][1]]), i)):
+            u, v = edges[i]
+            owner = min((u, v), key=lambda n: (len(owned[n]), degree[n], n))
+            owned[owner].append(i)
 
-        # Precompute which edges belong to which agent.
-        # Since undirected links share one budget, we assign control of the link
-        # to the node with the numerically lower ID.
-        self.agent_edges = {}
-        for agent in self.possible_agents:
-            node_id = int(agent.split("_")[1])
-            edges = []
-            for i, (u, v) in enumerate(self.network._edges):
-                if u == node_id: 
-                    edges.append(i)
-            self.agent_edges[agent] = edges
+        self.agent_edges = {f"node_{n}": sorted(e) for n, e in owned.items() if e}
+        self.possible_agents = list(self.agent_edges)
+        self.agents = self.possible_agents[:]
 
         self._action_spaces = {}
         self._observation_spaces = {}
-        
+
         obs_dim = 2 * self.network.num_edges() + self.network.num_nodes
         for agent in self.possible_agents:
             num_owned_edges = len(self.agent_edges[agent])
@@ -89,7 +104,7 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
         self.traffic.reset(seed=seed)
         self._step_count = 0
         self._pending = np.zeros(self.network.num_edges(), dtype=np.float32)
-        
+
         obs = self._observe()
         observations = {a: obs for a in self.agents}
         infos = {a: {} for a in self.agents}
@@ -103,7 +118,7 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
         # Reconstruct global action vector from individual agent actions
         global_bw = np.zeros(self.network.num_edges(), dtype=np.float32)
         global_routing = np.ones(self.network.num_edges(), dtype=np.float32)
-        
+
         for agent, action in actions.items():
             owned = self.agent_edges[agent]
             if owned:
@@ -124,7 +139,7 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
 
         trunc = self._step_count >= self.max_steps
         term = False
-        
+
         obs = self._observe()
         observations = {a: obs for a in self.agents}
         rewards = {a: float(reward) for a in self.agents}
