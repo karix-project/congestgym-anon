@@ -1,0 +1,11 @@
+single 12-unit packet, weight 0.3, 50 steps -> delivered units: 12.0
+constant-weight sweep (unconstrained, 150 steps, warmup 20, seed 0):
+  weight 0.10 -> mean reward -1.682
+  weight 0.20 -> mean reward -1.424
+  weight 0.30 -> mean reward -1.229
+  weight 0.35 -> mean reward -1.071
+  weight 0.40 -> mean reward -0.900
+  weight 0.45 -> mean reward -0.750
+  weight 0.50 -> mean reward -0.585
+  weight 0.70 -> mean reward +0.070
+  weight 1.00 -> mean reward +0.550

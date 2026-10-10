@@ -22,3 +22,6 @@ Thumbs.db
 random_agent_log.csv
 qa/baseline/notebooks/
 qa/baseline/traces/
+
+# Trained models are small and kept with their results
+!results/**/model.zip

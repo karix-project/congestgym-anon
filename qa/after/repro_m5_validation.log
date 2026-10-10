@@ -1,0 +1,10 @@
+bandwidth_budget=-0.5: raised ValueError: bandwidth_budget must be None or in (0, 1], got -0.5
+bandwidth_budget=0.0: raised ValueError: bandwidth_budget must be None or in (0, 1], got 0.0
+bandwidth_budget=1.5: raised ValueError: bandwidth_budget must be None or in (0, 1], got 1.5
+wrong-length action: raised ValueError: action must have shape (24,) (E bandwidth weights then E routing weights), got (5,)
+grid num_nodes=7: raised ValueError: grid topology needs a perfect-square num_nodes (4, 9, 16, ...), got 7
+grid num_nodes=9: built 9 nodes
+grid num_nodes=10: raised ValueError: grid topology needs a perfect-square num_nodes (4, 9, 16, ...), got 10
+register vs max_steps: gym.make(max_steps=50) truncated at step 50
+register vs max_steps: gym.make(max_steps=500) truncated at step 500
+step after truncation: raised RuntimeError: Episode has ended (truncated at max_steps); call reset() before step().

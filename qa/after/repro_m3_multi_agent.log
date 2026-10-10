@@ -1,0 +1,12 @@
+Passed Parallel API test
+grid  : parallel_api_test PASSED; agents with zero-size action space: 0 of 9
+Passed Parallel API test
+star  : parallel_api_test PASSED; agents with zero-size action space: 0 of 8
+Passed Parallel API test
+ring  : parallel_api_test PASSED; agents with zero-size action space: 0 of 9
+Passed Parallel API test
+mesh  : parallel_api_test PASSED; agents with zero-size action space: 0 of 9
+Passed Parallel API test
+random: parallel_api_test PASSED; agents with zero-size action space: 0 of 9
+pettingzoo declared in requirements.txt: True
+pettingzoo declared in pyproject.toml: True
