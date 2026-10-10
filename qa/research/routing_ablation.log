@@ -1,0 +1,5 @@
+full             +0.494 +/- 0.013   per seed [0.496 0.51  0.493 0.492 0.481]
+uniform_routing  +0.442 +/- 0.016   per seed [0.431 0.444 0.455 0.454 0.426]
+qp_bandwidth     +0.456 +/- 0.008   per seed [0.452 0.454 0.456 0.451 0.467]
+full - uniform_routing: +0.052 +/- 0.017
+share of src-dst routes that change from one step to the next under the agent: 15.3%
