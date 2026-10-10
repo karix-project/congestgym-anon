@@ -442,3 +442,33 @@ def test_bottleneck_hurts_and_is_respected():
 def test_invalid_bottleneck_rejected(bad):
     with pytest.raises(ValueError, match="bottleneck"):
         CarlaGymEnv(bottlenecks=bad)
+
+
+# ---------------------------------------------------------------- baselines / stats
+def test_all_baselines_emit_valid_actions_on_every_topology():
+    from carla_gym.baselines import POLICIES
+    for topology in ["grid", "random", "star", "mesh", "ring"]:
+        env = CarlaGymEnv(topology=topology, max_steps=10, seed=0)
+        obs, _ = env.reset(seed=0)
+        rng = np.random.default_rng(0)
+        for _ in range(5):
+            obs, *_ = env.step(env.action_space.sample())
+        for name, fn in POLICIES.items():
+            action = np.asarray(fn(env, obs, rng), dtype=np.float32)
+            assert env.action_space.contains(action), (topology, name)
+
+
+def test_load_aware_routing_raises_cost_of_congested_links():
+    from carla_gym.baselines import policy_load_aware_routing
+    env = CarlaGymEnv(max_steps=10, seed=0)
+    env.reset(seed=0)
+    obs = np.zeros(env.observation_space.shape, dtype=np.float32)
+    obs[env.num_edges + 3] = 1.0                 # link 3 has a full queue
+    routing = policy_load_aware_routing(env, obs)[env.num_edges:]
+    assert routing[3] == routing.max() and routing[3] > routing.min()
+
+
+def test_ci95_matches_hand_computed_interval():
+    from carla_gym.utils.stats import ci95
+    assert ci95([1.0, 2.0, 3.0, 4.0, 5.0]) == pytest.approx(2.776 * np.std([1, 2, 3, 4, 5], ddof=1) / np.sqrt(5))
+    assert np.isnan(ci95([1.0]))
