@@ -24,7 +24,7 @@ class CarlaGymEnv(gym.Env):
                  link_capacity: float = 30.0, node_buffer: float = 120.0,
                  load_scale: float = 1.0, max_steps: int = 200,
                  k: float = 0.5, c: float = 1.0, delay_reference: float = 10.0,
-                 bandwidth_budget: float | None = None,
+                 bandwidth_budget: float | None = 0.8,
                  traffic=None,
                  render_mode: str | None = None, seed: int | None = None):
         """
@@ -32,7 +32,7 @@ class CarlaGymEnv(gym.Env):
             fraction of total link capacity per step; actions summing above
             it are rescaled down. Without this constraint the optimal policy
             is degenerate ("allocate 1.0 everywhere") and there is nothing
-            interesting to learn. Leave None for the simple Phase-1 setting.
+            interesting to learn.
         """
         super().__init__()
         self.max_steps = max_steps
@@ -96,8 +96,8 @@ class CarlaGymEnv(gym.Env):
         else:
             weighted_delay = raw_delay = 0.0
 
-        t_n, d_n, l_n = self.reward_calc.normalize(delivered, offered, weighted_delay, dropped)
-        reward = self.reward_calc.compute(t_n, d_n, l_n)
+        t_n, d_n, l_n, m_n = self.reward_calc.normalize(delivered, offered, weighted_delay, dropped, stats["deadline_misses"], stats["delivered_count"])
+        reward = self.reward_calc.compute(t_n, d_n, l_n, m_n)
 
         self._pending = stats["pending_units"].astype(np.float32)
         self._step_count += 1
@@ -108,6 +108,7 @@ class CarlaGymEnv(gym.Env):
             "reward_throughput": t_n,
             "reward_delay": d_n,
             "reward_loss": l_n,
+            "reward_deadline_miss": m_n,
             "delivered_units": delivered,
             "offered_units": offered,
             "dropped_units": dropped,

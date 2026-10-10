@@ -106,9 +106,10 @@ def test_reward_terms_are_commensurate():
 
 
 def test_reward_penalties_reduce_reward():
-    rc = RewardCalculator(k=0.5, c=1.0)
-    assert rc.compute(1.0, 0.0, 0.0) > rc.compute(1.0, 0.5, 0.0)
-    assert rc.compute(1.0, 0.0, 0.0) > rc.compute(1.0, 0.0, 0.5)
+    rc = RewardCalculator(k=0.5, c=1.0, m=0.5)
+    assert rc.compute(1.0, 0.0, 0.0, 0.0) > rc.compute(1.0, 0.5, 0.0, 0.0)
+    assert rc.compute(1.0, 0.0, 0.0, 0.0) > rc.compute(1.0, 0.0, 0.5, 0.0)
+    assert rc.compute(1.0, 0.0, 0.0, 0.0) > rc.compute(1.0, 0.0, 0.0, 0.5)
 
 
 def test_observation_always_within_bounds_under_stress():
