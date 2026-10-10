@@ -334,3 +334,13 @@ addresses remain publicly retrievable.
 Also unchanged: the committed traces were produced from those raw files, so
 their provenance and licence question (see `docs/RESEARCHER_REVIEW.md`,
 section 7) still applies to the derived data, in a much weaker form.
+
+## 14. Round 6: R5-1 from the round-5 confirmation
+
+`carla_gym/core/dataset_adapters.py` quoted a real MAC-vendor string from the
+removed capture as an example of a non-IP endpoint. It is replaced with a
+made-up placeholder (`"Vendor_00:00:00"`). A search of all tracked files finds
+no other MAC-style string and no remaining copy of the original in code,
+docs or logs. Docstring only: no behaviour change, **129 passed**.
+
+Like the raw files, the original string remains in the git history.

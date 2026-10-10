@@ -20,7 +20,7 @@ The derived traces contain node ids only.
   * Midterm_53_group.csv -- the SAME capture as output1.csv, exported by
                           Wireshark's text UI instead: Time is relative
                           seconds, Source/Destination mix IPs, MAC-vendor
-                          strings ("VMware_8a:5c:e6"), and the literal
+                          strings (e.g. "Vendor_00:00:00"), and the literal
                           string "Broadcast". Only the IP<->IP rows are
                           usable (they are the same ~393k rows output1.csv
                           has; the rest have no routable destination).
