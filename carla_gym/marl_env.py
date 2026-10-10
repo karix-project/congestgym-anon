@@ -82,11 +82,10 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
         return self._action_spaces[agent]
 
     def reset(self, seed=None, options=None):
-        if seed is not None:
-            self._seed = seed
         self.agents = self.possible_agents[:]
         self.network.reset()
-        self.traffic.reset(seed=self._seed)
+        # Re-seed only on an explicit seed; see CarlaGymEnv.reset().
+        self.traffic.reset(seed=seed)
         self._step_count = 0
         self._pending = np.zeros(self.network.num_edges(), dtype=np.float32)
         

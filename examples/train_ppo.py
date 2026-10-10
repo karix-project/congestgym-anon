@@ -13,9 +13,8 @@ import argparse
 import numpy as np
 import pandas as pd
 from stable_baselines3 import PPO
-from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.monitor import Monitor
-from stable_baselines3.common.vec_env import VecNormalize
+from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
 from carla_gym.env import CarlaGymEnv
 from carla_gym.core.trace_traffic import TraceTrafficGenerator
@@ -66,7 +65,9 @@ def main():
     p.add_argument("--save", default="ppo_carla")
     a = p.parse_args()
 
-    venv = make_vec_env(lambda: make_env(a, a.seed)(), n_envs=a.n_envs, seed=a.seed)
+    # Distinct seed per env rank, so parallel envs do not share one traffic stream.
+    venv = DummyVecEnv([make_env(a, a.seed + rank) for rank in range(a.n_envs)])
+    venv.seed(a.seed)
     venv = VecNormalize(venv, norm_obs=False, norm_reward=True)   # reward scale ~[-2,1]
     model = PPO("MlpPolicy", venv, n_steps=512, batch_size=256, gamma=0.95,
                 learning_rate=3e-4, ent_coef=0.0, seed=a.seed, verbose=1,

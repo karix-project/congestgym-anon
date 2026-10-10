@@ -156,3 +156,72 @@ def test_traffic_generator_respects_seed():
     p1, p2 = g1.generate(0), g2.generate(0)
     assert len(p1) == len(p2)
     assert [p.size for p in p1] == [p.size for p in p2]
+
+
+# ---------------------------------------------------------------- seeding (H1)
+def _offered_trace(env, steps=15, seed=None):
+    env.reset(seed=seed)
+    act = np.full(2 * env.num_edges, 0.5, dtype=np.float32)
+    return [env.step(act)[4]["offered_units"] for _ in range(steps)]
+
+
+def test_unseeded_resets_draw_fresh_traffic():
+    """Regression guard: reset() without a seed used to re-seed the traffic
+    RNG with the constructor seed, so every training episode replayed one
+    fixed traffic realisation."""
+    env = CarlaGymEnv(max_steps=15, seed=0)
+    first = _offered_trace(env, seed=0)
+    second = _offered_trace(env)
+    third = _offered_trace(env)
+    assert first != second and second != third
+
+
+def test_seeded_reset_replays_identical_traffic():
+    env = CarlaGymEnv(max_steps=15, seed=0)
+    a = _offered_trace(env, seed=123)
+    _offered_trace(env)                      # advance the stream in between
+    b = _offered_trace(env, seed=123)
+    assert a == b
+
+
+def test_constructor_seed_fixes_first_unseeded_episode():
+    a = _offered_trace(CarlaGymEnv(max_steps=15, seed=5))
+    b = _offered_trace(CarlaGymEnv(max_steps=15, seed=5))
+    c = _offered_trace(CarlaGymEnv(max_steps=15, seed=6))
+    assert a == b and a != c
+
+
+def test_trace_traffic_unseeded_resets_differ(tmp_path):
+    import pandas as pd
+    from carla_gym.core.trace_traffic import TraceTrafficGenerator
+
+    csv = tmp_path / "trace.csv"
+    pd.DataFrame({"step": [0, 0, 1, 1], "src": [0, 1, 2, 3],
+                  "dst": [4, 5, 6, 7], "volume": [50.0, 60.0, 40.0, 70.0]}).to_csv(csv, index=False)
+    traffic = TraceTrafficGenerator(list(range(9)), str(csv), target_load=100.0, seed=0)
+    env = CarlaGymEnv(max_steps=15, traffic=traffic, seed=0)
+    first = _offered_trace(env, seed=0)
+    second = _offered_trace(env)
+    assert first != second
+    assert _offered_trace(env, seed=0) == first
+
+
+def test_multi_agent_unseeded_resets_draw_fresh_traffic():
+    pytest.importorskip("pettingzoo")
+    from carla_gym.marl_env import MultiAgentCarlaGymEnv
+
+    def episode(env, seed=None):
+        obs, _ = env.reset(seed=seed)
+        out = []
+        for _ in range(15):
+            acts = {a: np.full(env.action_space(a).shape, 0.5, dtype=np.float32)
+                    for a in env.agents}
+            obs, *_ = env.step(acts)
+            out.append(obs[env.possible_agents[0]].tolist())
+        return out
+
+    env = MultiAgentCarlaGymEnv(max_steps=15, seed=0)
+    first = episode(env, seed=0)
+    second = episode(env)
+    assert first != second
+    assert episode(env, seed=0) == first

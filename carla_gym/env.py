@@ -65,7 +65,10 @@ class CarlaGymEnv(gym.Env):
     def reset(self, *, seed: int | None = None, options: dict | None = None):
         super().reset(seed=seed)
         self.network.reset()
-        self.traffic.reset(seed=seed if seed is not None else self._seed)
+        # Re-seed traffic only on an explicit seed. The constructor seed already
+        # seeded the generator once; un-seeded resets must continue that stream
+        # so successive episodes see fresh traffic.
+        self.traffic.reset(seed=seed)
         self._step_count = 0
         self._pending = np.zeros(self.num_edges, dtype=np.float32)
         return self._observe(), {"step": 0}
