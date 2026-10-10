@@ -1,15 +1,15 @@
 """
 examples/random_agent_test.py
 
-Sprint 4 deliverable. Runs a random-action agent and logs every step with
+Sanity run. Runs a random-action agent and logs every step with
 Pandas to verify that actions genuinely move queue lengths, latency and
 reward.
 
-It also runs three reference policies alongside random. A random agent on
+It also runs the rule-based reference policies alongside random. A random agent on
 its own only proves the env *runs*; comparing it against a deliberately
 bad policy (min bandwidth) and a sensible one (max / queue-proportional)
 is what demonstrates there is a real control problem to learn -- which is
-the claim your Phase-1 evaluation actually rests on.
+the property every later evaluation rests on.
 
 Usage:
     python examples/random_agent_test.py --episodes 3 --steps 150
@@ -25,47 +25,12 @@ import pandas as pd
 from carla_gym.env import CarlaGymEnv
 
 
-# ---------------------------------------------------------------------- #
-# Reference policies
-#
-# `rng` defaults to None (and is unused by every policy except the random
-# one) so these can be called either as fn(env, obs, rng) -- this file's
-# own run_policy() -- or as fn(env, obs) -- examples/train_ppo.py's
-# rollout(), which evaluates PPO against these same baselines and doesn't
-# thread an rng through. Keep that compatibility if you add a new policy.
-# ---------------------------------------------------------------------- #
-def policy_random(env, obs, rng=None):
-    rng = rng if rng is not None else np.random.default_rng()
-    return rng.uniform(0.0, 1.0, size=2 * env.num_edges)
-
-
-def policy_max(env, obs, rng=None):
-    return np.ones(2 * env.num_edges)
-
-
-def policy_min(env, obs, rng=None):
-    return np.full(2 * env.num_edges, 0.05)
-
-
-def policy_queue_proportional(env, obs, rng=None):
-    """Allocate bandwidth in proportion to each link's pending demand.
-    Keep routing weights uniform for the baseline."""
-    pending = obs[env.num_edges:2 * env.num_edges]
-    if pending.max() <= 1e-9:
-        bw = np.full(env.num_edges, 0.5)
-    else:
-        bw = np.clip(pending / pending.max(), 0.05, 1.0)
-    
-    routing = np.ones(env.num_edges)
-    return np.concatenate([bw, routing])
-
-
-POLICIES = {
-    "random": policy_random,
-    "min_bandwidth": policy_min,
-    "max_bandwidth": policy_max,
-    "queue_proportional": policy_queue_proportional,
-}
+# Reference policies live in carla_gym/baselines.py; re-exported here so
+# existing imports from this module keep working.
+from carla_gym.baselines import (  # noqa: E402,F401
+    POLICIES, policy_congestion_aware, policy_load_aware_routing, policy_max,
+    policy_min, policy_queue_proportional, policy_random,
+)
 
 
 def run_policy(name, fn, episodes, steps, topology, seed, budget=None, warmup=20):
@@ -81,8 +46,12 @@ def run_policy(name, fn, episodes, steps, topology, seed, budget=None, warmup=20
             rows.append({
                 "policy": name, "episode": ep, "step": t,
                 "action_mean": float(np.mean(action)),
+                "bandwidth_mean": float(np.mean(action[:env.num_edges])),
                 "reward": reward,
                 "throughput": info["reward_throughput"],
+                "offered_units": info["offered_units"],
+                "delivered_units": info["delivered_units"],
+                "dropped_units": info["dropped_units"],
                 "delay_norm": info["reward_delay"],
                 "loss_ratio": info["reward_loss"],
                 "latency_steps": info["mean_latency_steps"],
@@ -99,7 +68,7 @@ def run_policy(name, fn, episodes, steps, topology, seed, budget=None, warmup=20
 
 
 def main():
-    p = argparse.ArgumentParser(description="CarlaGym Sprint 4 validation")
+    p = argparse.ArgumentParser(description="CarlaGym sanity run: baselines and six checks")
     p.add_argument("--episodes", type=int, default=3)
     p.add_argument("--steps", type=int, default=150)
     p.add_argument("--topology", type=str, default="grid",
@@ -132,16 +101,23 @@ def main():
         backlog=("backlog_units", "mean"),
         node_occ=("mean_node_occupancy", "mean"),
     ).sort_values("reward", ascending=False)
-    print("=== Policy comparison (post-warmup means) ===")
+    # `throughput` and `loss` above are means of the per-step reward terms.
+    # The fraction of traffic actually delivered / dropped comes from totals.
+    totals = warm.groupby("policy")[["offered_units", "delivered_units", "dropped_units"]].sum()
+    summary["delivered_frac"] = totals["delivered_units"] / totals["offered_units"]
+    summary["dropped_frac"] = totals["dropped_units"] / totals["offered_units"]
+    print("=== Policy comparison (post-warmup means; *_frac = episode totals) ===")
     print(summary.round(3).to_string())
 
     rnd = warm[warm["policy"] == "random"]
-    print("\n=== Random-agent sensitivity: action_mean vs outcomes ===")
-    corr = rnd[["action_mean", "reward", "backlog_units",
-                "loss_ratio", "latency_steps"]].corr()["action_mean"]
+    # Correlate against the bandwidth half of the action only: the routing
+    # half has no monotone effect, so the mean over both dilutes the signal.
+    print("\n=== Random-agent sensitivity: bandwidth_mean vs outcomes ===")
+    corr = rnd[["bandwidth_mean", "reward", "backlog_units",
+                "loss_ratio", "latency_steps"]].corr()["bandwidth_mean"]
     print(corr.round(3).to_string())
 
-    print("\n=== Sprint 4 checks ===")
+    print("\n=== Sanity checks ===")
     checks = [
         ("node occupancy is a live observable (not constant zero)",
          warm["mean_node_occupancy"].std() > 1e-6),

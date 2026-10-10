@@ -1,0 +1,26 @@
+== T1
+tracked junk in HEAD: 0
+pyc files on disk in carla_gym: 8
+git sees them as changes: 0
+fatal: --quiet is only valid with a single pathname
+fresh clone junk files: 0
+== pytest
+114 passed, 1 warning in 36.67s
+== T2
+native env, 90 actions with one non-finite entry: rejected 90 accepted []
+through wrappers: {'RescaleAction': 'rejected', 'gym.make': 'rejected', 'DummyVecEnv': 'rejected', 'python list': 'rejected', 'multi-agent': 'rejected'}
+finite out-of-range actions accepted and clipped; max served on a link 30.0 (capacity 30)
+state untouched by rejected step: True
+== regression
+=== SUMMARY ===
+FAIL 1
+NOTE 4
+PASS 16
+[FAIL] Dropped packet consumes link budget; delivered packet does not need destination buffer room: transit in
+[PASS] README / report numbers recomputed from raw result files: PPO +0.494 ± 0.013; SAC +0.383 ± 0.028; queue
+[PASS] Benchmark determinism: one scenario recomputed on current code equals results/benchmark: max abs differ
+[PASS] Saved PPO/SAC models reload and reproduce their saved test rewards: ppo: max abs diff 5.6e-17; sac: max
+== repro
+1
+curve: 20 checkpoints, max abs diff 0.045, mean 0.016; last saved 0.461 rerun 0.454
+test reward: saved 0.496, rerun 0.492

@@ -1,0 +1,20 @@
+HEAD 7b66da0
+== what changed in package code since the last confirmed commit (ef53745)
+ carla_gym/core/dataset_adapters.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+-                          strings ("<original string redacted>"), and the literal
++                          strings (e.g. "Vendor_00:00:00"), and the literal
+== scan of all tracked files
+files scanned: 173
+  IPv4: none
+  full MAC: none
+  vendor_xx:xx:xx: {'carla_gym/core/dataset_adapters.py': {'Vendor_00:00:00'}, 'docs/TESTER_REPORT.md': {'Vendor_00:00:00'}}
+  original fragment: none
+  VMware: none
+== behaviour
+pytest: 129 passed, 1 warning in 28.23s
+module imports; docstring mentions placeholder: True
+Wireshark-text export still converts; non-IP rows dropped: 634 ; rows 4163
+equals committed trace: True
+== history (unchanged, for the record)
+original fragment reachable in history: 2 commits

@@ -2,285 +2,496 @@
 
 <p align="center">
   <img src=".github/carla-logo.png" height="auto" width="150"> <br>
-   A Gymnasium environment for Reinforcement Learning Agents in Congested SDNs
+   A Gymnasium environment for reinforcement learning on congested network traffic
 </p>
 
+CarlaGym is a Python reinforcement-learning framework built on the standard
+[Gymnasium](https://gymnasium.farama.org/) API. An agent controls a congested
+packet network: every step it decides **how much bandwidth each link gets** and
+**how traffic is routed**, and it is rewarded on QoS metrics (throughput, delay,
+packet loss, deadline misses). The framework ships with customizable
+topologies, volatile synthetic and dataset-driven traffic, node-bottleneck
+scenarios, rule-based traffic-engineering baselines, and scripts to train,
+evaluate and benchmark RL agents against them.
 
-A modular network-simulation RL environment, architecturally inspired by
-`mobile-env`: traffic generation, topology/queueing, and reward computation
-are fully decoupled from the `gymnasium.Env` loop.
+Traffic generation, the network simulator and the reward are decoupled from
+the `gymnasium.Env` loop (an architecture inspired by `mobile-env`), so each
+can be replaced independently.
 
 ## Layout
 
 ```
 carla_gym/
-  env.py                  # CarlaGymEnv(gymnasium.Env) — spaces + step()/reset() only
+  env.py                  # CarlaGymEnv(gymnasium.Env): spaces, step()/reset()
+  marl_env.py             # MultiAgentCarlaGymEnv (PettingZoo ParallelEnv)
+  baselines.py            # rule-based reference policies (bandwidth and routing-aware)
   core/
-    network.py            # Topology, node buffers, link service, store-and-forward
-    traffic.py            # Poisson QoS traffic (voice/gaming/video/best-effort)
-    trace_traffic.py      # Dataset-driven traffic: TraceTrafficGenerator
-    dataset_adapters.py   # Raw dataset -> (step,src,dst,volume) trace schema
+    network.py            # topologies, node buffers, link service, store-and-forward
+    step.py               # one simulation step, shared by both envs
+    traffic.py            # Poisson QoS traffic (voice / gaming / video / best-effort)
+    trace_traffic.py      # dataset-driven traffic: TraceTrafficGenerator
+    dataset_adapters.py   # raw dataset -> (step, src, dst, volume) trace
   utils/
-    reward.py             # R = Throughput - k*Delay - c*PacketLoss (normalized)
+    reward.py             # R = Throughput - k*Delay - c*PacketLoss - m*DeadlineMiss
+    stats.py              # 95% confidence intervals
+    qos.py                # episode-aggregate delivered / dropped / delay
     visualization.py      # Matplotlib congestion rendering
 examples/
-  random_agent_test.py    # Sprint 4: random + 3 reference policies, pandas logging
-  train_ppo.py             # PPO training (synthetic or --trace dataset-driven)
+  random_agent_test.py    # sanity run: all baselines, pandas log, six checks
+  train_agent.py          # train PPO / SAC / TD3, held-out evaluation vs baselines
+  train_ppo.py            # shortcut for train_agent.py --algo ppo
 scripts/
-  prepare_trace.py          # CLI: raw dataset -> trace CSV, with calibration stats
-notebooks/
-  01_simulation_walkthrough.ipynb   # step through the sim, render congestion, plot queues
-  02_policy_comparison.ipynb         # reference policies head-to-head, synthetic + real trace
-  03_dataset_exploration.ipynb        # what's in the raw datasets, the placement-fix visualized
-  04_ppo_training_curves.ipynb         # a real (short) PPO training run with a learning curve
-data/
-  cs448b_ipasn.csv          # raw: daily local-host -> remote-ASN flow counts
-  output1.csv                # raw: packet capture, numeric export
-  Midterm_53_group.csv        # raw: SAME capture as output1.csv, Wireshark text export
-tests/
-  test_env.py                   # 19 tests: API conformance + simulator invariants
-  test_dataset_pipeline.py       # 15 tests: adapters + real-data training pipeline
+  prepare_trace.py        # raw dataset -> trace CSV
+  run_benchmark.py        # baseline scenario matrix with confidence intervals
+  summarize_training.py   # aggregate multi-seed training runs
+  evaluate_saved.py       # delivered / dropped / delay table for saved agents
+  update_readme_results.py  # copy result tables from results/ into this file
+notebooks/                # four executed notebooks (see below)
+data/                     # dataset-derived traces (raw sources are not distributed)
+results/                  # outputs of the runs reported below
+tests/                    # pytest suite
+qa/                       # reproduction scripts and logs for the QA round
+docs/                     # tester report and researcher note
 ```
 
-## Install & run
+## Install
+
+Python 3.10 or newer.
+
+PowerShell (Windows):
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt -c constraints.txt
+$env:PYTHONPATH = "."
+```
+
+bash (Linux / macOS):
 
 ```bash
-pip install -r requirements.txt   # torch/stable-baselines3 only needed for train_ppo.py
-
-PYTHONPATH=. python -m pytest tests/ -q
-PYTHONPATH=. python examples/random_agent_test.py --episodes 3 --steps 150
-PYTHONPATH=. python examples/random_agent_test.py --budget 0.8   # constrained variant
-
-# Dataset-driven: convert a raw dataset, then train on it
-PYTHONPATH=. python scripts/prepare_trace.py --in data/output1.csv --out data/pcap_tr[carla_gym](../carla-gym-integrated/carla_gym)
-[data](../carla-gym-integrated/data)
-[examples](../carla-gym-integrated/examples)
-[LICENSE](../carla-gym-integrated/LICENSE)
-[notebooks](../carla-gym-integrated/notebooks)
-[pyproject.toml](../carla-gym-integrated/pyproject.toml)
-[README.md](../carla-gym-integrated/README.md)
-[requirements.txt](../carla-gym-integrated/requirements.txt)
-[scripts](../carla-gym-integrated/scripts)
-[tests](../carla-gym-integrated/tests)ace.csv
-PYTHONPATH=. python examples/train_ppo.py --trace data/pcap_trace.csv --nodes 16 \
-    --load 110 --budget 0.5 --timesteps 300000
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt -c constraints.txt
+export PYTHONPATH=.
 ```
+
+`constraints.txt` pins the versions everything here was run with; drop
+`-c constraints.txt` to take the newest compatible releases. As a package:
+`pip install -e .` for the core environment, or `pip install -e ".[all]"` to add
+the extras `rl` (PyTorch, Stable-Baselines3), `marl` (PettingZoo), `notebooks`
+and `dev`.
+
+The commands below are the same in both shells once `PYTHONPATH` is set.
+
+```
+python -m pytest -q
+python examples/random_agent_test.py --episodes 3 --steps 150 --budget 0.8
+python examples/train_agent.py --algo ppo --timesteps 500000 --seed 0
+python scripts/run_benchmark.py --quick
+```
+
+## Quick start
+
+```python
+import gymnasium as gym
+import carla_gym  # registers CarlaGym-v0
+
+env = gym.make("CarlaGym-v0", topology="grid", num_nodes=9, bandwidth_budget=0.8)
+obs, info = env.reset(seed=0)
+for _ in range(200):
+    obs, reward, terminated, truncated, info = env.step(env.action_space.sample())
+    if terminated or truncated:
+        obs, info = env.reset()
+```
+
+Main constructor options: `topology` (`grid`, `ring`, `star`, `mesh`,
+`random`), `num_nodes`, `link_capacity`, `node_buffer`, `load_scale`,
+`bandwidth_budget`, `bottlenecks`, `traffic`, reward coefficients `k`, `c`,
+`m`, `delay_reference`, `max_steps`, `render_mode` (`human` or `rgb_array`).
 
 ## Simulation model
 
-The environment is a **store-and-forward** packet simulator, not a
-flow-rate approximation:
+The environment is a **store-and-forward** packet simulator, not a flow-rate
+approximation.
 
-* **Nodes** hold finite buffers (units). Packets physically occupy them.
-* **Links** have a service rate (units/step). The action scales that rate.
-* Packets advance **at most one hop per step**, subject to link budget and
-  downstream buffer space, with FIFO head-of-line blocking.
-* **Latency is measured** as the number of steps from injection to
-  delivery. It is not a utilization proxy.
-* **Loss** occurs on admission overflow, downstream buffer overflow, or
-  unroutable src/dst.
-
-Routing is rigid shortest-path (Sprint 2), so Phase 1 isolates *resource
-allocation*; learned routing is the Phase-2 extension.
+* **Nodes** hold finite buffers. Packets physically occupy them.
+* **Links** are undirected and have a service rate (units per step) shared by
+  both directions. The bandwidth action scales that rate.
+* Packets advance **at most one hop per step**. Service is **fractional**: a
+  packet larger than the budget a link has left is partly transmitted and
+  finishes the hop on a later step, so any positive allocation moves traffic.
+* Each node forwards in FIFO order with **head-of-line blocking**.
+* A packet moves on only if the next node had room at the start of the step
+  (plus what has arrived since); otherwise it is dropped. Buffers therefore
+  never exceed `node_buffer`.
+* **Routing** is decided when a packet is admitted: Dijkstra shortest path
+  under the per-link routing weights in the current action. Uniform weights
+  give hop-count shortest paths.
+* **Latency is measured** in steps from injection to delivery.
+* **Loss** occurs on admission overflow, downstream buffer overflow, or when
+  no route exists.
 
 ### Spaces
 
+`E` = number of links, `N` = number of nodes (default grid: `E=12`, `N=9`).
+
 | | Shape | Meaning |
 |---|---|---|
-| Observation | `Box(0,1,(2E+N,))` | link utilization (E), pending demand per link (E), node buffer occupancy (N) |
-| Action | `Box(0,1,(E,))` | per-link bandwidth weight; service rate = `capacity × weight` |
+| Observation | `Box(0, 1, (2E+N,))` | link utilization (E), pending demand per link (E), node buffer occupancy (N) |
+| Action | `Box(0, 1, (2E,))` | per-link bandwidth weight (E), then per-link routing weight (E) |
+
+`bandwidth_budget=b` caps the sum of bandwidth weights at `b*E`; actions above
+it are scaled down proportionally. Without a budget, "allocate everything
+everywhere" is close to optimal and the allocation problem is uninteresting.
 
 ### Reward
 
 ```
-R = Throughput − k·Delay − c·PacketLoss
+R = Throughput - k*Delay - c*PacketLoss - m*DeadlineMiss        (defaults k=0.5, c=1.0, m=0.5)
 ```
 
-All three terms are **normalized to [0,1]** before the coefficients apply:
-throughput is a goodput ratio, delay is measured latency over
-`delay_reference`, loss is a drop ratio. Defaults `k=0.5`, `c=1.0`.
+Every term is normalized to [0, 1] per step:
 
-Delay is weighted by QoS class `delay_sensitivity`, so latency on
-voice/gaming costs more than the same latency on best-effort.
+* **Throughput**: delivered / offered units, clipped at 1.
+* **Delay**: delay-sensitivity-weighted mean age of traffic in the system
+  (end-to-end delay of packets delivered this step, current age of packets
+  still queued), divided by `delay_reference` (10 steps) and clipped at 1.
+  It is QoS-weighted, not plain latency: voice and gaming cost more per step
+  than best-effort.
+* **PacketLoss**: dropped / offered units, clipped at 1.
+* **DeadlineMiss**: packets that missed their class deadline this step
+  (delivered late, or expired while queued) over packets resolved this step.
+  Each packet is counted once.
 
-## Phase 1 status
+The reward is therefore in [-2, 1]. `info` reports every term and the raw
+counters. The terms are per-step quantities; for the fraction of traffic
+delivered or dropped over an episode, aggregate the raw counters
+(`carla_gym.utils.qos.EpisodeQoS`).
 
-| Sprint | Deliverable | Status |
+### Traffic
+
+`TrafficGenerator` draws Poisson arrivals for four QoS classes with different
+packet sizes, delay sensitivities and deadlines (about 104 units per step at
+`load_scale=1`). `TraceTrafficGenerator` replays a `step,src,dst,volume` CSV,
+rescaled to a `target_load`. Any object with `generate(step)` and
+`reset(seed)` can be passed as `traffic=`.
+
+Seeding: `reset(seed=s)` replays the same traffic; `reset()` continues the
+random stream, so successive episodes see new traffic.
+
+### Node bottlenecks
+
+`bottlenecks={node: scale}` degrades a node: it keeps only that fraction of
+its buffer and of the capacity of every link touching it. This is the
+scenario for studying bottleneck mitigation: a policy has to steer traffic
+around the degraded node or prioritise its links.
+
+### Multi-agent
+
+`MultiAgentCarlaGymEnv` exposes the same simulator through the PettingZoo
+parallel API. Each link is controlled by exactly one of its endpoint nodes;
+nodes that control no link are not agents. Agents share the global
+observation and a cooperative reward. `step()` needs one action for every
+live agent and raises otherwise. It needs the `marl` extra.
+
+## Baselines
+
+All in `carla_gym/baselines.py`:
+
+| Policy | Bandwidth | Routing |
 |---|---|---|
-| 1 | Repo skeleton, env config, `CarlaGymEnv` | Done |
-| 2 | 5 topologies, Poisson QoS traffic, shortest-path routing | Done |
-| 3 | Observation/action spaces, wired QoS reward | Done |
-| 4 | Random-agent run + baselines, pandas logs, sensitivity checks | Done |
+| `max_bandwidth` | equal split over all links | hop-count shortest path |
+| `queue_proportional` | proportional to each link's pending demand | hop-count shortest path |
+| `load_aware_routing` | equal split | load-aware shortest path (congested links cost more) |
+| `congestion_aware` | proportional to pending demand | load-aware shortest path |
+| `random` | uniform random | uniform random |
+| `min_bandwidth` | 5% everywhere | hop-count shortest path |
 
-### Sprint 4 results (grid, 3 episodes × 150 steps, post-warmup)
+`load_aware_routing` and `congestion_aware` are the routing-aware
+traffic-engineering baselines.
 
-| Policy | Reward | Throughput | Loss | Latency (steps) |
-|---|---|---|---|---|
-| max_bandwidth | 0.524 | 0.832 | 0.088 | 3.47 |
-| queue_proportional | 0.423 | 0.821 | 0.114 | 4.44 |
-| random | −0.699 | 0.405 | 0.614 | 18.68 |
-| min_bandwidth | −1.000 | 0.000 | 1.000 | — |
+## Results
 
-All six Sprint-4 assertions pass: node occupancy is a live observable,
-actions move backlog and reward, the policy ranking is non-degenerate, and
-both QoS terms stay informative rather than pinned at their bounds.
+Everything in this section is copied from files under `results/` by
+`scripts/update_readme_results.py`; the commands that produced them are shown.
+Rewards are the mean per-step reward after a 20-step warm-up, over 200-step
+episodes.
 
-## Two calibration notes worth defending in the report
+### RL agents vs baselines (3x3 grid, synthetic traffic, budget 0.8)
 
-**1. Capacity must be tuned to the offered load.** Default traffic offers
-~104 units/step. Too much capacity and packet loss sits at exactly 0, so
-the loss term contributes nothing; too little and the network collapses to
-100% loss, so every action looks equally bad. `link_capacity=30`,
-`node_buffer=120` was chosen by sweeping to the regime where a good policy
-reaches ~0.85 throughput and a bad one ~0.4 — a wide, learnable gap.
-
-**2. Unconstrained bandwidth makes the optimal policy trivial.** With no
-cost to allocation, "output 1.0 everywhere" is optimal and an agent learns
-it almost immediately — an unimpressive result to present. Setting
-`bandwidth_budget=0.8` caps total spend, and the ranking inverts:
-
-| Policy | Unconstrained | `budget=0.8` |
-|---|---|---|
-| max_bandwidth | **0.537** | 0.086 |
-| queue_proportional | 0.428 | **0.344** |
-
-Under a budget the agent must decide *where* to spend, and
-congestion-aware allocation beats uniform allocation four-fold. This is the
-more defensible setting for demonstrating that RL adds value.
-
-## Dataset-driven training (trace_traffic integration)
-
-`CarlaGymEnv(traffic=...)` accepts any object with `generate(step)` /
-`reset(seed)`, so `TraceTrafficGenerator` (reads a `step,src,dst,volume`
-CSV) is a drop-in replacement for the Poisson `TrafficGenerator`.
-`dataset_adapters.py` converts the raw datasets this repo ships with into
-that schema. None of them arrive in it natively:
-
-| Raw file | What it actually is | Adapter |
-|---|---|---|
-| `cs448b_ipasn.csv` | Stanford CS448B dataset: one row per (day, local host 0-9, remote ASN), with a daily flow count. No per-packet timing at all. | `convert_cs448b` |
-| `output1.csv` | Raw packet capture, numeric export: per-packet Timestamp/Source IP/Destination IP/Length. | `convert_packet_capture` |
-| `Midterm_53_group.csv` | **The same capture as `output1.csv`**, exported by Wireshark's text UI instead — confirmed by identical destination-IP counts. Source/Destination here can also be a MAC-vendor string or the literal `"Broadcast"`, which aren't routable and are dropped (634 rows). | `convert_packet_capture` (auto-detects either export format) |
-
-```bash
-PYTHONPATH=. python scripts/prepare_trace.py --in data/output1.csv --out data/pcap_trace.csv
-PYTHONPATH=. python scripts/prepare_trace.py --in data/cs448b_ipasn.csv --out data/cs448b_trace.csv
+```
+python examples/train_agent.py --algo ppo --timesteps 500000 --seed S --eval-every 25000 --out results/grid_b08/ppo_seedS
+python examples/train_agent.py --algo sac --timesteps 100000 --seed S --eval-every 10000 --out results/grid_b08/sac_seedS
+python scripts/summarize_training.py results/grid_b08
 ```
 
-### Topology-aware node placement (the fix that mattered most)
+for `S` in 0..4. Agents train on a `[-1, 1]` action space
+(`gymnasium.wrappers.RescaleAction`). Training envs draw fresh traffic every
+episode, learning curves use validation seeds (1000+), and the table uses test
+seeds (2000 to 2009) that neither training nor the curves saw. For RL agents
+the interval is over the five training seeds; for baselines it is over the ten
+test episodes, each averaged over the ten run directories (this only matters
+for `random`, whose actions differ per run).
 
-Mapping thousands of real IPs/ASNs down to a handful of simulated nodes
-means bucketing — and a naive hash or frequency-rank bucketing has no idea
-which bucket id lands where in the topology. In the first pass, the single
-IP responsible for ~95% of all destination traffic landed on node `0`,
-which NetworkX's grid labeling puts in a **corner with only 2 links**. No
-bandwidth policy fixes that: it's a fixed physical bottleneck, not a load
-problem, and max-bandwidth throughput was capped at ~0.26 regardless of
-how low `--load` was set.
+<!-- RESULTS:training:start -->
+| Policy | Kind | Reward (mean ± 95% CI) | n | CI over |
+|---|---|---:|---:|---|
+| PPO | RL agent | +0.494 ± 0.013 | 5 | training seeds |
+| queue_proportional | baseline | +0.404 ± 0.024 | 10 | test episodes |
+| congestion_aware | baseline | +0.386 ± 0.021 | 10 | test episodes |
+| SAC | RL agent | +0.383 ± 0.028 | 5 | training seeds |
+| load_aware_routing | baseline | +0.378 ± 0.026 | 10 | test episodes |
+| max_bandwidth | baseline | +0.317 ± 0.030 | 10 | test episodes |
+| random | baseline | -0.901 ± 0.026 | 10 | test episodes |
+| min_bandwidth | baseline | -1.803 ± 0.008 | 10 | test episodes |
+<!-- RESULTS:training:end -->
 
-The adapters now compute each bucket's total traffic volume and place the
-heaviest buckets onto the best-connected real node ids (`_place_by_volume`
-in `dataset_adapters.py`). That alone took max-bandwidth throughput on the
-pcap trace from 0.26 to 0.42+ at the same load. `tests/test_dataset_pipeline.py::test_heaviest_node_lands_on_best_connected_position`
-guards this regression.
+![Learning curves](results/grid_b08/learning_curves.png)
 
-### Calibration differs from synthetic traffic
+The same agents and baselines in network terms (`python scripts/evaluate_saved.py results/grid_b08`):
 
-`TraceTrafficGenerator(target_load=...)` rescales a trace's raw volume to
-match whatever load you ask for, so the trace's own raw units are mostly
-irrelevant — `scripts/prepare_trace.py` used to suggest the raw per-step
-mean as `--load`, which is close to a no-op rescaling and would reproduce
-whatever collapse the raw units implied. It now suggests a load based on
-the env's actual link budget instead.
+<!-- RESULTS:training_qos:start -->
+Episode aggregates over steps 20..199 of test seeds 2000..2009, mean ± 95% CI (agents: over training seeds; baselines: over test episodes). Delivered % and Dropped % are of traffic offered in the same window; the remainder is backlog growth.
 
-Separately, real traffic concentrates on far fewer src/dst pairs than the
-synthetic Poisson generator spreads across all edges, so the *budget*
-needed for a congestion-aware policy to actually beat uniform allocation
-is tighter: **`--budget 0.5`** for real traces, not the `0.8` used for
-synthetic traffic. At `0.5`, `queue_proportional` beats `max_bandwidth` on
-both `cs448b` and `pcap` traces; above roughly `0.6` the budget stops
-binding and uniform allocation wins again, same as the unconstrained case.
+| Policy | Reward | Delivered % | Dropped % | Delay of delivered packets (steps) | Deadline misses per delivered packet |
+|---|---:|---:|---:|---:|---:|
+| PPO | +0.494 | 92.2 ± 0.5 | 7.7 ± 0.5 | 3.89 ± 0.07 | 0.192 ± 0.008 |
+| queue_proportional | +0.404 | 87.0 ± 1.4 | 13.0 ± 1.4 | 3.88 ± 0.06 | 0.194 ± 0.005 |
+| congestion_aware | +0.386 | 86.6 ± 1.0 | 13.4 ± 1.0 | 4.00 ± 0.07 | 0.211 ± 0.009 |
+| SAC | +0.383 | 87.6 ± 0.9 | 12.3 ± 0.9 | 4.30 ± 0.22 | 0.237 ± 0.021 |
+| load_aware_routing | +0.378 | 86.2 ± 1.2 | 13.9 ± 1.3 | 4.00 ± 0.12 | 0.212 ± 0.014 |
+| max_bandwidth | +0.317 | 82.6 ± 1.5 | 17.3 ± 1.5 | 4.02 ± 0.09 | 0.208 ± 0.011 |
+| random | -0.898 | 39.4 ± 1.5 | 60.3 ± 1.7 | 12.01 ± 0.32 | 0.867 ± 0.026 |
+| min_bandwidth | -1.803 | 3.6 ± 0.2 | 96.4 ± 0.2 | 81.59 ± 1.37 | 4.194 ± 0.240 |
+<!-- RESULTS:training_qos:end -->
 
-### Non-deterministic node placement (found while building the notebooks)
+Read "delivered" and "dropped" from this table, not from the reward terms:
+the `throughput` and `loss` terms in the reward are ratios within a single
+step (and throughput is clipped at 1), so their average over an episode is
+not the fraction of traffic delivered.
 
-The adapters originally bucketed IPs/ASNs with Python's builtin `hash()`,
-which is randomized per-process by default (`PYTHONHASHSEED`) for
-hash-flooding security reasons. That meant **re-running `prepare_trace.py`
-produced a different node mapping every time**, even on the identical raw
-CSV -- a real reproducibility break, not a cosmetic one, and every trace
-file already generated before this fix should be considered stale. Fixed
-with a stable `hashlib.md5`-based hash; `tests/test_dataset_pipeline.py::test_adapter_output_reproducible_across_processes`
-runs the adapter in two subprocesses with different hash seeds and asserts
-identical output.
+### Baseline scenario matrix
 
-### Two bugs in train_ppo.py / random_agent_test.py's interaction
-
-Both are fixed, with regression tests (`test_reference_policies_callable_with_and_without_rng`,
-`test_rollout_works_with_monitor_wrapped_env`):
-
-1. `random_agent_test.py`'s policy functions (`policy_max`, `policy_queue_proportional`)
-   required a positional `rng` argument that `train_ppo.py`'s `rollout()`
-   never passed — only `policy_random` had a hand-written wrapper to work
-   around it. `rng` is now optional (`rng=None`) on every policy.
-2. `train_ppo.py` wraps envs in stable-baselines3's `Monitor`, which does
-   **not** forward custom attributes like `num_edges`/`num_nodes` — calling
-   a reference policy on the wrapped env raised `AttributeError`.
-   `rollout()` now hands policies `env.unwrapped` while still stepping the
-   wrapped `env` (so Monitor's episode logging still works).
-
-### Verified training run
-
-```bash
-PYTHONPATH=. python examples/train_ppo.py --trace data/pcap_trace.csv \
-    --nodes 16 --load 110 --budget 0.5 --timesteps 60000 --n-envs 4
+```
+python scripts/run_benchmark.py
 ```
 
-| Policy | Reward (held-out seeds) |
-|---|---|
-| queue_proportional | **-0.067** |
-| PPO (60K timesteps) | -0.101 |
-| max_bandwidth | -0.126 |
-| random | -0.162 |
+<!-- RESULTS:benchmark:start -->
+Mean post-warmup reward ± 95% CI over 10 seeds (2000..2009), 200 steps, warmup 20.
+**Bold**: best policy, its interval overlaps no other. `~`: best group, intervals overlap (a statistical tie).
 
-At 60K timesteps PPO already beats the naive heuristics and is closing in
-on `queue_proportional`; at the script's default `--timesteps 300000` it
-should plausibly surpass it. 8K timesteps (≈8 gradient updates on a
-24-dim continuous action space) is not enough to judge anything by —
-don't read a short smoke-test run as "PPO doesn't work here."
+| Scenario | random | min_bandwidth | max_bandwidth | queue_proportional | load_aware_routing | congestion_aware |
+|---|---:|---:|---:|---:|---:|---:|
+| grid/load x0.5/budget 0.8 | -0.126 ± 0.031 | -1.644 ± 0.021 | **+0.702 ± 0.010** | +0.582 ± 0.013 | +0.674 ± 0.009 | +0.548 ± 0.012 |
+| grid/load x0.5/budget 0.5 | -0.234 ± 0.039 | -1.644 ± 0.021 | +0.341 ± 0.062 | +0.537 ± 0.020 ~ | +0.432 ± 0.037 | +0.508 ± 0.018 ~ |
+| grid/load x1/budget 0.8 | -0.898 ± 0.040 | -1.803 ± 0.008 | +0.317 ± 0.030 | +0.404 ± 0.024 ~ | +0.378 ± 0.026 ~ | +0.386 ± 0.021 ~ |
+| grid/load x1/budget 0.5 | -0.974 ± 0.024 | -1.803 ± 0.008 | -0.581 ± 0.041 | -0.475 ± 0.048 ~ | -0.543 ± 0.041 ~ | -0.507 ± 0.032 ~ |
+| grid/load x2/budget 0.8 | -1.404 ± 0.013 | -1.858 ± 0.006 | -0.718 ± 0.025 | -0.655 ± 0.034 ~ | -0.636 ± 0.024 ~ | -0.623 ± 0.015 ~ |
+| grid/load x2/budget 0.5 | -1.451 ± 0.013 | -1.858 ± 0.006 | -1.281 ± 0.013 ~ | -1.270 ± 0.019 ~ | -1.284 ± 0.016 ~ | -1.275 ± 0.017 ~ |
+| ring/load x0.5/budget 0.8 | -0.471 ± 0.046 | -1.727 ± 0.011 | +0.526 ± 0.031 ~ | +0.462 ± 0.014 | +0.506 ± 0.028 ~ | +0.452 ± 0.012 |
+| ring/load x0.5/budget 0.5 | -0.556 ± 0.040 | -1.727 ± 0.011 | -0.227 ± 0.061 ~ | -0.134 ± 0.083 ~ | -0.244 ± 0.068 ~ | -0.139 ± 0.073 ~ |
+| ring/load x1/budget 0.8 | -1.146 ± 0.028 | -1.844 ± 0.008 | -0.329 ± 0.042 ~ | -0.288 ± 0.045 ~ | -0.332 ± 0.050 ~ | -0.286 ± 0.045 ~ |
+| ring/load x1/budget 0.5 | -1.216 ± 0.031 | -1.844 ± 0.008 | -1.050 ± 0.024 ~ | -1.059 ± 0.037 ~ | -1.057 ± 0.033 ~ | -1.055 ± 0.027 ~ |
+| ring/load x2/budget 0.8 | -1.535 ± 0.012 | -1.888 ± 0.004 | -1.100 ± 0.012 ~ | -1.105 ± 0.022 ~ | -1.105 ± 0.019 ~ | -1.110 ± 0.016 ~ |
+| ring/load x2/budget 0.5 | -1.569 ± 0.012 | -1.888 ± 0.004 | -1.507 ± 0.010 ~ | -1.513 ± 0.015 ~ | -1.508 ± 0.013 ~ | -1.509 ± 0.016 ~ |
+| star/load x0.5/budget 0.8 | -0.334 ± 0.062 | -1.669 ± 0.021 | +0.695 ± 0.009 ~ | +0.413 ± 0.023 | +0.695 ± 0.009 ~ | +0.413 ± 0.023 |
+| star/load x0.5/budget 0.5 | -0.439 ± 0.033 | -1.669 ± 0.021 | +0.345 ± 0.036 ~ | +0.282 ± 0.039 ~ | +0.345 ± 0.036 ~ | +0.282 ± 0.039 ~ |
+| star/load x1/budget 0.8 | -0.834 ± 0.028 | -1.807 ± 0.010 | +0.185 ± 0.018 ~ | +0.030 ± 0.018 | +0.185 ± 0.018 ~ | +0.030 ± 0.018 |
+| star/load x1/budget 0.5 | -0.950 ± 0.019 | -1.807 ± 0.010 | -0.587 ± 0.020 ~ | -0.573 ± 0.027 ~ | -0.587 ± 0.020 ~ | -0.573 ± 0.027 ~ |
+| star/load x2/budget 0.8 | -1.345 ± 0.013 | -1.868 ± 0.005 | -0.707 ± 0.006 ~ | -0.704 ± 0.008 ~ | -0.707 ± 0.006 ~ | -0.704 ± 0.008 ~ |
+| star/load x2/budget 0.5 | -1.425 ± 0.008 | -1.868 ± 0.005 | -1.214 ± 0.004 ~ | -1.222 ± 0.006 ~ | -1.214 ± 0.004 ~ | -1.222 ± 0.006 ~ |
+| mesh/load x0.5/budget 0.8 | +0.407 ± 0.029 | -1.155 ± 0.026 | **+0.927 ± 0.003** | +0.731 ± 0.005 | +0.851 ± 0.006 | +0.697 ± 0.006 |
+| mesh/load x0.5/budget 0.5 | +0.375 ± 0.038 | -1.155 ± 0.026 | **+0.849 ± 0.008** | +0.731 ± 0.005 | +0.807 ± 0.005 | +0.697 ± 0.006 |
+| mesh/load x1/budget 0.8 | -0.292 ± 0.033 | -1.490 ± 0.011 | **+0.911 ± 0.003** | +0.766 ± 0.006 | +0.830 ± 0.003 | +0.700 ± 0.008 |
+| mesh/load x1/budget 0.5 | -0.338 ± 0.042 | -1.490 ± 0.011 | **+0.832 ± 0.004** | +0.766 ± 0.006 | +0.764 ± 0.008 | +0.700 ± 0.008 |
+| mesh/load x2/budget 0.8 | -1.015 ± 0.012 | -1.641 ± 0.003 | **+0.879 ± 0.005** | +0.769 ± 0.006 | +0.744 ± 0.010 | +0.652 ± 0.006 |
+| mesh/load x2/budget 0.5 | -1.073 ± 0.027 | -1.641 ± 0.003 | +0.693 ± 0.013 | **+0.770 ± 0.005** | +0.504 ± 0.013 | +0.620 ± 0.008 |
+| random/load x0.5/budget 0.8 | -0.218 ± 0.224 | -1.638 ± 0.040 | +0.633 ± 0.119 ~ | +0.522 ± 0.122 ~ | +0.615 ± 0.094 ~ | +0.479 ± 0.097 ~ |
+| random/load x0.5/budget 0.5 | -0.327 ± 0.232 | -1.638 ± 0.040 | +0.143 ± 0.286 ~ | +0.483 ± 0.136 ~ | +0.238 ± 0.266 ~ | +0.401 ± 0.143 ~ |
+| random/load x1/budget 0.8 | -0.934 ± 0.130 | -1.789 ± 0.020 | +0.072 ± 0.310 ~ | +0.231 ± 0.243 ~ | +0.175 ± 0.306 ~ | +0.249 ± 0.211 ~ |
+| random/load x1/budget 0.5 | -1.020 ± 0.104 | -1.789 ± 0.020 | -0.681 ± 0.194 ~ | -0.401 ± 0.287 ~ | -0.570 ± 0.225 ~ | -0.425 ± 0.271 ~ |
+| random/load x2/budget 0.8 | -1.419 ± 0.071 | -1.848 ± 0.015 | -0.746 ± 0.210 ~ | -0.589 ± 0.252 ~ | -0.669 ± 0.225 ~ | -0.587 ± 0.252 ~ |
+| random/load x2/budget 0.5 | -1.466 ± 0.066 | -1.848 ± 0.015 | -1.259 ± 0.136 ~ | -1.229 ± 0.152 ~ | -1.255 ± 0.127 ~ | -1.241 ± 0.133 ~ |
+| grid/bottleneck node 4 x0.5/budget 0.8 | -1.147 ± 0.025 | -1.836 ± 0.005 | -0.196 ± 0.037 | -0.034 ± 0.026 ~ | -0.061 ± 0.029 | +0.003 ± 0.033 ~ |
+| pcap trace/grid-16/budget 0.8 | -0.484 ± 0.022 | -1.187 ± 0.023 | -0.105 ± 0.015 | -0.043 ± 0.019 ~ | -0.079 ± 0.016 ~ | -0.110 ± 0.022 |
+| pcap trace/grid-16/budget 0.5 | -0.517 ± 0.019 | -1.187 ± 0.023 | -0.426 ± 0.012 | **-0.043 ± 0.019** | -0.380 ± 0.017 | -0.098 ± 0.023 |
+| cs448b trace/grid-16/budget 0.8 | -0.169 ± 0.038 | -1.496 ± 0.018 | +0.482 ± 0.014 ~ | +0.414 ± 0.017 | +0.471 ± 0.013 ~ | +0.322 ± 0.019 |
+| cs448b trace/grid-16/budget 0.5 | -0.239 ± 0.039 | -1.496 ± 0.018 | +0.169 ± 0.019 | **+0.414 ± 0.017** | +0.237 ± 0.024 | +0.323 ± 0.016 |
+<!-- RESULTS:benchmark:end -->
+
+In most scenarios the leading heuristics are statistically tied; a policy is
+bold only where its interval overlaps no other. Rows where every policy is
+far below zero are overloaded regimes in which no policy can do well.
+
+Traffic delivered and dropped in the same runs:
+
+<!-- RESULTS:benchmark_qos:start -->
+Traffic delivered / dropped, as % of traffic offered after warm-up (episode aggregate; the rest is backlog growth).
+
+| Scenario | random | min_bandwidth | max_bandwidth | queue_proportional | load_aware_routing | congestion_aware |
+|---|---:|---:|---:|---:|---:|---:|
+| grid/load x0.5/budget 0.8 | 74.7 / 25.2 | 7.7 / 90.8 | 99.8 / 0.2 | 99.6 / 0.7 | 100.0 / 0.2 | 99.5 / 0.7 |
+| grid/load x0.5/budget 0.5 | 70.9 / 28.9 | 7.7 / 90.8 | 91.3 / 8.4 | 98.5 / 1.6 | 96.1 / 3.7 | 98.5 / 1.7 |
+| grid/load x1/budget 0.8 | 39.4 / 60.3 | 3.6 / 96.4 | 82.6 / 17.3 | 87.0 / 13.0 | 86.2 / 13.9 | 86.6 / 13.4 |
+| grid/load x1/budget 0.5 | 36.7 / 62.9 | 3.6 / 96.4 | 51.9 / 47.7 | 55.5 / 44.2 | 52.8 / 47.1 | 54.0 / 46.0 |
+| grid/load x2/budget 0.8 | 18.4 / 81.6 | 1.8 / 98.2 | 41.7 / 58.4 | 43.3 / 56.7 | 41.8 / 58.2 | 41.8 / 58.3 |
+| grid/load x2/budget 0.5 | 17.0 / 83.0 | 1.8 / 98.2 | 23.6 / 76.3 | 24.1 / 75.8 | 23.5 / 76.6 | 23.8 / 76.1 |
+| ring/load x0.5/budget 0.8 | 62.7 / 36.9 | 4.8 / 93.9 | 98.0 / 2.3 | 98.2 / 2.0 | 98.1 / 2.1 | 98.2 / 2.0 |
+| ring/load x0.5/budget 0.5 | 57.7 / 41.4 | 4.8 / 93.9 | 73.1 / 26.2 | 77.3 / 21.8 | 72.6 / 26.7 | 77.3 / 21.8 |
+| ring/load x1/budget 0.8 | 29.4 / 70.5 | 2.4 / 97.6 | 59.3 / 40.3 | 60.9 / 38.9 | 59.4 / 40.5 | 61.0 / 38.9 |
+| ring/load x1/budget 0.5 | 26.5 / 73.3 | 2.4 / 97.6 | 33.6 / 66.2 | 33.2 / 66.6 | 33.1 / 66.6 | 33.4 / 66.4 |
+| ring/load x2/budget 0.8 | 13.6 / 86.4 | 1.3 / 98.7 | 26.0 / 74.1 | 25.9 / 74.1 | 25.6 / 74.4 | 25.9 / 74.2 |
+| ring/load x2/budget 0.5 | 12.5 / 87.5 | 1.3 / 98.7 | 14.9 / 85.1 | 14.6 / 85.4 | 14.8 / 85.2 | 14.8 / 85.2 |
+| star/load x0.5/budget 0.8 | 52.7 / 47.4 | 6.3 / 91.9 | 95.8 / 4.4 | 83.4 / 16.7 | 95.8 / 4.4 | 83.4 / 16.7 |
+| star/load x0.5/budget 0.5 | 48.1 / 52.0 | 6.3 / 91.9 | 81.1 / 18.9 | 76.5 / 23.7 | 81.1 / 18.9 | 76.5 / 23.7 |
+| star/load x1/budget 0.8 | 32.0 / 67.6 | 3.1 / 96.9 | 66.4 / 33.7 | 58.1 / 42.0 | 66.4 / 33.7 | 58.1 / 42.0 |
+| star/load x1/budget 0.5 | 29.1 / 70.3 | 3.1 / 96.9 | 46.6 / 52.2 | 46.8 / 51.8 | 46.6 / 52.2 | 46.8 / 51.8 |
+| star/load x2/budget 0.8 | 17.0 / 83.0 | 1.6 / 98.4 | 38.1 / 61.9 | 38.2 / 61.8 | 38.1 / 61.9 | 38.2 / 61.8 |
+| star/load x2/budget 0.5 | 15.2 / 84.8 | 1.6 / 98.4 | 25.0 / 75.0 | 24.7 / 75.4 | 25.0 / 75.0 | 24.7 / 75.4 |
+| mesh/load x0.5/budget 0.8 | 96.6 / 3.2 | 26.7 / 71.1 | 100.0 / 0.0 | 99.9 / 0.0 | 99.9 / 0.0 | 100.0 / 0.0 |
+| mesh/load x0.5/budget 0.5 | 95.8 / 4.0 | 26.7 / 71.1 | 100.0 / 0.0 | 99.9 / 0.0 | 100.0 / 0.0 | 100.0 / 0.0 |
+| mesh/load x1/budget 0.8 | 64.1 / 35.7 | 13.8 / 86.2 | 100.0 / 0.0 | 99.9 / 0.0 | 100.0 / 0.0 | 99.7 / 0.1 |
+| mesh/load x1/budget 0.5 | 62.3 / 37.5 | 13.8 / 86.2 | 100.0 / 0.0 | 99.9 / 0.0 | 99.7 / 0.2 | 99.7 / 0.1 |
+| mesh/load x2/budget 0.8 | 31.0 / 69.0 | 7.3 / 92.7 | 99.9 / 0.0 | 99.1 / 1.0 | 96.9 / 3.2 | 94.3 / 5.7 |
+| mesh/load x2/budget 0.5 | 29.4 / 70.7 | 7.3 / 92.7 | 95.8 / 4.4 | 99.0 / 1.0 | 88.7 / 11.5 | 93.1 / 7.1 |
+| random/load x0.5/budget 0.8 | 69.4 / 30.5 | 8.1 / 90.4 | 96.4 / 3.7 | 94.9 / 4.9 | 97.0 / 2.9 | 95.6 / 4.3 |
+| random/load x0.5/budget 0.5 | 65.3 / 34.6 | 8.1 / 90.4 | 80.5 / 19.3 | 93.5 / 6.4 | 86.1 / 13.8 | 92.8 / 7.3 |
+| random/load x1/budget 0.8 | 37.1 / 62.7 | 3.9 / 96.1 | 71.5 / 28.6 | 77.5 / 22.7 | 76.8 / 23.3 | 79.7 / 20.5 |
+| random/load x1/budget 0.5 | 34.3 / 65.7 | 3.9 / 96.1 | 46.4 / 53.5 | 55.6 / 44.3 | 50.8 / 49.0 | 55.7 / 44.1 |
+| random/load x2/budget 0.8 | 17.8 / 82.2 | 2.0 / 98.0 | 39.1 / 61.1 | 43.2 / 57.0 | 41.9 / 58.3 | 43.7 / 56.4 |
+| random/load x2/budget 0.5 | 16.5 / 83.6 | 2.0 / 98.0 | 24.2 / 75.8 | 25.0 / 75.0 | 24.4 / 75.6 | 24.9 / 75.2 |
+| grid/bottleneck node 4 x0.5/budget 0.8 | 28.9 / 71.2 | 2.6 / 97.4 | 60.2 / 39.6 | 66.2 / 33.6 | 66.7 / 33.2 | 68.9 / 30.8 |
+| pcap trace/grid-16/budget 0.8 | 27.2 / 71.3 | 3.9 / 90.4 | 39.9 / 59.3 | 43.3 / 55.8 | 43.2 / 55.8 | 43.5 / 55.0 |
+| pcap trace/grid-16/budget 0.5 | 26.0 / 72.5 | 3.9 / 90.4 | 29.2 / 69.2 | 43.3 / 55.8 | 31.1 / 67.2 | 44.3 / 54.4 |
+| cs448b trace/grid-16/budget 0.8 | 31.8 / 68.5 | 3.9 / 94.5 | 42.6 / 57.6 | 43.1 / 57.5 | 44.8 / 55.7 | 43.3 / 57.3 |
+| cs448b trace/grid-16/budget 0.5 | 30.5 / 69.8 | 3.9 / 94.5 | 37.0 / 63.4 | 43.1 / 57.5 | 40.7 / 59.8 | 43.5 / 57.1 |
+<!-- RESULTS:benchmark_qos:end -->
+
+Both trace scenarios are heavily overloaded in aggregate: 54 to 69% of the
+offered traffic is dropped under every heuristic, although the per-step loss
+term of the reward is far lower. The traces are bursty, so most traffic
+arrives in a few heavy steps, and a per-step ratio weighs a quiet step as
+much as a heavy one. Quote the aggregate figures for the trace scenarios.
+
+## Datasets
+
+Two dataset-derived traces ship in `data/`. Each is a `step,src,dst,volume`
+CSV holding simulator node ids only:
+
+| Trace | Derived from | Rows | Steps |
+|---|---|---:|---:|
+| `data/cs448b_trace.csv` | Daily flow counts per (local host, remote ASN) over 92 days, from a Stanford CS448B course dataset (`cs448b_ipasn.csv`). One simulation step = one day; the values are flow counts, not volumes. | 4,644 | 92 |
+| `data/pcap_trace.csv` | A packet capture of about 21 minutes (exported from Wireshark), binned into 5-second steps; volume = bytes. | 4,163 | 252 (246 with traffic) |
+
+**The raw files are not distributed.** The capture contains real IP
+addresses and the flow-count file has no stated licence. The traces above
+were produced from them by `dataset_adapters.py`, which maps addresses and
+ASNs to 16 node ids through a hash, so no address appears in this repository's
+current files. After rescaling to a target load only the *shape* of the load
+over time and across node pairs survives: treat the traces as load shapes
+derived from real measurements, not as a replay of real traffic.
+
+```
+python examples/train_agent.py --algo ppo --trace data/pcap_trace.csv --nodes 16 --load 110 --budget 0.5
+```
+
+To build a trace from your own data, put a CSV in one of the two supported
+formats anywhere outside version control (`data/raw/` is git-ignored) and run:
+
+```
+python scripts/prepare_trace.py --in data/raw/my_capture.csv --out data/my_trace.csv --bin-seconds 5
+```
+
+Supported inputs: a flow-count table with columns `date, l_ipn, r_asn, f`; or
+a packet-capture export with `Timestamp, Source IP, Destination IP, Length`
+(numeric) or `Time, Source, Destination, Length` (Wireshark text export).
+
+Design points:
+
+* IP addresses and ASNs are bucketed into node ids with a stable MD5-based
+  hash, so conversion is reproducible across processes and machines.
+* Placement is topology-aware: the busiest buckets go to the best-connected
+  nodes, so a traffic hub does not land on a two-link grid corner. For
+  `--topology random`, pass `--topology-seed` equal to the env's seed.
+* Trace volume is rescaled so the mean offered load per step, over all time
+  bins including empty ones, equals `target_load`.
 
 ## Notebooks
 
-Each notebook in `notebooks/` is pre-executed with real outputs embedded,
-so you can open it and see plots immediately without running anything.
-To regenerate them after you change the code:
+All four are committed with executed outputs. To re-run one:
 
-```bash
+```
 cd notebooks
-PYTHONPATH=.. jupyter nbconvert --to notebook --execute --inplace 01_simulation_walkthrough.ipynb
+python -m jupyter nbconvert --to notebook --execute --inplace 01_simulation_walkthrough.ipynb
 ```
 
 | Notebook | What it shows |
 |---|---|
-| `01_simulation_walkthrough.ipynb` | Builds an env, runs `queue_proportional`, plots backlog/utilization/reward-components over time, and renders the network graph at a lightly-loaded step vs. a congested one (plus a zero-bandwidth stress test). |
-| `02_policy_comparison.ipynb` | Runs all four reference policies on both synthetic traffic (budget=0.8) and the real pcap trace (budget=0.5), with bar charts, reward-over-time lines, and a throughput-vs-loss scatter. |
-| `03_dataset_exploration.ipynb` | Profiles all three raw datasets, then visually demonstrates the topology-placement fix: a scatter of node degree vs. assigned traffic volume, naive hashing vs. the actual adapter, side by side. |
-| `04_ppo_training_curves.ipynb` | A real 60K-timestep PPO run (≈30-60s on CPU) against the real trace, evaluated on held-out seeds every 10K steps, plotted against the heuristic baselines as horizontal reference lines. |
+| `01_simulation_walkthrough.ipynb` | The five topologies and their nodes, one episode step by step (backlog, utilization, the four reward terms), network renders, `rgb_array` output, a zero-bandwidth stress test and a node bottleneck. |
+| `02_policy_comparison.ipynb` | All six baselines on synthetic traffic and on the pcap trace, with 95% intervals. |
+| `03_dataset_exploration.ipynb` | The two dataset-derived traces: load over time, which node pairs carry it, the topology-aware placement, and both traces run through the simulator. |
+| `04_ppo_training_curves.ipynb` | Learning curves of the saved multi-seed PPO and SAC runs, plus a short PPO run trained live on the pcap trace. |
 
-Notebook 4 trains for 60K timesteps for runtime's sake (enough to beat
-`max_bandwidth`/`random`, not enough to catch `queue_proportional`) — it's
-a demonstration that training works and is improving, not the full result.
-For that, run `examples/train_ppo.py --timesteps 300000` as described above.
+## Tests
 
-## Phase 2 directions
+```
+python -m pytest -q
+```
 
-* **Learned routing** — fold routing weights into the action space and drop
-  the `shortest_path` call in `network.path()`. The store-and-forward core
-  already advances packets hop-by-hop, so per-hop routing decisions slot in
-  without rewriting the simulator.
-* **Constrained allocation** — adopt `bandwidth_budget` as the default and
-  compare PPO/SAC against the `queue_proportional` heuristic as the baseline
-  to beat.
-* **Multi-agent** — `core/` is independent of the RL formulation, so a
-  per-node controller setup only requires rewiring `env.py`.
-* **Deadline-aware reward** — `deadline_misses` is already logged per step
-  but not yet in the reward; it is a natural third QoS term.
+<!-- RESULTS:tests:start -->
+Last run: **129 passed with local copies of the raw datasets in data/raw/; 115 passed, 14 skipped without them (a fresh clone)**.
+<!-- RESULTS:tests:end -->
+
+The suite covers Gymnasium API conformance (`check_env`, including rendering),
+PettingZoo `parallel_api_test` on all five topologies, packet-unit
+conservation, buffer and link-capacity bounds, seeding, input validation, the
+reward terms, the baselines, and the committed traces. Fourteen further
+tests exercise the raw-data adapters; they need local copies of the raw
+datasets in `data/raw/` and are skipped otherwise.
+
+## Limitations
+
+* Time is slotted and packets move one hop per step; there is no propagation
+  delay, retransmission or transport-layer behaviour.
+* A link's budget is shared by both directions and nodes are served in id
+  order, so lower-numbered nodes get first use of a contested link.
+* Each node has a single FIFO queue; there is no per-class scheduling inside a
+  node. QoS classes differ only in size, deadline and reward weight.
+* A packet's route is fixed at admission; routing weights do not re-route
+  packets already queued.
+* There is no backpressure. A packet that has crossed a link is dropped if the
+  next node's buffer was full at the start of the step, even if that node
+  emptied during the step; two full neighbours sending to each other lose
+  traffic. Space freed in a step is usable from the next step.
+* The pending-demand observation counts a part-transmitted packet at its full
+  size.
+* Deadline misses are counted once per packet, but a packet that expires in a
+  queue and is delivered later appears in the deadline term's denominator on
+  both steps. Expiry is recorded one step after the miss became unavoidable.
+* In a step with no offered traffic (for example after a non-looping trace
+  ends) the throughput term is 0, so draining a backlog then earns no
+  throughput credit.
+* The per-step throughput term is clipped at 1, so a draining backlog and
+  steady state look the same to that term (the delay term separates them).
+* The multi-agent environment gives every agent the global observation.
+* RL results are reported for one training scenario; the scenario matrix
+  covers the rule-based baselines only.
+* Tested on Python 3.14 (Windows 11). The code parses under the Python 3.10
+  grammar but has not been run on 3.10 to 3.13.
+
+## Changes in 0.3.0
+
+Dynamics and reward changed in this release, so results from 0.2.0 are not
+comparable.
+
+* `reset()` without a seed no longer replays the same traffic.
+* Fractional link service replaces all-or-nothing packet service.
+* Node buffers are enforced while traffic is moving.
+* Delay and deadline terms now include packets still waiting in queues.
+* Added: routing-aware baselines, node bottlenecks, SAC/TD3 training,
+  scenario-matrix benchmark, input validation, `rgb_array` rendering.
+* Multi-agent env: every agent controls at least one link.
+
+## License
+
+BSD 2-Clause; see `LICENSE`.

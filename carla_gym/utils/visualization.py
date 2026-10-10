@@ -8,8 +8,8 @@ rendering -- reads NetworkModel state, mutates nothing.
 
 from __future__ import annotations
 
-import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 import networkx as nx
 import numpy as np
 
@@ -20,7 +20,9 @@ class NetworkVisualizer:
         self._pos = nx.spring_layout(self.model.graph, seed=layout_seed)
 
     def render(self, step: int | None = None, save_path: str | None = None,
-               show: bool = False):
+               show: bool = False, return_rgb: bool = False):
+        """Draws the current network state. Returns an (H, W, 3) uint8 array
+        when `return_rgb` is set, otherwise `save_path` (None if not saving)."""
         g = self.model.graph
 
         edge_colors, edge_widths = [], []
@@ -30,8 +32,7 @@ class NetworkVisualizer:
             edge_widths.append(1.0 + 4.0 * util)
 
         occ = self.model.get_node_occupancy()
-        cap = max(self.model.node_buffer, 1e-9)
-        node_util = np.clip(occ / cap, 0.0, 1.0)
+        node_util = np.clip(occ / self.model.get_node_buffers(), 0.0, 1.0)
 
         fig, ax = plt.subplots(figsize=(7.5, 6))
         nx.draw_networkx_edges(g, self._pos, edge_color=edge_colors,
@@ -52,7 +53,12 @@ class NetworkVisualizer:
 
         if save_path:
             fig.savefig(save_path, dpi=150, bbox_inches="tight")
-        if show:
+        frame = None
+        if return_rgb:
+            canvas = FigureCanvasAgg(fig)
+            canvas.draw()
+            frame = np.asarray(canvas.buffer_rgba())[..., :3].copy()
+        elif show:
             plt.show()
         plt.close(fig)
-        return save_path
+        return frame if return_rgb else save_path

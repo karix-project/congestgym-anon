@@ -1,0 +1,35 @@
+C:\Users\aryan\Downloads\carla-gym\carla-gym\.venv\Lib\site-packages\gymnasium\spaces\box.py:297: UserWarning: [33mWARN: Box low's precision lowered by casting to float32, current low.dtype=float64[0m
+  gym.logger.warn(
+C:\Users\aryan\Downloads\carla-gym\carla-gym\.venv\Lib\site-packages\gymnasium\spaces\box.py:364: UserWarning: [33mWARN: Box high's precision lowered by casting to float32, current high.dtype=float64[0m
+  gym.logger.warn(
+C:\Users\aryan\Downloads\carla-gym\carla-gym\.venv\Lib\site-packages\gymnasium\spaces\box.py:297: UserWarning: [33mWARN: Box low's precision lowered by casting to float32, current low.dtype=float64[0m
+  gym.logger.warn(
+C:\Users\aryan\Downloads\carla-gym\carla-gym\.venv\Lib\site-packages\gymnasium\spaces\box.py:364: UserWarning: [33mWARN: Box high's precision lowered by casting to float32, current high.dtype=float64[0m
+  gym.logger.warn(
+[eval] timesteps=   10000  held-out reward=-0.854 +/- 0.040
+[eval] timesteps=   20000  held-out reward=-0.144 +/- 0.060
+[eval] timesteps=   30000  held-out reward=+0.195 +/- 0.044
+[eval] timesteps=   40000  held-out reward=+0.275 +/- 0.021
+[eval] timesteps=   50000  held-out reward=+0.316 +/- 0.020
+[eval] timesteps=   60000  held-out reward=+0.326 +/- 0.027
+[eval] timesteps=   70000  held-out reward=+0.382 +/- 0.036
+[eval] timesteps=   80000  held-out reward=+0.371 +/- 0.038
+[eval] timesteps=   90000  held-out reward=+0.338 +/- 0.026
+[eval] timesteps=  100000  held-out reward=+0.372 +/- 0.029
+C:\Users\aryan\Downloads\carla-gym\carla-gym\.venv\Lib\site-packages\gymnasium\spaces\box.py:297: UserWarning: [33mWARN: Box low's precision lowered by casting to float32, current low.dtype=float64[0m
+  gym.logger.warn(
+C:\Users\aryan\Downloads\carla-gym\carla-gym\.venv\Lib\site-packages\gymnasium\spaces\box.py:364: UserWarning: [33mWARN: Box high's precision lowered by casting to float32, current high.dtype=float64[0m
+  gym.logger.warn(
+
+=== Held-out evaluation (test seeds) ===
+                    reward_mean  reward_std
+policy                                     
+queue_proportional        0.404       0.034
+SAC                       0.395       0.037
+congestion_aware          0.386       0.029
+load_aware_routing        0.378       0.037
+max_bandwidth             0.317       0.042
+random                   -0.904       0.053
+min_bandwidth            -1.803       0.011
+
+Saved to results/grid_b08/sac_seed1

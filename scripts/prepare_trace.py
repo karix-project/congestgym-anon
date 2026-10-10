@@ -6,12 +6,13 @@ TraceTrafficGenerator / train_ppo.py --trace expect, and report enough
 stats to tell whether it will calibrate into a usable load regime before
 you spend a training run finding out.
 
-Usage:
-    PYTHONPATH=. python scripts/prepare_trace.py \
-        --in data/cs448b_ipasn.csv --out data/cs448b_trace.csv
+Usage (PowerShell: $env:PYTHONPATH = "."   bash: export PYTHONPATH=.):
+    python scripts/prepare_trace.py --in data/raw/cs448b_ipasn.csv --out data/cs448b_trace.csv
+    python scripts/prepare_trace.py --in data/raw/output1.csv --out data/pcap_trace.csv --bin-seconds 5
 
-    PYTHONPATH=. python scripts/prepare_trace.py \
-        --in data/output1.csv --out data/pcap_trace.csv --bin-seconds 5
+The raw inputs are not distributed with the repository; data/raw/ is ignored
+by git. Use your own flow-count or packet-capture CSV in one of the two
+supported formats (see carla_gym/core/dataset_adapters.py).
 
 Format is auto-detected by column names; pass --format to override.
 """
@@ -35,6 +36,8 @@ def main():
     p.add_argument("--internal-nodes", type=int, default=10, help="cs448b adapter only")
     p.add_argument("--external-buckets", type=int, default=6, help="cs448b adapter only")
     p.add_argument("--topology", default="grid", help="topology to place heavy nodes against")
+    p.add_argument("--topology-seed", type=int, default=None,
+                   help="for --topology random: the seed the env will be built with")
     args = p.parse_args()
 
     fmt = detect_format(args.in_path) if args.format == "auto" else args.format
@@ -44,11 +47,11 @@ def main():
         df = ADAPTERS[fmt](args.in_path, args.out_path,
                            internal_nodes=args.internal_nodes,
                            external_buckets=args.external_buckets,
-                           topology=args.topology)
+                           topology=args.topology, topology_seed=args.topology_seed)
     else:
         df = ADAPTERS[fmt](args.in_path, args.out_path,
                            num_nodes=args.num_nodes, bin_seconds=args.bin_seconds,
-                           topology=args.topology)
+                           topology=args.topology, topology_seed=args.topology_seed)
 
     n_nodes = df.attrs["num_nodes"]
     per_step = df.groupby("step")["volume"].sum()
@@ -60,7 +63,7 @@ def main():
     # default env's link budget (link_capacity=30 across num_edges links),
     # using the fraction our own calibration runs found non-degenerate.
     from carla_gym.core.network import NetworkModel
-    net = NetworkModel(topology=args.topology, num_nodes=n_nodes)
+    net = NetworkModel(topology=args.topology, num_nodes=n_nodes, seed=args.topology_seed)
     default_link_capacity = 30.0
     total_capacity_per_step = net.num_edges() * default_link_capacity
     suggested_load = round(0.15 * total_capacity_per_step, -1) or 10.0

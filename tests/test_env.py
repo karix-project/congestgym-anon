@@ -1,7 +1,7 @@
 """
 tests/test_env.py
 
-Sprint 1-4 validation. Beyond API conformance these assert the simulator
+Environment and simulator tests. Beyond API conformance these assert the simulator
 *invariants* -- conservation of packet units, live node observables, and
 monotone response to bandwidth -- because those are the properties that
 silently broke in earlier iterations.
@@ -17,7 +17,7 @@ from carla_gym.env import CarlaGymEnv
 from carla_gym.utils.reward import RewardCalculator
 
 
-# ---------------------------------------------------------------- Sprint 1
+# ---------------------------------------------------------------- API and seeding basics
 def test_gymnasium_api_conformance():
     env = CarlaGymEnv(max_steps=20, seed=0)
     check_env(env.unwrapped, skip_render_check=True)
@@ -39,7 +39,7 @@ def test_reset_is_deterministic_given_seed():
     assert np.allclose(oa, ob) and ra == pytest.approx(rb)
 
 
-# ---------------------------------------------------------------- Sprint 2
+# ---------------------------------------------------------------- topologies, conservation, buffers
 @pytest.mark.parametrize("topology", ["grid", "random", "star", "mesh", "ring"])
 def test_all_topologies_build_and_step(topology):
     env = CarlaGymEnv(topology=topology, num_nodes=9, max_steps=5, seed=0)
@@ -78,7 +78,7 @@ def test_node_buffers_never_exceed_capacity():
         assert np.all(occ <= env.network.node_buffer + 1e-6)
 
 
-# ---------------------------------------------------------------- Sprint 3
+# ---------------------------------------------------------------- observations and reward terms
 def test_node_occupancy_is_a_live_observable():
     """Regression guard: node queues were previously always zero, silently
     wasting a third of the observation vector."""
@@ -120,9 +120,9 @@ def test_observation_always_within_bounds_under_stress():
         assert env.observation_space.contains(obs)
 
 
-# ---------------------------------------------------------------- Sprint 4
+# ---------------------------------------------------------------- actions matter
 def test_more_bandwidth_yields_no_worse_throughput():
-    """The central premise of Sprint 4: the action must actually matter."""
+    """The central premise of the benchmark: the action must actually matter."""
     def run(weight):
         env = CarlaGymEnv(max_steps=60, seed=8)
         env.reset(seed=8)
@@ -156,3 +156,392 @@ def test_traffic_generator_respects_seed():
     p1, p2 = g1.generate(0), g2.generate(0)
     assert len(p1) == len(p2)
     assert [p.size for p in p1] == [p.size for p in p2]
+
+
+# ---------------------------------------------------------------- seeding (H1)
+def _offered_trace(env, steps=15, seed=None):
+    env.reset(seed=seed)
+    act = np.full(2 * env.num_edges, 0.5, dtype=np.float32)
+    return [env.step(act)[4]["offered_units"] for _ in range(steps)]
+
+
+def test_unseeded_resets_draw_fresh_traffic():
+    """Regression guard: reset() without a seed used to re-seed the traffic
+    RNG with the constructor seed, so every training episode replayed one
+    fixed traffic realisation."""
+    env = CarlaGymEnv(max_steps=15, seed=0)
+    first = _offered_trace(env, seed=0)
+    second = _offered_trace(env)
+    third = _offered_trace(env)
+    assert first != second and second != third
+
+
+def test_seeded_reset_replays_identical_traffic():
+    env = CarlaGymEnv(max_steps=15, seed=0)
+    a = _offered_trace(env, seed=123)
+    _offered_trace(env)                      # advance the stream in between
+    b = _offered_trace(env, seed=123)
+    assert a == b
+
+
+def test_constructor_seed_fixes_first_unseeded_episode():
+    a = _offered_trace(CarlaGymEnv(max_steps=15, seed=5))
+    b = _offered_trace(CarlaGymEnv(max_steps=15, seed=5))
+    c = _offered_trace(CarlaGymEnv(max_steps=15, seed=6))
+    assert a == b and a != c
+
+
+def test_trace_traffic_unseeded_resets_differ(tmp_path):
+    import pandas as pd
+    from carla_gym.core.trace_traffic import TraceTrafficGenerator
+
+    csv = tmp_path / "trace.csv"
+    pd.DataFrame({"step": [0, 0, 1, 1], "src": [0, 1, 2, 3],
+                  "dst": [4, 5, 6, 7], "volume": [50.0, 60.0, 40.0, 70.0]}).to_csv(csv, index=False)
+    traffic = TraceTrafficGenerator(list(range(9)), str(csv), target_load=100.0, seed=0)
+    env = CarlaGymEnv(max_steps=15, traffic=traffic, seed=0)
+    first = _offered_trace(env, seed=0)
+    second = _offered_trace(env)
+    assert first != second
+    assert _offered_trace(env, seed=0) == first
+
+
+def test_multi_agent_unseeded_resets_draw_fresh_traffic():
+    pytest.importorskip("pettingzoo")
+    from carla_gym.marl_env import MultiAgentCarlaGymEnv
+
+    def episode(env, seed=None):
+        obs, _ = env.reset(seed=seed)
+        out = []
+        for _ in range(15):
+            acts = {a: np.full(env.action_space(a).shape, 0.5, dtype=np.float32)
+                    for a in env.agents}
+            obs, *_ = env.step(acts)
+            out.append(obs[env.possible_agents[0]].tolist())
+        return out
+
+    env = MultiAgentCarlaGymEnv(max_steps=15, seed=0)
+    first = episode(env, seed=0)
+    second = episode(env)
+    assert first != second
+    assert episode(env, seed=0) == first
+
+
+# ---------------------------------------------------------------- link service (M2) / buffers (N1)
+def _single_packet_net(size=12.0, deadline=8):
+    from carla_gym.core.traffic import Packet, QoSClass
+    net = NetworkModel("ring", 4, link_capacity=30.0, node_buffer=1000.0, seed=0)
+    net.update_routing(np.ones(net.num_edges()))
+    net.admit([Packet(0, 1, QoSClass.VIDEO, size, 1.5, deadline, 0)])
+    return net
+
+
+def test_packet_larger_than_link_budget_is_served_over_several_steps():
+    """Regression guard: a 12-unit packet on a link serving 9 units/step used
+    to wait forever, which made every allocation below ~0.4 equally useless."""
+    net = _single_packet_net()
+    alloc = np.full(net.num_edges(), 0.3)            # 9 units/step
+    first = net.forward(alloc, 0)
+    assert first["delivered_units"] == 0.0
+    second = net.forward(alloc, 1)
+    assert second["delivered_units"] == pytest.approx(12.0)
+    assert second["latencies"][0][0] == 2.0
+
+
+def test_zero_allocation_moves_nothing():
+    net = _single_packet_net()
+    for s in range(20):
+        assert net.forward(np.zeros(net.num_edges()), s)["delivered_units"] == 0.0
+    assert net.backlog_units() == pytest.approx(12.0)
+
+
+def test_link_never_serves_more_than_its_allocation():
+    env = CarlaGymEnv(max_steps=60, bandwidth_budget=None, seed=12)
+    env.reset(seed=12)
+    rng = np.random.default_rng(12)
+    for _ in range(60):
+        a = rng.uniform(0, 1, 2 * env.num_edges)
+        env.step(a)
+        served = env.network._served
+        assert np.all(served <= env.network.link_capacity * a[:env.num_edges] + 1e-6)
+
+
+def test_reward_increases_with_bandwidth_without_a_dead_zone():
+    def run(weight):
+        env = CarlaGymEnv(max_steps=100, bandwidth_budget=None, seed=13)
+        env.reset(seed=13)
+        a = np.full(2 * env.num_edges, weight, dtype=np.float32)
+        return float(np.mean([env.step(a)[1] for _ in range(100)][20:]))
+
+    rewards = [run(w) for w in (0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1.0)]
+    assert all(b > a + 0.01 for a, b in zip(rewards, rewards[1:]))
+
+
+@pytest.mark.parametrize("weight,load", [(0.6, 1.0), (1.0, 1.0), (0.6, 2.0), (1.0, 2.0)])
+def test_node_buffers_bounded_while_traffic_moves(weight, load):
+    """Regression guard: downstream space was checked against a partial view
+    of the buffer, so nodes held several times `node_buffer` under load."""
+    env = CarlaGymEnv(max_steps=80, bandwidth_budget=None, load_scale=load, seed=14)
+    env.reset(seed=14)
+    a = np.full(2 * env.num_edges, weight, dtype=np.float32)
+    for _ in range(80):
+        env.step(a)
+        assert np.all(env.network.get_node_occupancy() <= env.network.node_buffer + 1e-6)
+
+
+# ---------------------------------------------------------------- reward honesty (M1)
+def test_packet_stuck_in_queue_counts_as_deadline_miss_once():
+    net = _single_packet_net(deadline=3)
+    alloc = np.zeros(net.num_edges())
+    expired = [net.forward(alloc, s)["queue_expired"] for s in range(10)]
+    assert sum(expired) == 1 and expired[3] == 1     # age 4 > deadline 3 at step 3
+    late = net.forward(np.ones(net.num_edges()), 10)
+    assert late["delivered_count"] == 1 and late["deadline_misses"] == 0
+
+
+def test_starved_network_is_penalised_for_delay_and_deadlines():
+    """Regression guard: with nothing delivered, the delay and deadline terms
+    used to read 0, so a fully stalled network looked free of latency."""
+    env = CarlaGymEnv(max_steps=40, seed=15)
+    env.reset(seed=15)
+    infos = [env.step(np.zeros(2 * env.num_edges, dtype=np.float32))[4] for _ in range(40)]
+    assert infos[-1]["reward_delay"] == pytest.approx(1.0)
+    assert sum(i["deadline_misses"] for i in infos) > 0
+    assert infos[-1]["mean_queue_age_steps"] > 0.0
+
+
+def test_deadline_coefficient_is_configurable():
+    def total(m):
+        env = CarlaGymEnv(max_steps=40, m=m, seed=16)
+        env.reset(seed=16)
+        a = np.full(2 * env.num_edges, 0.4, dtype=np.float32)
+        return sum(env.step(a)[1] for _ in range(40))
+
+    assert total(0.0) > total(0.5) > total(2.0)
+
+
+# ---------------------------------------------------------------- validation (M5) / render (M4)
+@pytest.mark.parametrize("budget", [-0.5, 0.0, 1.5])
+def test_invalid_bandwidth_budget_rejected(budget):
+    with pytest.raises(ValueError, match="bandwidth_budget"):
+        CarlaGymEnv(bandwidth_budget=budget)
+
+
+@pytest.mark.parametrize("budget", [None, 0.5, 0.8, 1.0])
+def test_valid_bandwidth_budgets_run(budget):
+    env = CarlaGymEnv(bandwidth_budget=budget, max_steps=5, seed=0)
+    env.reset(seed=0)
+    _, reward, *_ = env.step(env.action_space.sample())
+    assert np.isfinite(reward)
+
+
+def test_wrong_length_action_gives_clear_error():
+    env = CarlaGymEnv(seed=0)
+    env.reset(seed=0)
+    with pytest.raises(ValueError, match="action must have shape"):
+        env.step(np.ones(5, dtype=np.float32))
+
+
+@pytest.mark.parametrize("n", [7, 10])
+def test_grid_rejects_non_square_node_count(n):
+    with pytest.raises(ValueError, match="perfect-square"):
+        CarlaGymEnv(topology="grid", num_nodes=n)
+
+
+def test_step_after_truncation_requires_reset():
+    env = CarlaGymEnv(max_steps=3, seed=0)
+    env.reset(seed=0)
+    for _ in range(3):
+        *_, truncated, _ = env.step(env.action_space.sample())
+    assert truncated
+    with pytest.raises(RuntimeError, match="reset"):
+        env.step(env.action_space.sample())
+    env.reset()
+    env.step(env.action_space.sample())
+
+
+@pytest.mark.parametrize("max_steps", [50, 500])
+def test_gym_make_honours_max_steps(max_steps):
+    import gymnasium as gym
+    import carla_gym  # noqa: F401 - registers CarlaGym-v0
+
+    env = gym.make("CarlaGym-v0", max_steps=max_steps)
+    env.reset(seed=0)
+    steps = 0
+    truncated = False
+    while not truncated:
+        *_, truncated, _ = env.step(env.action_space.sample())
+        steps += 1
+    assert steps == max_steps
+
+
+def test_render_rgb_array_returns_image():
+    import matplotlib
+    matplotlib.use("Agg")
+    env = CarlaGymEnv(render_mode="rgb_array", max_steps=5, seed=0)
+    env.reset(seed=0)
+    env.step(env.action_space.sample())
+    frame = env.render()
+    assert isinstance(frame, np.ndarray) and frame.dtype == np.uint8
+    assert frame.ndim == 3 and frame.shape[2] == 3
+    assert frame.std() > 0                       # not a blank canvas
+    env.close()
+
+
+def test_render_without_mode_returns_none():
+    env = CarlaGymEnv(max_steps=5, seed=0)
+    env.reset(seed=0)
+    assert env.render() is None
+
+
+def test_gymnasium_api_conformance_with_render():
+    import matplotlib
+    matplotlib.use("Agg")
+    env = CarlaGymEnv(max_steps=20, render_mode="rgb_array", seed=0)
+    check_env(env.unwrapped)
+
+
+# ---------------------------------------------------------------- node bottlenecks
+def test_default_env_is_unchanged_by_bottleneck_support():
+    a = CarlaGymEnv(max_steps=30, seed=17)
+    b = CarlaGymEnv(max_steps=30, seed=17, bottlenecks={})
+    assert np.all(a.network.get_edge_capacities() == a.network.link_capacity)
+    assert np.all(a.network.get_node_buffers() == a.network.node_buffer)
+    a.reset(seed=17); b.reset(seed=17)
+    act = np.full(2 * a.num_edges, 0.7, dtype=np.float32)
+    assert [a.step(act)[1] for _ in range(30)] == [b.step(act)[1] for _ in range(30)]
+
+
+def test_bottleneck_scales_incident_links_and_buffer():
+    net = NetworkModel("grid", 9, link_capacity=30.0, node_buffer=120.0, bottlenecks={4: 0.5})
+    caps = net.get_edge_capacities()
+    for i, (u, v) in enumerate(net.edge_list()):
+        assert caps[i] == pytest.approx(15.0 if 4 in (u, v) else 30.0)
+    bufs = net.get_node_buffers()
+    assert bufs[4] == pytest.approx(60.0) and bufs[0] == pytest.approx(120.0)
+
+
+def test_bottleneck_hurts_and_is_respected():
+    def run(bottlenecks):
+        env = CarlaGymEnv(max_steps=100, bandwidth_budget=None, bottlenecks=bottlenecks, seed=18)
+        obs, _ = env.reset(seed=18)
+        act = np.ones(2 * env.num_edges, dtype=np.float32)
+        rewards = []
+        for _ in range(100):
+            obs, r, *_ = env.step(act)
+            rewards.append(r)
+            assert env.observation_space.contains(obs)
+            assert np.all(env.network.get_node_occupancy() <= env.network.get_node_buffers() + 1e-6)
+            assert np.all(env.network._served <= env.network.get_edge_capacities() + 1e-6)
+        return float(np.mean(rewards[20:]))
+
+    assert run({4: 0.3}) < run(None) - 0.05
+
+
+@pytest.mark.parametrize("bad", [{99: 0.5}, {4: 0.0}, {4: 1.5}])
+def test_invalid_bottleneck_rejected(bad):
+    with pytest.raises(ValueError, match="bottleneck"):
+        CarlaGymEnv(bottlenecks=bad)
+
+
+# ---------------------------------------------------------------- baselines / stats
+def test_all_baselines_emit_valid_actions_on_every_topology():
+    from carla_gym.baselines import POLICIES
+    for topology in ["grid", "random", "star", "mesh", "ring"]:
+        env = CarlaGymEnv(topology=topology, max_steps=10, seed=0)
+        obs, _ = env.reset(seed=0)
+        rng = np.random.default_rng(0)
+        for _ in range(5):
+            obs, *_ = env.step(env.action_space.sample())
+        for name, fn in POLICIES.items():
+            action = np.asarray(fn(env, obs, rng), dtype=np.float32)
+            assert env.action_space.contains(action), (topology, name)
+
+
+def test_load_aware_routing_raises_cost_of_congested_links():
+    from carla_gym.baselines import policy_load_aware_routing
+    env = CarlaGymEnv(max_steps=10, seed=0)
+    env.reset(seed=0)
+    obs = np.zeros(env.observation_space.shape, dtype=np.float32)
+    obs[env.num_edges + 3] = 1.0                 # link 3 has a full queue
+    routing = policy_load_aware_routing(env, obs)[env.num_edges:]
+    assert routing[3] == routing.max() and routing[3] > routing.min()
+
+
+def test_ci95_matches_hand_computed_interval():
+    from carla_gym.utils.stats import ci95
+    assert ci95([1.0, 2.0, 3.0, 4.0, 5.0]) == pytest.approx(2.776 * np.std([1, 2, 3, 4, 5], ddof=1) / np.sqrt(5))
+    assert np.isnan(ci95([1.0]))
+
+
+# ---------------------------------------------------------------- non-finite actions (T2)
+@pytest.mark.parametrize("bad", [np.nan, np.inf, -np.inf])
+@pytest.mark.parametrize("position", [0, 5, 12, 23])
+def test_non_finite_action_rejected(bad, position):
+    """Regression guard: NaN survived clipping and compared false against the
+    link budget, so a NaN action got unlimited bandwidth (79.9 units through a
+    30-unit link) and scored above any valid policy."""
+    env = CarlaGymEnv(seed=0)
+    env.reset(seed=0)
+    action = np.full(2 * env.num_edges, 0.5, dtype=np.float32)
+    action[position] = bad
+    with pytest.raises(ValueError, match="NaN or infinite"):
+        env.step(action)
+    env.step(np.full(2 * env.num_edges, 0.5, dtype=np.float32))   # env still usable
+
+
+def test_network_rejects_non_finite_allocation_and_routing():
+    net = NetworkModel("grid", 9, seed=0)
+    good = np.ones(net.num_edges())
+    bad = good.copy(); bad[3] = np.nan
+    with pytest.raises(ValueError, match="allocation"):
+        net.forward(bad, 0)
+    with pytest.raises(ValueError, match="routing_weights"):
+        net.update_routing(bad)
+    with pytest.raises(ValueError, match="routing_weights"):
+        net.update_routing(-good)
+    with pytest.raises(ValueError, match="allocation"):
+        net.forward(np.ones(3), 0)
+
+
+# ---------------------------------------------------------------- parameter validation (T3)
+@pytest.mark.parametrize("kwargs", [
+    dict(delay_reference=0.0), dict(delay_reference=-1.0),
+    dict(k=-0.1), dict(c=-1.0), dict(m=-0.5), dict(load_scale=-1.0),
+])
+def test_invalid_reward_and_load_parameters_rejected(kwargs):
+    with pytest.raises(ValueError):
+        CarlaGymEnv(**kwargs)
+
+
+def test_zero_coefficients_and_zero_load_are_valid():
+    env = CarlaGymEnv(k=0.0, c=0.0, m=0.0, load_scale=0.0, max_steps=5, seed=0)
+    env.reset(seed=0)
+    _, reward, _, _, info = env.step(env.action_space.sample())
+    assert reward == 0.0 and info["offered_units"] == 0.0
+
+
+# ---------------------------------------------------------------- episode-aggregate QoS
+def test_episode_qos_matches_raw_totals_and_differs_from_mean_of_step_ratios():
+    from carla_gym.utils.qos import EpisodeQoS
+    env = CarlaGymEnv(max_steps=120, bandwidth_budget=0.8, seed=21)
+    obs, _ = env.reset(seed=21)
+    qos, off, dlv, drp, step_tput = EpisodeQoS(), 0.0, 0.0, 0.0, []
+    for _ in range(120):
+        _, _, _, _, info = env.step(np.ones(2 * env.num_edges, dtype=np.float32))
+        qos.add(info)
+        off += info["offered_units"]; dlv += info["delivered_units"]; drp += info["dropped_units"]
+        step_tput.append(info["reward_throughput"])
+    s = qos.summary()
+    assert s["delivered_fraction"] == pytest.approx(dlv / off)
+    assert s["dropped_fraction"] == pytest.approx(drp / off)
+    assert s["delivered_fraction"] + s["dropped_fraction"] <= 1.0 + 1e-9
+    assert s["latency_delivered"] >= 1.0
+    # the reason this helper exists: the two notions of throughput are not the same number
+    assert abs(s["delivered_fraction"] - float(np.mean(step_tput))) > 0.005
+
+
+def test_episode_qos_empty_is_finite():
+    from carla_gym.utils.qos import EpisodeQoS
+    s = EpisodeQoS().summary()
+    assert all(np.isfinite(v) for v in s.values()) and s["delivered_fraction"] == 0.0

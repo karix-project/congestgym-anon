@@ -1,0 +1,26 @@
+Logged 2700 steps across 6 policies (bandwidth_budget=0.8) -> qa/after/random_agent_budget08.csv
+
+=== Policy comparison (post-warmup means) ===
+                    reward  throughput   loss  latency   backlog  node_occ
+policy                                                                    
+congestion_aware     0.402       0.812  0.125    4.019   312.435     0.289
+queue_proportional   0.398       0.806  0.128    3.909   298.788     0.277
+load_aware_routing   0.357       0.804  0.150    4.037   311.026     0.288
+max_bandwidth        0.319       0.797  0.170    4.082   302.443     0.280
+random              -0.921       0.416  0.611   11.783   660.339     0.611
+min_bandwidth       -1.804       0.043  0.939   43.829  1049.004     0.971
+
+=== Random-agent sensitivity: bandwidth_mean vs outcomes ===
+bandwidth_mean    1.000
+reward            0.158
+backlog_units    -0.315
+loss_ratio        0.253
+latency_steps    -0.011
+
+=== Sprint 4 checks ===
+  [PASS] node occupancy is a live observable (not constant zero)
+  [PASS] actions change backlog
+  [PASS] actions change reward
+  [PASS] policy ranking is non-degenerate (best > worst)
+  [PASS] loss term is informative (not pinned at 0 or 1)
+  [PASS] latency term is informative

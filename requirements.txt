@@ -1,15 +1,24 @@
-gymnasium>=0.29
+# Everything needed to run the tests, examples and notebooks.
+# For the exact versions this release was tested with, add:  -c constraints.txt
+
+# core (the carla_gym package itself)
+gymnasium>=1.0
 networkx>=3.0
 numpy>=1.24
 pandas>=2.0
 matplotlib>=3.7
+
+# tests
 pytest>=7.4
 
-# needed only for examples/train_ppo.py (dataset-driven PPO training)
+# RL training: examples/train_agent.py, notebook 04
 torch>=2.0
-stable-baselines3>=2.0
+stable-baselines3>=2.3
 
-# needed only for running the notebooks/ yourself
+# multi-agent env: carla_gym/marl_env.py
+pettingzoo>=1.24
+
+# notebooks
 jupyter>=1.0
 nbformat>=5.9
 nbconvert>=7.0

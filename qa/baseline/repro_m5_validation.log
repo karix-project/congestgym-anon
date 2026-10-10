@@ -1,0 +1,10 @@
+bandwidth_budget=-0.5: accepted, applied bandwidth sum = -6.00
+bandwidth_budget=0.0: accepted, applied bandwidth sum = 0.00
+bandwidth_budget=1.5: accepted, applied bandwidth sum = 12.00
+wrong-length action: raised IndexError: index 0 is out of bounds for axis 0 with size 0
+grid num_nodes=7: built 9 nodes
+grid num_nodes=9: built 9 nodes
+grid num_nodes=10: built 9 nodes
+register vs max_steps: gym.make(max_steps=50) truncated at step 50
+register vs max_steps: gym.make(max_steps=500) truncated at step 200
+step after truncation: step() after truncation accepted silently

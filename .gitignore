@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Run artefacts
+*.zip
+random_agent_log.csv
+qa/baseline/notebooks/
+qa/baseline/traces/
+
+# Trained models are small and kept with their results
+!results/**/model.zip
+
+# Raw datasets are not distributed (real IP addresses, unknown licence); keep local copies here
+data/raw/

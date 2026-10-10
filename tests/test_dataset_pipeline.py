@@ -1,10 +1,10 @@
 """
 tests/test_dataset_pipeline.py
 
-Covers the trace-data integration your friends added: raw dataset ->
-dataset_adapters -> TraceTrafficGenerator -> CarlaGymEnv. These tests run
-against the real uploaded CSVs (copied into data/) so they catch schema
-drift in the actual files, not just a synthetic stand-in.
+Covers the trace-data integration: raw dataset -> dataset_adapters ->
+TraceTrafficGenerator -> CarlaGymEnv. Adapter tests run against the real raw
+CSVs when a local copy exists in data/raw/ (they are not distributed); the
+committed derived traces are tested everywhere.
 
 Two regressions are specifically guarded against because they were found
 and fixed during integration:
@@ -29,16 +29,24 @@ from carla_gym.core.trace_traffic import TraceTrafficGenerator
 from carla_gym.env import CarlaGymEnv
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data")
-CS448B = os.path.join(DATA, "cs448b_ipasn.csv")
-PCAP_NUMERIC = os.path.join(DATA, "output1.csv")
-PCAP_TEXT = os.path.join(DATA, "Midterm_53_group.csv")
+# The derived traces are committed. The raw datasets they were made from are
+# not distributed with the repository; tests that need them run only where a
+# local copy exists in data/raw/ and are skipped otherwise.
+RAW = os.path.join(DATA, "raw")
+CS448B = os.path.join(RAW, "cs448b_ipasn.csv")
+PCAP_NUMERIC = os.path.join(RAW, "output1.csv")
+PCAP_TEXT = os.path.join(RAW, "Midterm_53_group.csv")
+PCAP_TRACE = os.path.join(DATA, "pcap_trace.csv")
+CS448B_TRACE = os.path.join(DATA, "cs448b_trace.csv")
 
-pytestmark = pytest.mark.skipif(
-    not os.path.exists(CS448B), reason="sample datasets not present in data/"
+needs_raw = pytest.mark.skipif(
+    not all(os.path.exists(f) for f in (CS448B, PCAP_NUMERIC, PCAP_TEXT)),
+    reason="raw datasets are not distributed; place them in data/raw/ to run this test",
 )
 
 
 # ---------------------------------------------------------------- format detection
+@needs_raw
 def test_detect_format():
     assert detect_format(CS448B) == "cs448b"
     assert detect_format(PCAP_NUMERIC) == "pcap"
@@ -46,6 +54,7 @@ def test_detect_format():
 
 
 # ---------------------------------------------------------------- cs448b adapter
+@needs_raw
 def test_cs448b_schema_and_bounds():
     df = convert_cs448b(CS448B, internal_nodes=10, external_buckets=6)
     assert set(df.columns) == {"step", "src", "dst", "volume"}
@@ -54,12 +63,14 @@ def test_cs448b_schema_and_bounds():
     assert (df["src"] != df["dst"]).all()
 
 
+@needs_raw
 def test_cs448b_rejects_l_ipn_overflow():
     with pytest.raises(ValueError):
         convert_cs448b(CS448B, internal_nodes=5, external_buckets=6)  # l_ipn goes to 9
 
 
 # ---------------------------------------------------------------- pcap adapter
+@needs_raw
 def test_pcap_numeric_and_text_agree():
     """output1.csv and Midterm_53_group.csv are the same capture exported two
     ways; after conversion their per-step load should be close (not
@@ -72,6 +83,7 @@ def test_pcap_numeric_and_text_agree():
     assert load_a == pytest.approx(load_b, rel=0.1)
 
 
+@needs_raw
 def test_pcap_schema():
     df = convert_packet_capture(PCAP_NUMERIC, num_nodes=16, bin_seconds=5.0)
     assert set(df.columns) == {"step", "src", "dst", "volume"}
@@ -87,6 +99,7 @@ def test_pcap_rejects_unknown_schema(tmp_path):
 
 
 # ---------------------------------------------------------------- topology-aware placement (regression)
+@needs_raw
 def test_adapter_output_reproducible_across_processes(tmp_path):
     """Regression guard: the adapters used to bucket IPs/ASNs with
     Python's builtin hash(), which is randomized per-process by default
@@ -96,6 +109,7 @@ def test_adapter_output_reproducible_across_processes(tmp_path):
     genuinely separate subprocesses (distinct hash seeds) and requires
     identical output."""
     import subprocess
+    import sys
     out_a = tmp_path / "a.csv"
     out_b = tmp_path / "b.csv"
     script = (
@@ -104,15 +118,16 @@ def test_adapter_output_reproducible_across_processes(tmp_path):
     )
     env_a = {**os.environ, "PYTHONHASHSEED": "1", "PYTHONPATH": os.path.dirname(os.path.dirname(__file__))}
     env_b = {**os.environ, "PYTHONHASHSEED": "2", "PYTHONPATH": os.path.dirname(os.path.dirname(__file__))}
-    subprocess.run(["python3", "-c", script.format(src=PCAP_NUMERIC, dst=str(out_a))],
+    subprocess.run([sys.executable, "-c", script.format(src=PCAP_NUMERIC, dst=str(out_a))],
                    env=env_a, check=True)
-    subprocess.run(["python3", "-c", script.format(src=PCAP_NUMERIC, dst=str(out_b))],
+    subprocess.run([sys.executable, "-c", script.format(src=PCAP_NUMERIC, dst=str(out_b))],
                    env=env_b, check=True)
     df_a = pd.read_csv(out_a)
     df_b = pd.read_csv(out_b)
     pd.testing.assert_frame_equal(df_a, df_b)
 
 
+@needs_raw
 def test_heaviest_node_lands_on_best_connected_position():
     """Regression guard: before this was fixed, frequency/hash-based node
     assignment could put the single busiest traffic concentration on an
@@ -138,6 +153,7 @@ def test_degree_order_is_well_formed():
 
 
 # ---------------------------------------------------------------- full pipeline
+@needs_raw
 @pytest.mark.parametrize("raw_path,kind", [
     (CS448B, "cs448b"), (PCAP_NUMERIC, "pcap"), (PCAP_TEXT, "pcap"),
 ])
@@ -166,8 +182,7 @@ def test_trace_driven_env_conserves_packet_units(tmp_path):
     """Same invariant as the Poisson-traffic conservation test, but now
     with trace-driven demand -- the simulator's bookkeeping shouldn't
     care where packets came from."""
-    out_csv = tmp_path / "trace.csv"
-    convert_packet_capture(PCAP_NUMERIC, str(out_csv), num_nodes=16, bin_seconds=5.0)
+    out_csv = PCAP_TRACE          # committed trace == adapter output (guarded below)
     traffic = TraceTrafficGenerator(nodes=list(range(16)), csv_path=str(out_csv),
                                     target_load=100.0, seed=0)
     env = CarlaGymEnv(topology="grid", num_nodes=16, bandwidth_budget=0.5,
@@ -219,8 +234,7 @@ def test_bandwidth_budget_changes_outcome_on_real_trace(tmp_path):
     """The central claim of the trace-driven setup: under a tight budget,
     congestion-aware allocation should not do worse than uniform -- if it
     did, there would be nothing for PPO to learn from this trace."""
-    out_csv = tmp_path / "trace.csv"
-    convert_packet_capture(PCAP_NUMERIC, str(out_csv), num_nodes=16, bin_seconds=5.0)
+    out_csv = PCAP_TRACE          # committed trace == adapter output (guarded below)
 
     def run(policy_weight_fn, budget):
         traffic = TraceTrafficGenerator(nodes=list(range(16)), csv_path=str(out_csv),
@@ -244,3 +258,85 @@ def test_bandwidth_budget_changes_outcome_on_real_trace(tmp_path):
     r_uniform = run(uniform, budget=0.5)
     r_queue_prop = run(queue_prop, budget=0.5)
     assert r_queue_prop >= r_uniform
+
+
+# ---------------------------------------------------------------- trace load calibration / committed traces
+@pytest.mark.parametrize("trace,nodes", [("cs448b_trace.csv", 16), ("pcap_trace.csv", 16)])
+def test_trace_mean_load_matches_target_including_empty_bins(trace, nodes):
+    """Regression guard: the rescaling averaged over non-empty bins only, so a
+    trace with gaps (the pcap trace has 6 empty bins of 252) under-delivered."""
+    gen = TraceTrafficGenerator(list(range(nodes)), os.path.join(DATA, trace),
+                                target_load=110.0, seed=0)
+    expected = sum(rows[:, 2].sum() for rows in gen.by_step.values()) / gen.n_steps
+    assert expected == pytest.approx(110.0)
+    realised = np.mean([sum(p.size for p in gen.generate(t)) for t in range(3 * gen.n_steps)])
+    assert realised == pytest.approx(110.0, rel=0.05)
+
+
+def test_trace_with_no_usable_rows_is_rejected(tmp_path):
+    csv = tmp_path / "trace.csv"
+    pd.DataFrame({"step": [0], "src": [50], "dst": [51], "volume": [1.0]}).to_csv(csv, index=False)
+    with pytest.raises(ValueError, match="no usable rows"):
+        TraceTrafficGenerator(list(range(9)), str(csv))
+
+
+@needs_raw
+@pytest.mark.parametrize("raw,committed,kind", [
+    (CS448B, "cs448b_trace.csv", "cs448b"),
+    (PCAP_NUMERIC, "pcap_trace.csv", "pcap"),
+    (PCAP_TEXT, "pcap_trace.csv", "pcap"),
+])
+def test_committed_traces_match_the_adapters(raw, committed, kind):
+    """The derived traces in data/ must be exactly what the adapters produce
+    from the raw files. Both pcap exports reduce to the same trace."""
+    path = raw
+    df = convert_cs448b(path) if kind == "cs448b" else convert_packet_capture(path)
+    ref = pd.read_csv(os.path.join(DATA, committed))
+    pd.testing.assert_frame_equal(df.reset_index(drop=True), ref, check_dtype=False)
+
+
+@needs_raw
+def test_random_topology_placement_uses_the_env_seed():
+    """Regression guard: placement used an unseeded random graph, which need
+    not be the graph the env builds."""
+    order = _topology_degree_order("random", 16, seed=7)
+    net = NetworkModel(topology="random", num_nodes=16, seed=7)
+    degs = dict(net.graph.degree())
+    assert order == sorted(degs, key=lambda n: (-degs[n], n))
+    df = convert_packet_capture(PCAP_NUMERIC, topology="random", topology_seed=7)
+    load = df.groupby("dst")["volume"].sum().add(
+        df.groupby("src")["volume"].sum(), fill_value=0.0)
+    assert degs[int(load.idxmax())] == max(degs.values())
+
+
+# ---------------------------------------------------------------- committed traces (no raw data needed)
+@pytest.mark.parametrize("trace", [PCAP_TRACE, CS448B_TRACE])
+def test_committed_trace_is_well_formed_and_anonymous(trace):
+    """The distributed traces hold node ids only: no addresses, no self-loops,
+    one row per (step, src, dst)."""
+    df = pd.read_csv(trace)
+    assert list(df.columns) == ["step", "src", "dst", "volume"]
+    assert df["src"].between(0, 15).all() and df["dst"].between(0, 15).all()
+    assert (df["src"] != df["dst"]).all() and (df["volume"] > 0).all()
+    assert not df.duplicated(["step", "src", "dst"]).any()
+    assert df["step"].min() == 0
+    for col in ("step", "src", "dst"):
+        assert pd.api.types.is_integer_dtype(df[col])
+
+
+def test_committed_pcap_trace_puts_busiest_node_on_best_connected_position():
+    df = pd.read_csv(PCAP_TRACE)
+    degrees = dict(NetworkModel(topology="grid", num_nodes=16).graph.degree())
+    load = df.groupby("dst")["volume"].sum().add(df.groupby("src")["volume"].sum(), fill_value=0.0)
+    assert degrees[int(load.idxmax())] == max(degrees.values())
+
+
+@pytest.mark.parametrize("trace", [PCAP_TRACE, CS448B_TRACE])
+def test_committed_trace_drives_the_env(trace):
+    traffic = TraceTrafficGenerator(nodes=list(range(16)), csv_path=trace, target_load=100.0, seed=0)
+    env = CarlaGymEnv(topology="grid", num_nodes=16, bandwidth_budget=0.5, max_steps=30,
+                      traffic=traffic, seed=0)
+    obs, _ = env.reset(seed=0)
+    for _ in range(30):
+        obs, reward, *_ = env.step(env.action_space.sample())
+        assert env.observation_space.contains(obs) and np.isfinite(reward)

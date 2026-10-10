@@ -1,0 +1,37 @@
+done: grid/load x0.5/budget 0.8
+done: grid/load x0.5/budget 0.5
+done: grid/load x1/budget 0.8
+done: grid/load x1/budget 0.5
+done: grid/load x2/budget 0.8
+done: grid/load x2/budget 0.5
+done: ring/load x0.5/budget 0.8
+done: ring/load x0.5/budget 0.5
+done: ring/load x1/budget 0.8
+done: ring/load x1/budget 0.5
+done: ring/load x2/budget 0.8
+done: ring/load x2/budget 0.5
+done: star/load x0.5/budget 0.8
+done: star/load x0.5/budget 0.5
+done: star/load x1/budget 0.8
+done: star/load x1/budget 0.5
+done: star/load x2/budget 0.8
+done: star/load x2/budget 0.5
+done: mesh/load x0.5/budget 0.8
+done: mesh/load x0.5/budget 0.5
+done: mesh/load x1/budget 0.8
+done: mesh/load x1/budget 0.5
+done: mesh/load x2/budget 0.8
+done: mesh/load x2/budget 0.5
+done: random/load x0.5/budget 0.8
+done: random/load x0.5/budget 0.5
+done: random/load x1/budget 0.8
+done: random/load x1/budget 0.5
+done: random/load x2/budget 0.8
+done: random/load x2/budget 0.5
+done: grid/bottleneck node 4 x0.5/budget 0.8
+done: pcap trace/grid-16/budget 0.8
+done: pcap trace/grid-16/budget 0.5
+done: cs448b trace/grid-16/budget 0.8
+done: cs448b trace/grid-16/budget 0.5
+
+Wrote 2100 episodes to results/benchmark
