@@ -39,6 +39,13 @@ class CarlaGymEnv(gym.Env):
             interesting to learn.
         """
         super().__init__()
+        if bandwidth_budget is not None and not 0.0 < bandwidth_budget <= 1.0:
+            raise ValueError(f"bandwidth_budget must be None or in (0, 1], got {bandwidth_budget}")
+        if max_steps < 1:
+            raise ValueError(f"max_steps must be >= 1, got {max_steps}")
+        modes = self.metadata["render_modes"]
+        if render_mode is not None and render_mode not in modes:
+            raise ValueError(f"render_mode must be one of {modes}, got {render_mode!r}")
         self.max_steps = max_steps
         self.render_mode = render_mode
         self.bandwidth_budget = bandwidth_budget
@@ -63,6 +70,7 @@ class CarlaGymEnv(gym.Env):
 
         self._step_count = 0
         self._pending = np.zeros(self.num_edges, dtype=np.float32)
+        self._needs_reset = False
         self._visualizer = None
 
     # ---------------------------------------------------------------- #
@@ -75,21 +83,30 @@ class CarlaGymEnv(gym.Env):
         self.traffic.reset(seed=seed)
         self._step_count = 0
         self._pending = np.zeros(self.num_edges, dtype=np.float32)
+        self._needs_reset = False
         return self._observe(), {"step": 0}
 
     def step(self, action):
-        action = np.clip(np.asarray(action, dtype=np.float32), 0.0, 1.0)
-        
+        if self._needs_reset:
+            raise RuntimeError("Episode has ended (truncated at max_steps); "
+                               "call reset() before step().")
+        action = np.asarray(action, dtype=np.float32)
+        if action.shape != self.action_space.shape:
+            raise ValueError(f"action must have shape {self.action_space.shape} "
+                             f"(E bandwidth weights then E routing weights), got {action.shape}")
+        action = np.clip(action, 0.0, 1.0)
+
         # Split action into bandwidth allocation (first E) and routing weights (last E)
         bw_action = self._apply_budget(action[:self.num_edges])
         routing_action = action[self.num_edges:]
-        
+
         reward, info, self._pending = advance(
             self.network, self.traffic, self.reward_calc,
             bw_action, routing_action, self._step_count)
 
         self._step_count += 1
         truncated = self._step_count >= self.max_steps
+        self._needs_reset = truncated
         info["step"] = self._step_count
         return self._observe(), float(reward), False, truncated, info
 
@@ -99,8 +116,10 @@ class CarlaGymEnv(gym.Env):
         from carla_gym.utils.visualization import NetworkVisualizer
         if self._visualizer is None:
             self._visualizer = NetworkVisualizer(self.network)
-        return self._visualizer.render(step=self._step_count,
-                                       show=self.render_mode == "human")
+        if self.render_mode == "rgb_array":
+            return self._visualizer.render(step=self._step_count, return_rgb=True)
+        self._visualizer.render(step=self._step_count, show=True)
+        return None
 
     def close(self):
         self._visualizer = None

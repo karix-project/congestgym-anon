@@ -318,3 +318,84 @@ def test_deadline_coefficient_is_configurable():
         return sum(env.step(a)[1] for _ in range(40))
 
     assert total(0.0) > total(0.5) > total(2.0)
+
+
+# ---------------------------------------------------------------- validation (M5) / render (M4)
+@pytest.mark.parametrize("budget", [-0.5, 0.0, 1.5])
+def test_invalid_bandwidth_budget_rejected(budget):
+    with pytest.raises(ValueError, match="bandwidth_budget"):
+        CarlaGymEnv(bandwidth_budget=budget)
+
+
+@pytest.mark.parametrize("budget", [None, 0.5, 0.8, 1.0])
+def test_valid_bandwidth_budgets_run(budget):
+    env = CarlaGymEnv(bandwidth_budget=budget, max_steps=5, seed=0)
+    env.reset(seed=0)
+    _, reward, *_ = env.step(env.action_space.sample())
+    assert np.isfinite(reward)
+
+
+def test_wrong_length_action_gives_clear_error():
+    env = CarlaGymEnv(seed=0)
+    env.reset(seed=0)
+    with pytest.raises(ValueError, match="action must have shape"):
+        env.step(np.ones(5, dtype=np.float32))
+
+
+@pytest.mark.parametrize("n", [7, 10])
+def test_grid_rejects_non_square_node_count(n):
+    with pytest.raises(ValueError, match="perfect-square"):
+        CarlaGymEnv(topology="grid", num_nodes=n)
+
+
+def test_step_after_truncation_requires_reset():
+    env = CarlaGymEnv(max_steps=3, seed=0)
+    env.reset(seed=0)
+    for _ in range(3):
+        *_, truncated, _ = env.step(env.action_space.sample())
+    assert truncated
+    with pytest.raises(RuntimeError, match="reset"):
+        env.step(env.action_space.sample())
+    env.reset()
+    env.step(env.action_space.sample())
+
+
+@pytest.mark.parametrize("max_steps", [50, 500])
+def test_gym_make_honours_max_steps(max_steps):
+    import gymnasium as gym
+    import carla_gym  # noqa: F401 - registers CarlaGym-v0
+
+    env = gym.make("CarlaGym-v0", max_steps=max_steps)
+    env.reset(seed=0)
+    steps = 0
+    truncated = False
+    while not truncated:
+        *_, truncated, _ = env.step(env.action_space.sample())
+        steps += 1
+    assert steps == max_steps
+
+
+def test_render_rgb_array_returns_image():
+    import matplotlib
+    matplotlib.use("Agg")
+    env = CarlaGymEnv(render_mode="rgb_array", max_steps=5, seed=0)
+    env.reset(seed=0)
+    env.step(env.action_space.sample())
+    frame = env.render()
+    assert isinstance(frame, np.ndarray) and frame.dtype == np.uint8
+    assert frame.ndim == 3 and frame.shape[2] == 3
+    assert frame.std() > 0                       # not a blank canvas
+    env.close()
+
+
+def test_render_without_mode_returns_none():
+    env = CarlaGymEnv(max_steps=5, seed=0)
+    env.reset(seed=0)
+    assert env.render() is None
+
+
+def test_gymnasium_api_conformance_with_render():
+    import matplotlib
+    matplotlib.use("Agg")
+    env = CarlaGymEnv(max_steps=20, render_mode="rgb_array", seed=0)
+    check_env(env.unwrapped)

@@ -41,6 +41,13 @@ class NetworkModel:
         if topology not in self.SUPPORTED_TOPOLOGIES:
             raise ValueError(f"Unknown topology '{topology}'. "
                              f"Choose from {self.SUPPORTED_TOPOLOGIES}")
+        if num_nodes < 2:
+            raise ValueError(f"num_nodes must be >= 2, got {num_nodes}")
+        if link_capacity <= 0 or node_buffer <= 0:
+            raise ValueError("link_capacity and node_buffer must be positive")
+        if topology == "grid" and int(round(np.sqrt(num_nodes))) ** 2 != num_nodes:
+            raise ValueError(f"grid topology needs a perfect-square num_nodes "
+                             f"(4, 9, 16, ...), got {num_nodes}")
         self.topology = topology
         self.num_nodes = num_nodes
         self.link_capacity = link_capacity
@@ -95,7 +102,7 @@ class NetworkModel:
         for n in self.graph.nodes():
             self.graph.nodes[n]["buffer_size"] = self.node_buffer
             self.graph.nodes[n]["queue"] = 0.0
-            
+
         # Initialize default uniform routing weights
         self.update_routing(np.ones(len(self._edges)))
 
@@ -115,7 +122,7 @@ class NetworkModel:
                 return nx.shortest_path(self.graph, src, dst)
             except nx.NetworkXNoPath:
                 return []
-        
+
         try:
             return self._current_paths[src][dst]
         except KeyError:
