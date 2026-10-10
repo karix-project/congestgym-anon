@@ -193,6 +193,10 @@ Not supported, or not tested:
   against the sources; they are relayed from the QA report.
 * **Framing of "learning agents benchmarked".** See section 6.
 
+> Update, 10 Oct 2026 (after this was written): the user decided to remove the raw datasets.
+> They are no longer in the repository's current files; only the derived traces remain.
+> They are still in the git history. See `docs/TESTER_REPORT.md`, section 13.
+
 ## 8. Limitations I know of
 
 Listed in the README. The ones most relevant to a reviewer: slotted one-hop

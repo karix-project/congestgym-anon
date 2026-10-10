@@ -47,7 +47,7 @@ scripts/
   evaluate_saved.py       # delivered / dropped / delay table for saved agents
   update_readme_results.py  # copy result tables from results/ into this file
 notebooks/                # four executed notebooks (see below)
-data/                     # raw datasets and the traces derived from them
+data/                     # dataset-derived traces (raw sources are not distributed)
 results/                  # outputs of the runs reported below
 tests/                    # pytest suite
 qa/                       # reproduction scripts and logs for the QA round
@@ -375,19 +375,36 @@ much as a heavy one. Quote the aggregate figures for the trace scenarios.
 
 ## Datasets
 
-`dataset_adapters.py` converts the raw files in `data/` into trace CSVs:
+Two dataset-derived traces ship in `data/`. Each is a `step,src,dst,volume`
+CSV holding simulator node ids only:
 
-| Raw file | What it is | Adapter | Derived trace |
-|---|---|---|---|
-| `cs448b_ipasn.csv` | Daily flow counts per (local host, remote ASN), 92 days. One simulation step = one day. | `convert_cs448b` | `cs448b_trace.csv` |
-| `output1.csv` | Packet capture, numeric export: per-packet timestamp, source IP, destination IP, length. | `convert_packet_capture` | `pcap_trace.csv` |
-| `Midterm_53_group.csv` | The same capture exported from Wireshark's text UI. Non-IP rows are dropped. | `convert_packet_capture` | identical to `pcap_trace.csv` |
+| Trace | Derived from | Rows | Steps |
+|---|---|---:|---:|
+| `data/cs448b_trace.csv` | Daily flow counts per (local host, remote ASN) over 92 days, from a Stanford CS448B course dataset (`cs448b_ipasn.csv`). One simulation step = one day; the values are flow counts, not volumes. | 4,644 | 92 |
+| `data/pcap_trace.csv` | A packet capture of about 21 minutes (exported from Wireshark), binned into 5-second steps; volume = bytes. | 4,163 | 252 (246 with traffic) |
+
+**The raw files are not distributed.** The capture contains real IP
+addresses and the flow-count file has no stated licence. The traces above
+were produced from them by `dataset_adapters.py`, which maps addresses and
+ASNs to 16 node ids through a hash, so no address appears in this repository's
+current files. After rescaling to a target load only the *shape* of the load
+over time and across node pairs survives: treat the traces as load shapes
+derived from real measurements, not as a replay of real traffic.
 
 ```
-python scripts/prepare_trace.py --in data/cs448b_ipasn.csv --out data/cs448b_trace.csv
-python scripts/prepare_trace.py --in data/output1.csv --out data/pcap_trace.csv --bin-seconds 5
 python examples/train_agent.py --algo ppo --trace data/pcap_trace.csv --nodes 16 --load 110 --budget 0.5
 ```
+
+To build a trace from your own data, put a CSV in one of the two supported
+formats anywhere outside version control (`data/raw/` is git-ignored) and run:
+
+```
+python scripts/prepare_trace.py --in data/raw/my_capture.csv --out data/my_trace.csv --bin-seconds 5
+```
+
+Supported inputs: a flow-count table with columns `date, l_ipn, r_asn, f`; or
+a packet-capture export with `Timestamp, Source IP, Destination IP, Length`
+(numeric) or `Time, Source, Destination, Length` (Wireshark text export).
 
 Design points:
 
@@ -396,8 +413,6 @@ Design points:
 * Placement is topology-aware: the busiest buckets go to the best-connected
   nodes, so a traffic hub does not land on a two-link grid corner. For
   `--topology random`, pass `--topology-seed` equal to the env's seed.
-* The pcap adapter bins packets into 5-second steps; the cs448b trace uses
-  daily bins. The two traces therefore represent very different timescales.
 * Trace volume is rescaled so the mean offered load per step, over all time
   bins including empty ones, equals `target_load`.
 
@@ -414,7 +429,7 @@ python -m jupyter nbconvert --to notebook --execute --inplace 01_simulation_walk
 |---|---|
 | `01_simulation_walkthrough.ipynb` | The five topologies and their nodes, one episode step by step (backlog, utilization, the four reward terms), network renders, `rgb_array` output, a zero-bandwidth stress test and a node bottleneck. |
 | `02_policy_comparison.ipynb` | All six baselines on synthetic traffic and on the pcap trace, with 95% intervals. |
-| `03_dataset_exploration.ipynb` | The raw datasets, the topology-aware placement, and both traces run through the simulator. |
+| `03_dataset_exploration.ipynb` | The two dataset-derived traces: load over time, which node pairs carry it, the topology-aware placement, and both traces run through the simulator. |
 | `04_ppo_training_curves.ipynb` | Learning curves of the saved multi-seed PPO and SAC runs, plus a short PPO run trained live on the pcap trace. |
 
 ## Tests
@@ -424,13 +439,15 @@ python -m pytest -q
 ```
 
 <!-- RESULTS:tests:start -->
-Last run: **124 passed**.
+Last run: **129 passed with local copies of the raw datasets in data/raw/; 115 passed, 14 skipped without them (a fresh clone)**.
 <!-- RESULTS:tests:end -->
 
 The suite covers Gymnasium API conformance (`check_env`, including rendering),
 PettingZoo `parallel_api_test` on all five topologies, packet-unit
 conservation, buffer and link-capacity bounds, seeding, input validation, the
-reward terms, the baselines, and the dataset pipeline against the real files.
+reward terms, the baselines, and the committed traces. Fourteen further
+tests exercise the raw-data adapters; they need local copies of the raw
+datasets in `data/raw/` and are skipped otherwise.
 
 ## Limitations
 

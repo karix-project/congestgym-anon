@@ -223,6 +223,10 @@ conference or a workshop, items 1, 4 and 8 would probably be enough.
   would rename; for the college submission it is tolerable.
 * **Personal email in `LICENSE`.** No scientific bearing.
 
+> Update, 10 Oct 2026 (after this was written): the user decided to remove the raw datasets.
+> They are no longer in the repository's current files; only the derived traces remain.
+> They are still in the git history. See `docs/TESTER_REPORT.md`, section 13.
+
 ## 8. Summary for the team
 
 * Correct to claim: a Gymnasium environment for joint bandwidth and routing

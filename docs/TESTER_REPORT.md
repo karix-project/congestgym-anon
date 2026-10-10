@@ -304,3 +304,33 @@ After round 4: `python -m pytest -q` -> **124 passed** (`tests/test_env.py` 82,
 Not addressed (out of scope for round 4): the experiments in section 5 of the
 researcher review, the presentation claims in its section 6, and the user's
 dataset decision.
+
+## 13. Round 5: raw datasets removed from the repository (user decision)
+
+Decision by the user (10 Oct 2026): remove the raw datasets, keep the derived
+traces.
+
+| What | Change |
+|---|---|
+| `data/cs448b_ipasn.csv`, `data/output1.csv`, `data/Midterm_53_group.csv` | Removed from the repository (untracked). Local copies were moved to `data/raw/`, which is git-ignored, so nothing was deleted from the user's machine. |
+| `data/cs448b_trace.csv`, `data/pcap_trace.csv` | Kept. They contain node ids 0 to 15 only. |
+| `tests/test_dataset_pipeline.py` | Adapter tests that need the raw files carry a `needs_raw` marker and are skipped when `data/raw/` is absent. The two env-level trace tests now run on the committed trace. Five new tests cover the committed traces without raw data (well-formed and anonymous, placement, drives the env). |
+| `notebooks/03_dataset_exploration.ipynb` | Rewritten to use the derived traces only and re-executed (0 errors). The previous version's executed output contained a chart of real destination IP addresses. |
+| README, `scripts/prepare_trace.py`, `dataset_adapters.py` docstring, notebook 02's assert message | State that the raw files are not distributed and how to build a trace from one's own data. |
+
+Test counts: with the raw files present locally **129 passed**; without them
+(a fresh clone) **115 passed, 14 skipped**. Both were run.
+
+A scan of all tracked text files, notebooks and CSVs finds no IPv4 address.
+
+**Not done, and it matters:** the raw files are still in the git history
+(they were committed in `12eb83c` and earlier, and that history is already on
+the public GitHub repository). So is the old notebook 03 output. Removing
+them from history needs a history rewrite and a force-push of the public
+repository, which changes every commit id and affects anyone who has cloned
+it. I did not do that without explicit instruction. Until it is done, the
+addresses remain publicly retrievable.
+
+Also unchanged: the committed traces were produced from those raw files, so
+their provenance and licence question (see `docs/RESEARCHER_REVIEW.md`,
+section 7) still applies to the derived data, in a much weaker form.

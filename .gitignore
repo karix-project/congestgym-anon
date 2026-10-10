@@ -25,3 +25,6 @@ qa/baseline/traces/
 
 # Trained models are small and kept with their results
 !results/**/model.zip
+
+# Raw datasets are not distributed (real IP addresses, unknown licence); keep local copies here
+data/raw/

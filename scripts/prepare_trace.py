@@ -7,8 +7,12 @@ stats to tell whether it will calibrate into a usable load regime before
 you spend a training run finding out.
 
 Usage (PowerShell: $env:PYTHONPATH = "."   bash: export PYTHONPATH=.):
-    python scripts/prepare_trace.py --in data/cs448b_ipasn.csv --out data/cs448b_trace.csv
-    python scripts/prepare_trace.py --in data/output1.csv --out data/pcap_trace.csv --bin-seconds 5
+    python scripts/prepare_trace.py --in data/raw/cs448b_ipasn.csv --out data/cs448b_trace.csv
+    python scripts/prepare_trace.py --in data/raw/output1.csv --out data/pcap_trace.csv --bin-seconds 5
+
+The raw inputs are not distributed with the repository; data/raw/ is ignored
+by git. Use your own flow-count or packet-capture CSV in one of the two
+supported formats (see carla_gym/core/dataset_adapters.py).
 
 Format is auto-detected by column names; pass --format to override.
 """

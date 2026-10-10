@@ -3,8 +3,11 @@ carla_gym/core/dataset_adapters.py
 
 TraceTrafficGenerator needs a CSV with columns (step, src, dst, volume),
 where src/dst are integer node ids in [0, num_nodes). Real-world datasets
-never arrive in that shape, so this module converts the specific raw
-formats this project has on hand into it:
+never arrive in that shape, so this module converts two raw formats into
+it. The raw files named below are the ones the committed traces in data/
+were made from; they are NOT distributed with the repository (the capture
+contains real IP addresses and the flow-count file has no stated licence).
+The derived traces contain node ids only.
 
   * cs448b_ipasn.csv   -- Stanford CS448B dataset: one row per
                           (day, local-host, remote-ASN) with a flow count.
