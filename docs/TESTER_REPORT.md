@@ -344,3 +344,12 @@ no other MAC-style string and no remaining copy of the original in code,
 docs or logs. Docstring only: no behaviour change, **129 passed**.
 
 Like the raw files, the original string remains in the git history.
+
+## 15. User decisions on the handoff's section 8 (recorded 11 Oct 2026)
+
+| # | Question | Decision |
+|---|---|---|
+| 1 | Raw datasets with real IP addresses in the public repository | **Remove the raw datasets, keep the derived traces** (done in round 5). **Leave the git history as it is**: the user was told that the raw files (73 MB), the old notebook 03 output with its address chart and one MAC-vendor string remain retrievable from the public repository's history, and chose not to rewrite it. |
+| 2 | Personal email address in `LICENSE`; dataset licence / attribution notice | No decision given. `LICENSE` is unchanged. The README states where each trace came from and that the raw files are not distributed. |
+| 3 | Rename the project because of the CARLA simulator name clash | No decision given. Name unchanged. |
+| 4 | Push the fix branch or open a pull request | **Push the code.** The branch `fix/qa-round-1` is pushed to `origin`; `main` is not modified. |
