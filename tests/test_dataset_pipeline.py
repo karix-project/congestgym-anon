@@ -1,10 +1,10 @@
 """
 tests/test_dataset_pipeline.py
 
-Covers the trace-data integration your friends added: raw dataset ->
-dataset_adapters -> TraceTrafficGenerator -> CarlaGymEnv. These tests run
-against the real uploaded CSVs (copied into data/) so they catch schema
-drift in the actual files, not just a synthetic stand-in.
+Covers the trace-data integration: raw dataset -> dataset_adapters ->
+TraceTrafficGenerator -> CarlaGymEnv. These tests run against the real CSVs
+in data/ so they catch schema drift in the actual files, not just a
+synthetic stand-in.
 
 Two regressions are specifically guarded against because they were found
 and fixed during integration:
@@ -245,3 +245,50 @@ def test_bandwidth_budget_changes_outcome_on_real_trace(tmp_path):
     r_uniform = run(uniform, budget=0.5)
     r_queue_prop = run(queue_prop, budget=0.5)
     assert r_queue_prop >= r_uniform
+
+
+# ---------------------------------------------------------------- trace load calibration / committed traces
+@pytest.mark.parametrize("trace,nodes", [("cs448b_trace.csv", 16), ("pcap_trace.csv", 16)])
+def test_trace_mean_load_matches_target_including_empty_bins(trace, nodes):
+    """Regression guard: the rescaling averaged over non-empty bins only, so a
+    trace with gaps (the pcap trace has 6 empty bins of 252) under-delivered."""
+    gen = TraceTrafficGenerator(list(range(nodes)), os.path.join(DATA, trace),
+                                target_load=110.0, seed=0)
+    expected = sum(rows[:, 2].sum() for rows in gen.by_step.values()) / gen.n_steps
+    assert expected == pytest.approx(110.0)
+    realised = np.mean([sum(p.size for p in gen.generate(t)) for t in range(3 * gen.n_steps)])
+    assert realised == pytest.approx(110.0, rel=0.05)
+
+
+def test_trace_with_no_usable_rows_is_rejected(tmp_path):
+    csv = tmp_path / "trace.csv"
+    pd.DataFrame({"step": [0], "src": [50], "dst": [51], "volume": [1.0]}).to_csv(csv, index=False)
+    with pytest.raises(ValueError, match="no usable rows"):
+        TraceTrafficGenerator(list(range(9)), str(csv))
+
+
+@pytest.mark.parametrize("raw,committed,kind", [
+    ("cs448b_ipasn.csv", "cs448b_trace.csv", "cs448b"),
+    ("output1.csv", "pcap_trace.csv", "pcap"),
+    ("Midterm_53_group.csv", "pcap_trace.csv", "pcap"),
+])
+def test_committed_traces_match_the_adapters(raw, committed, kind):
+    """The derived traces in data/ must be exactly what the adapters produce
+    from the raw files. Both pcap exports reduce to the same trace."""
+    path = os.path.join(DATA, raw)
+    df = convert_cs448b(path) if kind == "cs448b" else convert_packet_capture(path)
+    ref = pd.read_csv(os.path.join(DATA, committed))
+    pd.testing.assert_frame_equal(df.reset_index(drop=True), ref, check_dtype=False)
+
+
+def test_random_topology_placement_uses_the_env_seed():
+    """Regression guard: placement used an unseeded random graph, which need
+    not be the graph the env builds."""
+    order = _topology_degree_order("random", 16, seed=7)
+    net = NetworkModel(topology="random", num_nodes=16, seed=7)
+    degs = dict(net.graph.degree())
+    assert order == sorted(degs, key=lambda n: (-degs[n], n))
+    df = convert_packet_capture(PCAP_NUMERIC, topology="random", topology_seed=7)
+    load = df.groupby("dst")["volume"].sum().add(
+        df.groupby("src")["volume"].sum(), fill_value=0.0)
+    assert degs[int(load.idxmax())] == max(degs.values())

@@ -8,8 +8,9 @@ traffic-matrix trace instead of Poisson sampling.
 Expected CSV (one row per demand record; long format):
     step, src, dst, volume
 `step` = time bin, `src`/`dst` = node ids (0..N-1), `volume` = bytes/Mbps/etc.
-Volume is rescaled so the trace's mean offered load per step equals
-`target_load` units/step -- this is how you match it to link_capacity.
+Volume is rescaled so the trace's mean offered load per step (averaged over
+every time bin, empty ones included) equals `target_load` units/step -- this
+is how you match it to link_capacity.
 Each record becomes a Poisson number of packets (volume-conserving) with a QoS
 class by `qos_mix` (traces rarely carry class labels).
 """
@@ -27,10 +28,15 @@ class TraceTrafficGenerator:
         if not need <= set(df.columns):
             raise ValueError(f"CSV needs columns {need}, got {set(df.columns)}")
         df = df[df.src.isin(self.nodes) & df.dst.isin(self.nodes) & (df.src != df.dst)]
+        if df.empty:
+            raise ValueError("Trace has no usable rows for these node ids "
+                             "(need src != dst, both in `nodes`).")
+        df = df.copy()
         df["step"] = df["step"] - df["step"].min()
-        per_step = df.groupby("step")["volume"].sum()
-        df["volume"] = df["volume"] * target_load / per_step.mean()
         self.n_steps = int(df["step"].max()) + 1
+        # Mean over ALL time bins, including bins with no traffic, so the
+        # realised load per simulation step equals target_load.
+        df["volume"] = df["volume"] * target_load * self.n_steps / df["volume"].sum()
         self.by_step = {int(s): g[["src", "dst", "volume"]].to_numpy()
                         for s, g in df.groupby("step")}
         self.loop = loop
