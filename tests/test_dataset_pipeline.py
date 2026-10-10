@@ -96,6 +96,7 @@ def test_adapter_output_reproducible_across_processes(tmp_path):
     genuinely separate subprocesses (distinct hash seeds) and requires
     identical output."""
     import subprocess
+    import sys
     out_a = tmp_path / "a.csv"
     out_b = tmp_path / "b.csv"
     script = (
@@ -104,9 +105,9 @@ def test_adapter_output_reproducible_across_processes(tmp_path):
     )
     env_a = {**os.environ, "PYTHONHASHSEED": "1", "PYTHONPATH": os.path.dirname(os.path.dirname(__file__))}
     env_b = {**os.environ, "PYTHONHASHSEED": "2", "PYTHONPATH": os.path.dirname(os.path.dirname(__file__))}
-    subprocess.run(["python3", "-c", script.format(src=PCAP_NUMERIC, dst=str(out_a))],
+    subprocess.run([sys.executable, "-c", script.format(src=PCAP_NUMERIC, dst=str(out_a))],
                    env=env_a, check=True)
-    subprocess.run(["python3", "-c", script.format(src=PCAP_NUMERIC, dst=str(out_b))],
+    subprocess.run([sys.executable, "-c", script.format(src=PCAP_NUMERIC, dst=str(out_b))],
                    env=env_b, check=True)
     df_a = pd.read_csv(out_a)
     df_b = pd.read_csv(out_b)
