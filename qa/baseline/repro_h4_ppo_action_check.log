@@ -1,0 +1,4 @@
+raw deterministic action: mean +0.044, min +0.000, max +0.275
+after clip to [0,1]: bandwidth mean 0.053, routing mean 0.034, share of bandwidth entries below 0.4: 100.0%
+policy log_std mean: -0.005 (std 0.996)
+mean reward (steps 20+): -1.000
