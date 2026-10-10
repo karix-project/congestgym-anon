@@ -188,3 +188,38 @@ is a code-correctness issue:
   public repository, the email in `LICENSE`, the project name, push / PR);
 * environments this machine cannot test (Python 3.10 to 3.13, Linux, macOS);
 * the Researcher pass.
+
+## 10. Confirmation pass on round 4 (commits `7901822`, `b9d3857`)
+
+Round 4 addressed the three inconsistencies in `docs/RESEARCHER_REVIEW.md`
+section 4. Script and log: `qa/retest/confirm_round4.py`,
+`qa/retest/confirm_round4.log`. 17 checks.
+
+| # | Item | Confirmed? |
+|---|---|---|
+| 1 | Episode-aggregate delivered / dropped / delay / deadline figures | Yes. I recomputed them without the new helper (delays captured directly from `NetworkModel.forward`, totals from raw counters) for 36 benchmark episodes across 6 scenarios including both traces and the bottleneck, and for a PPO and a SAC agent: agreement to 1e-15. All 210 benchmark cells and all 8 trained-agent rows in the README match the result files. `qos.csv` agent rewards equal `final_eval.csv` on all 100 rows. |
+| 2 | Tie marking in the benchmark table | Yes. Recomputed with my own rule: 9 rows with a clear winner, 26 ties, no wrong mark; the README carries the same rows and a legend. |
+| 3 | Unsourced NetworkGym reward claim | Yes. Removed from `docs/RESEARCHER_NOTE.md`, removal noted. (My script printed one "PROBLEM" for the string "log-ratio" in `docs/TESTER_REPORT.md`; that line describes the removal and asserts nothing. False positive.) |
+
+Results unchanged: the re-run benchmark equals the previously committed one
+on all 2,100 episodes with zero difference (checked against the file in git
+history, not the Developer's copy). The only package code added since the
+last confirmed commit is `carla_gym/utils/qos.py` (43 lines, reporting only).
+
+README statements checked against the data: "54 to 69% dropped on the trace
+scenarios" (data 54.4 to 69.2), PPO 92.2% delivered (92.18), cs448b reward
++0.41 with 57% dropped (+0.414, 57.5%).
+
+One wording note, not a defect: delivered % plus dropped % exceeds 100 in 44%
+of benchmark episodes, by up to 2.7 points, because a backlog left from the
+warm-up drains inside the measured window. The tables say "the remainder is
+backlog growth"; that growth can be negative. Worth half a sentence.
+
+Regression: **124 passed** here and in a fresh clone; no tracked junk files.
+
+### Tester/QA status after round 4
+
+No open defects. The Researcher's observation that both trace scenarios drop
+more than half their traffic is confirmed by my independent numbers; whether
+to lower their target load is a design decision for the Developer and
+Researcher, not a bug.
