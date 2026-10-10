@@ -223,3 +223,44 @@ No open defects. The Researcher's observation that both trace scenarios drop
 more than half their traffic is confirmed by my independent numbers; whether
 to lower their target load is a design decision for the Developer and
 Researcher, not a bug.
+
+## 11. Confirmation pass on round 5: raw datasets removed (commit `e01aa70`)
+
+Log: `qa/retest/confirm_round5.log`.
+
+| Check | Result |
+|---|---|
+| Files under `data/` at `HEAD` | only `cs448b_trace.csv` and `pcap_trace.csv`; no raw file name anywhere in the tree |
+| Local raw copies | 3 files in `data/raw/`, all ignored by git |
+| Derived traces | byte-identical to before (same MD5 sums as at `12eb83c`) |
+| Adapters, run on the local raw copies | reproduce both committed traces exactly |
+| Address scan of all 172 tracked files, including the PNG images embedded in notebooks (byte scan) | no IPv4-shaped string |
+| Tests with the raw files present | **129 passed** |
+| Tests with `data/raw/` hidden (same as a fresh clone) | **115 passed, 14 skipped**; every skip carries the "raw datasets are not distributed" reason, none for any other reason |
+| Results | README numbers, benchmark determinism and saved-model probes still pass |
+| Notebooks | all four executed, in order, 0 errors, no stale references |
+
+**Round 5 is confirmed for the current files.**
+
+### One new finding
+
+**R5-1 (LOW): a hardware-address fragment from the capture is still in the
+code.** `carla_gym/core/dataset_adapters.py` line 22 gives, as an example of a
+non-IP endpoint, a MAC-vendor string taken from the capture (vendor label
+plus the last three octets of a network card's address). It is not an IP
+address and identifies at most a virtual network card, but it is real data
+from the removed file. Replace it with a made-up example. For the Developer.
+
+### Limits of this check
+
+* The scan reads bytes. Text drawn *inside* a chart image cannot be found
+  that way. I reviewed notebook 03's code instead: every chart plots node
+  ids, loads or degrees, never an address. The words "Source IP" and
+  "Destination IP" in that notebook are column names in a description of
+  supported input formats, not data.
+* **History is not clean, as the Developer stated.** Two commits in the
+  history touch the raw files, `origin/main` still contains all three
+  (73 MB), and the old notebook 03 output with its address chart is in the
+  history too. Removing the files from the current tree does not remove them
+  from the public repository. That needs a history rewrite and a force-push,
+  which is a decision for the user.
