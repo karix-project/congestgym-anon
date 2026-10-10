@@ -264,3 +264,19 @@ from the removed file. Replace it with a made-up example. For the Developer.
   history too. Removing the files from the current tree does not remove them
   from the public repository. That needs a history rewrite and a force-push,
   which is a decision for the user.
+
+## 12. Confirmation of R5-1 (commit `7b66da0`)
+
+Log: `qa/retest/confirm_r5_1.log` (the removed line of the diff is redacted
+in the log, so the log does not put the original string back into the repo).
+
+| Check | Result |
+|---|---|
+| Code change since the last confirmed commit | one docstring line in `carla_gym/core/dataset_adapters.py`; nothing else in the package, tests, examples or scripts |
+| Scan of all 173 tracked files (including notebook images, byte scan) | no IPv4-shaped string, no full MAC address, no copy of the original fragment, no vendor name; the only vendor-style string is the placeholder `Vendor_00:00:00` (in the docstring and in the Developer's note about it) |
+| Behaviour | **129 passed**; the Wireshark-text export still converts, drops the same 634 non-IP rows and yields the committed trace exactly |
+
+**R5-1 is confirmed fixed. No open defects from the Tester/QA role.**
+
+For the record, unchanged: the original string is reachable in 2 commits of
+the git history, alongside the raw datasets and the old notebook 03 output.
