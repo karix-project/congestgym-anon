@@ -13,11 +13,14 @@ Model
 * Packets advance AT MOST ONE HOP PER STEP, subject to link budget and
   downstream buffer space. Latency is therefore *measured in steps*,
   not proxied by utilization.
+* Service is FRACTIONAL: a packet larger than the budget a link has left
+  is partly transmitted and finishes the hop on a later step, so any
+  positive allocation eventually moves traffic.
 * Drops occur on admission overflow, downstream buffer overflow, or when
   no route exists.
 
 Head-of-line blocking is intentional: a node's FIFO stalls behind a packet
-whose next-hop link is exhausted. That is what creates the congestion
+whose next-hop link is exhausted (or still part-way through that packet). That is what creates the congestion
 dynamics an RL agent has something to learn about.
 """
 
@@ -163,9 +166,15 @@ class NetworkModel:
         deadline_misses = 0
         delivered_count = 0
 
+        # Downstream space is judged against occupancy at the START of the
+        # step plus what has arrived since. Space freed by departures becomes
+        # usable on the next step. This is independent of node iteration order
+        # and guarantees a buffer never ends a step above `node_buffer`.
+        start_occ = {n: self._occupancy(n) for n in self.graph.nodes()}
+        arrived = {n: 0.0 for n in self.graph.nodes()}
+
         def occ(n: int) -> float:
-            return (sum(p.size for p in retained[n])
-                    + sum(p.size for p in arrivals[n]))
+            return start_occ[n] + arrived[n]
 
         for node in self.graph.nodes():
             blocked = False
@@ -181,33 +190,58 @@ class NetworkModel:
                     continue
 
                 key = self._key(node, nxt)
-                if budget[key] + 1e-9 < pkt.size:
+                need = pkt.size - pkt.sent
+                if budget[key] + 1e-9 < need:
+                    # Fractional service: spend what the link has left on this
+                    # packet and finish the hop on a later step.
+                    pkt.sent += budget[key]
+                    self._served[ei] += budget[key]
+                    budget[key] = 0.0
                     blocked = True
                     retained[node].append(pkt)
                     continue
 
-                # Link can serve it -- check the downstream buffer next.
+                # Link can finish the hop -- check the downstream buffer next.
+                budget[key] = max(budget[key] - need, 0.0)
+                self._served[ei] += need
+                pkt.sent = 0.0
                 if pkt.hop_index + 1 == len(pkt.path) - 1:
-                    budget[key] -= pkt.size
-                    self._served[ei] += pkt.size
                     pkt.hop_index += 1
                     delivered_units += pkt.size
                     delivered_count += 1
                     delay = float(step - pkt.birth_step + 1)
                     latencies.append((delay, pkt.delay_sensitivity, pkt.size))
-                    if delay > pkt.deadline:
+                    if delay > pkt.deadline and not pkt.missed:
+                        pkt.missed = True
                         deadline_misses += 1
                 elif occ(nxt) + pkt.size > self.node_buffer:
                     dropped_units += pkt.size          # downstream overflow
-                    budget[key] -= pkt.size
-                    self._served[ei] += pkt.size
                 else:
-                    budget[key] -= pkt.size
-                    self._served[ei] += pkt.size
                     pkt.hop_index += 1
                     arrivals[nxt].append(pkt)
+                    arrived[nxt] += pkt.size
 
         self.buffers = {n: retained[n] + arrivals[n] for n in self.graph.nodes()}
+
+        # Packets still queued: record their age, and count a deadline miss
+        # the first step a packet outlives its deadline while waiting. Without
+        # this, traffic that never leaves a buffer is invisible to the delay
+        # and deadline terms of the reward.
+        queue_expired = 0
+        queued_count = 0
+        queued_units = 0.0
+        queued_age_sum = 0.0
+        queued_weighted_age_sum = 0.0
+        for pkts in self.buffers.values():
+            for pkt in pkts:
+                age = float(step - pkt.birth_step + 1)
+                queued_count += 1
+                queued_units += pkt.size
+                queued_age_sum += age
+                queued_weighted_age_sum += age * pkt.delay_sensitivity * pkt.size
+                if age > pkt.deadline and not pkt.missed:
+                    pkt.missed = True
+                    queue_expired += 1
 
         caps = np.array([self.graph[u][v]["capacity"] for u, v in self._edges])
         util = np.clip(self._served / np.maximum(caps, 1e-9), 0.0, 1.0)
@@ -222,6 +256,11 @@ class NetworkModel:
             "latencies": latencies,
             "delivered_count": delivered_count,
             "deadline_misses": deadline_misses,
+            "queue_expired": queue_expired,
+            "queued_count": queued_count,
+            "queued_units": queued_units,
+            "queued_age_sum": queued_age_sum,
+            "queued_weighted_age_sum": queued_weighted_age_sum,
             "pending_units": pending_units,
             "utilization": util,
         }

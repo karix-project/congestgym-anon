@@ -19,6 +19,7 @@ except ImportError:
         pass
 
 from carla_gym.core.network import NetworkModel
+from carla_gym.core.step import advance
 from carla_gym.core.traffic import TrafficGenerator
 from carla_gym.utils.reward import RewardCalculator
 
@@ -115,31 +116,12 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
                     global_routing[edge_idx] = rt_act[idx]
 
         global_bw = self._apply_budget(global_bw)
-        self.network.update_routing(global_routing)
-
-        packets = self.traffic.generate(self._step_count)
-        offered, admit_dropped = self.network.admit(packets)
-        stats = self.network.forward(global_bw, self._step_count)
-
-        dropped = admit_dropped + stats["dropped_units"]
-        delivered = stats["delivered_units"]
-
-        lat = stats["latencies"]
-        if lat:
-            num = sum(d * s * sz for d, s, sz in lat)
-            den = sum(sz for _, _, sz in lat)
-            weighted_delay = num / den
-        else:
-            weighted_delay = 0.0
-
-        t_n, d_n, l_n, m_n = self.reward_calc.normalize(delivered, offered, weighted_delay, dropped, stats["deadline_misses"], stats["delivered_count"])
-        
         # Global cooperative reward
-        reward = self.reward_calc.compute(t_n, d_n, l_n, m_n)
-
-        self._pending = stats["pending_units"].astype(np.float32)
+        reward, step_info, self._pending = advance(
+            self.network, self.traffic, self.reward_calc,
+            global_bw, global_routing, self._step_count)
         self._step_count += 1
-        
+
         trunc = self._step_count >= self.max_steps
         term = False
         
@@ -148,7 +130,7 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
         rewards = {a: float(reward) for a in self.agents}
         terminations = {a: term for a in self.agents}
         truncations = {a: trunc for a in self.agents}
-        infos = {a: {} for a in self.agents}
+        infos = {a: dict(step_info) for a in self.agents}
 
         if term or trunc:
             self.agents = []

@@ -225,3 +225,96 @@ def test_multi_agent_unseeded_resets_draw_fresh_traffic():
     second = episode(env)
     assert first != second
     assert episode(env, seed=0) == first
+
+
+# ---------------------------------------------------------------- link service (M2) / buffers (N1)
+def _single_packet_net(size=12.0, deadline=8):
+    from carla_gym.core.traffic import Packet, QoSClass
+    net = NetworkModel("ring", 4, link_capacity=30.0, node_buffer=1000.0, seed=0)
+    net.update_routing(np.ones(net.num_edges()))
+    net.admit([Packet(0, 1, QoSClass.VIDEO, size, 1.5, deadline, 0)])
+    return net
+
+
+def test_packet_larger_than_link_budget_is_served_over_several_steps():
+    """Regression guard: a 12-unit packet on a link serving 9 units/step used
+    to wait forever, which made every allocation below ~0.4 equally useless."""
+    net = _single_packet_net()
+    alloc = np.full(net.num_edges(), 0.3)            # 9 units/step
+    first = net.forward(alloc, 0)
+    assert first["delivered_units"] == 0.0
+    second = net.forward(alloc, 1)
+    assert second["delivered_units"] == pytest.approx(12.0)
+    assert second["latencies"][0][0] == 2.0
+
+
+def test_zero_allocation_moves_nothing():
+    net = _single_packet_net()
+    for s in range(20):
+        assert net.forward(np.zeros(net.num_edges()), s)["delivered_units"] == 0.0
+    assert net.backlog_units() == pytest.approx(12.0)
+
+
+def test_link_never_serves_more_than_its_allocation():
+    env = CarlaGymEnv(max_steps=60, bandwidth_budget=None, seed=12)
+    env.reset(seed=12)
+    rng = np.random.default_rng(12)
+    for _ in range(60):
+        a = rng.uniform(0, 1, 2 * env.num_edges)
+        env.step(a)
+        served = env.network._served
+        assert np.all(served <= env.network.link_capacity * a[:env.num_edges] + 1e-6)
+
+
+def test_reward_increases_with_bandwidth_without_a_dead_zone():
+    def run(weight):
+        env = CarlaGymEnv(max_steps=100, bandwidth_budget=None, seed=13)
+        env.reset(seed=13)
+        a = np.full(2 * env.num_edges, weight, dtype=np.float32)
+        return float(np.mean([env.step(a)[1] for _ in range(100)][20:]))
+
+    rewards = [run(w) for w in (0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1.0)]
+    assert all(b > a + 0.01 for a, b in zip(rewards, rewards[1:]))
+
+
+@pytest.mark.parametrize("weight,load", [(0.6, 1.0), (1.0, 1.0), (0.6, 2.0), (1.0, 2.0)])
+def test_node_buffers_bounded_while_traffic_moves(weight, load):
+    """Regression guard: downstream space was checked against a partial view
+    of the buffer, so nodes held several times `node_buffer` under load."""
+    env = CarlaGymEnv(max_steps=80, bandwidth_budget=None, load_scale=load, seed=14)
+    env.reset(seed=14)
+    a = np.full(2 * env.num_edges, weight, dtype=np.float32)
+    for _ in range(80):
+        env.step(a)
+        assert np.all(env.network.get_node_occupancy() <= env.network.node_buffer + 1e-6)
+
+
+# ---------------------------------------------------------------- reward honesty (M1)
+def test_packet_stuck_in_queue_counts_as_deadline_miss_once():
+    net = _single_packet_net(deadline=3)
+    alloc = np.zeros(net.num_edges())
+    expired = [net.forward(alloc, s)["queue_expired"] for s in range(10)]
+    assert sum(expired) == 1 and expired[3] == 1     # age 4 > deadline 3 at step 3
+    late = net.forward(np.ones(net.num_edges()), 10)
+    assert late["delivered_count"] == 1 and late["deadline_misses"] == 0
+
+
+def test_starved_network_is_penalised_for_delay_and_deadlines():
+    """Regression guard: with nothing delivered, the delay and deadline terms
+    used to read 0, so a fully stalled network looked free of latency."""
+    env = CarlaGymEnv(max_steps=40, seed=15)
+    env.reset(seed=15)
+    infos = [env.step(np.zeros(2 * env.num_edges, dtype=np.float32))[4] for _ in range(40)]
+    assert infos[-1]["reward_delay"] == pytest.approx(1.0)
+    assert sum(i["deadline_misses"] for i in infos) > 0
+    assert infos[-1]["mean_queue_age_steps"] > 0.0
+
+
+def test_deadline_coefficient_is_configurable():
+    def total(m):
+        env = CarlaGymEnv(max_steps=40, m=m, seed=16)
+        env.reset(seed=16)
+        a = np.full(2 * env.num_edges, 0.4, dtype=np.float32)
+        return sum(env.step(a)[1] for _ in range(40))
+
+    assert total(0.0) > total(0.5) > total(2.0)

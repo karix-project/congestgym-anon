@@ -13,6 +13,7 @@ import numpy as np
 from gymnasium import spaces
 
 from carla_gym.core.network import NetworkModel
+from carla_gym.core.step import advance
 from carla_gym.core.traffic import TrafficGenerator
 from carla_gym.utils.reward import RewardCalculator
 
@@ -23,11 +24,14 @@ class CarlaGymEnv(gym.Env):
     def __init__(self, topology: str = "grid", num_nodes: int = 9,
                  link_capacity: float = 30.0, node_buffer: float = 120.0,
                  load_scale: float = 1.0, max_steps: int = 200,
-                 k: float = 0.5, c: float = 1.0, delay_reference: float = 10.0,
+                 k: float = 0.5, c: float = 1.0, m: float = 0.5,
+                 delay_reference: float = 10.0,
                  bandwidth_budget: float | None = 0.8,
                  traffic=None,
                  render_mode: str | None = None, seed: int | None = None):
         """
+        k, c, m : reward coefficients for delay, packet loss and deadline
+            misses (see utils/reward.py).
         bandwidth_budget : if set (0, 1], the agent may only spend that
             fraction of total link capacity per step; actions summing above
             it are rescaled down. Without this constraint the optimal policy
@@ -46,7 +50,7 @@ class CarlaGymEnv(gym.Env):
         # `traffic`: optional pre-built generator (e.g. TraceTrafficGenerator).
         self.traffic = traffic or TrafficGenerator(nodes=list(self.network.graph.nodes()),
                                         load_scale=load_scale, seed=seed)
-        self.reward_calc = RewardCalculator(k=k, c=c, delay_reference=delay_reference)
+        self.reward_calc = RewardCalculator(k=k, c=c, m=m, delay_reference=delay_reference)
 
         self.num_edges = self.network.num_edges()
         self.num_nodes = self.network.num_nodes
@@ -80,48 +84,13 @@ class CarlaGymEnv(gym.Env):
         bw_action = self._apply_budget(action[:self.num_edges])
         routing_action = action[self.num_edges:]
         
-        # Apply routing weights so admit() routes dynamically
-        self.network.update_routing(routing_action)
+        reward, info, self._pending = advance(
+            self.network, self.traffic, self.reward_calc,
+            bw_action, routing_action, self._step_count)
 
-        packets = self.traffic.generate(self._step_count)
-        offered, admit_dropped = self.network.admit(packets)
-        stats = self.network.forward(bw_action, self._step_count)
-
-        dropped = admit_dropped + stats["dropped_units"]
-        delivered = stats["delivered_units"]
-
-        lat = stats["latencies"]
-        if lat:
-            num = sum(d * s * sz for d, s, sz in lat)
-            den = sum(sz for _, _, sz in lat)
-            weighted_delay = num / den
-            raw_delay = sum(d for d, _, _ in lat) / len(lat)
-        else:
-            weighted_delay = raw_delay = 0.0
-
-        t_n, d_n, l_n, m_n = self.reward_calc.normalize(delivered, offered, weighted_delay, dropped, stats["deadline_misses"], stats["delivered_count"])
-        reward = self.reward_calc.compute(t_n, d_n, l_n, m_n)
-
-        self._pending = stats["pending_units"].astype(np.float32)
         self._step_count += 1
         truncated = self._step_count >= self.max_steps
-
-        info = {
-            "step": self._step_count,
-            "reward_throughput": t_n,
-            "reward_delay": d_n,
-            "reward_loss": l_n,
-            "reward_deadline_miss": m_n,
-            "delivered_units": delivered,
-            "offered_units": offered,
-            "dropped_units": dropped,
-            "mean_latency_steps": raw_delay,
-            "weighted_latency_steps": weighted_delay,
-            "delivered_count": stats["delivered_count"],
-            "deadline_misses": stats["deadline_misses"],
-            "backlog_units": self.network.backlog_units(),
-            "mean_link_utilization": float(stats["utilization"].mean()),
-        }
+        info["step"] = self._step_count
         return self._observe(), float(reward), False, truncated, info
 
     def render(self):

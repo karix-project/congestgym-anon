@@ -46,6 +46,12 @@ class Packet:
     # (not in a side table) so store-and-forward progress is self-contained.
     path: list[int] = field(default_factory=list)
     hop_index: int = 0
+    # Units already transmitted over the current hop. A packet larger than a
+    # link's per-step budget crosses it over several steps instead of stalling.
+    sent: float = 0.0
+    # Set once the packet's age first exceeds its deadline (queued or delivered),
+    # so a deadline miss is counted exactly once.
+    missed: bool = False
 
     @property
     def next_hop(self) -> int | None:

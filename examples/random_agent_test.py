@@ -81,6 +81,7 @@ def run_policy(name, fn, episodes, steps, topology, seed, budget=None, warmup=20
             rows.append({
                 "policy": name, "episode": ep, "step": t,
                 "action_mean": float(np.mean(action)),
+                "bandwidth_mean": float(np.mean(action[:env.num_edges])),
                 "reward": reward,
                 "throughput": info["reward_throughput"],
                 "delay_norm": info["reward_delay"],
@@ -136,9 +137,11 @@ def main():
     print(summary.round(3).to_string())
 
     rnd = warm[warm["policy"] == "random"]
-    print("\n=== Random-agent sensitivity: action_mean vs outcomes ===")
-    corr = rnd[["action_mean", "reward", "backlog_units",
-                "loss_ratio", "latency_steps"]].corr()["action_mean"]
+    # Correlate against the bandwidth half of the action only: the routing
+    # half has no monotone effect, so the mean over both dilutes the signal.
+    print("\n=== Random-agent sensitivity: bandwidth_mean vs outcomes ===")
+    corr = rnd[["bandwidth_mean", "reward", "backlog_units",
+                "loss_ratio", "latency_steps"]].corr()["bandwidth_mean"]
     print(corr.round(3).to_string())
 
     print("\n=== Sprint 4 checks ===")
