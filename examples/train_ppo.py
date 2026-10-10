@@ -10,6 +10,7 @@ Train on the CONSTRAINED setting (--budget 0.8). Unconstrained, the optimum is
 "output 1.0 everywhere" and there is nothing to learn.
 """
 import argparse
+import gymnasium as gym
 import numpy as np
 import pandas as pd
 from stable_baselines3 import PPO
@@ -21,7 +22,11 @@ from carla_gym.core.trace_traffic import TraceTrafficGenerator
 from examples.random_agent_test import policy_max, policy_queue_proportional, policy_random
 
 
-def make_env(args, seed):
+def make_env(args, seed, rescale=True):
+    """`rescale=True` exposes the action space as [-1, 1] (mapped linearly to
+    the env's native [0, 1]). An SB3 Gaussian policy starts with mean 0; on
+    the native space that is the zero-bandwidth corner and half of all
+    exploration noise is clipped away. Heuristics use the native space."""
     def _f():
         traffic = None
         if args.trace:
@@ -30,6 +35,8 @@ def make_env(args, seed):
         env = CarlaGymEnv(topology=args.topology, num_nodes=args.nodes,
                           max_steps=args.steps, bandwidth_budget=args.budget,
                           traffic=traffic, seed=seed)
+        if rescale:
+            env = gym.wrappers.RescaleAction(env, -1.0, 1.0)
         return Monitor(env)
     return _f
 
@@ -63,6 +70,8 @@ def main():
     p.add_argument("--n-envs", type=int, default=4)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--save", default="ppo_carla")
+    p.add_argument("--log-std-init", type=float, default=-1.0,
+                   help="initial log std of the Gaussian policy (SB3 default 0.0)")
     a = p.parse_args()
 
     # Distinct seed per env rank, so parallel envs do not share one traffic stream.
@@ -71,18 +80,22 @@ def main():
     venv = VecNormalize(venv, norm_obs=False, norm_reward=True)   # reward scale ~[-2,1]
     model = PPO("MlpPolicy", venv, n_steps=512, batch_size=256, gamma=0.95,
                 learning_rate=3e-4, ent_coef=0.0, seed=a.seed, verbose=1,
+                policy_kwargs=dict(log_std_init=a.log_std_init),
                 tensorboard_log=None)
     model.learn(total_timesteps=a.timesteps)
     model.save(a.save)
 
     # ---- held-out evaluation: seeds the agent never trained on ----
     test_seeds = range(1000, 1010)
-    env = make_env(a, 0)()
+    agent_env = make_env(a, 0)()                  # [-1, 1] actions, as trained
+    native_env = make_env(a, 0, rescale=False)()  # [0, 1] actions, for heuristics
     ppo_fn = lambda e, o: model.predict(o, deterministic=True)[0]
+    random_rng = np.random.default_rng(a.seed)
     rows = []
-    for name, fn in [("PPO", ppo_fn), ("queue_proportional", policy_queue_proportional),
-                     ("max_bandwidth", policy_max),
-                     ("random", lambda e, o: policy_random(e, o, np.random.default_rng()))]:
+    for name, fn, env in [("PPO", ppo_fn, agent_env),
+                          ("queue_proportional", policy_queue_proportional, native_env),
+                          ("max_bandwidth", policy_max, native_env),
+                          ("random", lambda e, o: policy_random(e, o, random_rng), native_env)]:
         m, sd = rollout(env, fn, test_seeds, a.steps)
         rows.append({"policy": name, "reward_mean": round(m, 3), "reward_std": round(sd, 3)})
     print("\n=== Held-out evaluation ===")
