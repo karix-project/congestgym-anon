@@ -52,16 +52,7 @@ PYTHONPATH=. python examples/random_agent_test.py --episodes 3 --steps 150
 PYTHONPATH=. python examples/random_agent_test.py --budget 0.8   # constrained variant
 
 # Dataset-driven: convert a raw dataset, then train on it
-PYTHONPATH=. python scripts/prepare_trace.py --in data/output1.csv --out data/pcap_tr[carla_gym](../carla-gym-integrated/carla_gym)
-[data](../carla-gym-integrated/data)
-[examples](../carla-gym-integrated/examples)
-[LICENSE](../carla-gym-integrated/LICENSE)
-[notebooks](../carla-gym-integrated/notebooks)
-[pyproject.toml](../carla-gym-integrated/pyproject.toml)
-[README.md](../carla-gym-integrated/README.md)
-[requirements.txt](../carla-gym-integrated/requirements.txt)
-[scripts](../carla-gym-integrated/scripts)
-[tests](../carla-gym-integrated/tests)ace.csv
+PYTHONPATH=. python scripts/prepare_trace.py --in data/output1.csv --out data/pcap_trace.csv
 PYTHONPATH=. python examples/train_ppo.py --trace data/pcap_trace.csv --nodes 16 \
     --load 110 --budget 0.5 --timesteps 300000
 ```
