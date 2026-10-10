@@ -245,7 +245,7 @@ Log: `qa/retest/confirm_round5.log`.
 ### One new finding
 
 **R5-1 (LOW): a hardware-address fragment from the capture is still in the
-code.** `carla_gym/core/dataset_adapters.py` line 22 gives, as an example of a
+code.** `carla_gym/core/dataset_adapters.py` line 23 gives, as an example of a
 non-IP endpoint, a MAC-vendor string taken from the capture (vendor label
 plus the last three octets of a network card's address). It is not an IP
 address and identifies at most a virtual network card, but it is real data
