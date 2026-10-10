@@ -5,7 +5,7 @@ Sprint 4 deliverable. Runs a random-action agent and logs every step with
 Pandas to verify that actions genuinely move queue lengths, latency and
 reward.
 
-It also runs three reference policies alongside random. A random agent on
+It also runs the rule-based reference policies alongside random. A random agent on
 its own only proves the env *runs*; comparing it against a deliberately
 bad policy (min bandwidth) and a sensible one (max / queue-proportional)
 is what demonstrates there is a real control problem to learn -- which is
@@ -25,47 +25,12 @@ import pandas as pd
 from carla_gym.env import CarlaGymEnv
 
 
-# ---------------------------------------------------------------------- #
-# Reference policies
-#
-# `rng` defaults to None (and is unused by every policy except the random
-# one) so these can be called either as fn(env, obs, rng) -- this file's
-# own run_policy() -- or as fn(env, obs) -- examples/train_ppo.py's
-# rollout(), which evaluates PPO against these same baselines and doesn't
-# thread an rng through. Keep that compatibility if you add a new policy.
-# ---------------------------------------------------------------------- #
-def policy_random(env, obs, rng=None):
-    rng = rng if rng is not None else np.random.default_rng()
-    return rng.uniform(0.0, 1.0, size=2 * env.num_edges)
-
-
-def policy_max(env, obs, rng=None):
-    return np.ones(2 * env.num_edges)
-
-
-def policy_min(env, obs, rng=None):
-    return np.full(2 * env.num_edges, 0.05)
-
-
-def policy_queue_proportional(env, obs, rng=None):
-    """Allocate bandwidth in proportion to each link's pending demand.
-    Keep routing weights uniform for the baseline."""
-    pending = obs[env.num_edges:2 * env.num_edges]
-    if pending.max() <= 1e-9:
-        bw = np.full(env.num_edges, 0.5)
-    else:
-        bw = np.clip(pending / pending.max(), 0.05, 1.0)
-    
-    routing = np.ones(env.num_edges)
-    return np.concatenate([bw, routing])
-
-
-POLICIES = {
-    "random": policy_random,
-    "min_bandwidth": policy_min,
-    "max_bandwidth": policy_max,
-    "queue_proportional": policy_queue_proportional,
-}
+# Reference policies live in carla_gym/baselines.py; re-exported here so
+# existing imports from this module keep working.
+from carla_gym.baselines import (  # noqa: E402,F401
+    POLICIES, policy_congestion_aware, policy_load_aware_routing, policy_max,
+    policy_min, policy_queue_proportional, policy_random,
+)
 
 
 def run_policy(name, fn, episodes, steps, topology, seed, budget=None, warmup=20):
