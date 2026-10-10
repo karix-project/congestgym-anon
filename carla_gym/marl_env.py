@@ -115,6 +115,11 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
         if not actions:
             self.agents = []
             return {}, {}, {}, {}, {}
+        if set(actions) != set(self.agents):
+            missing = sorted(set(self.agents) - set(actions))
+            unknown = sorted(set(actions) - set(self.agents), key=str)
+            raise ValueError(f"step() needs one action per live agent; "
+                             f"missing {missing}, unknown {unknown}")
 
         # Reconstruct global action vector from individual agent actions
         global_bw = np.zeros(self.network.num_edges(), dtype=np.float32)

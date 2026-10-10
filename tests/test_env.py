@@ -1,7 +1,7 @@
 """
 tests/test_env.py
 
-Sprint 1-4 validation. Beyond API conformance these assert the simulator
+Environment and simulator tests. Beyond API conformance these assert the simulator
 *invariants* -- conservation of packet units, live node observables, and
 monotone response to bandwidth -- because those are the properties that
 silently broke in earlier iterations.
@@ -17,7 +17,7 @@ from carla_gym.env import CarlaGymEnv
 from carla_gym.utils.reward import RewardCalculator
 
 
-# ---------------------------------------------------------------- Sprint 1
+# ---------------------------------------------------------------- API and seeding basics
 def test_gymnasium_api_conformance():
     env = CarlaGymEnv(max_steps=20, seed=0)
     check_env(env.unwrapped, skip_render_check=True)
@@ -39,7 +39,7 @@ def test_reset_is_deterministic_given_seed():
     assert np.allclose(oa, ob) and ra == pytest.approx(rb)
 
 
-# ---------------------------------------------------------------- Sprint 2
+# ---------------------------------------------------------------- topologies, conservation, buffers
 @pytest.mark.parametrize("topology", ["grid", "random", "star", "mesh", "ring"])
 def test_all_topologies_build_and_step(topology):
     env = CarlaGymEnv(topology=topology, num_nodes=9, max_steps=5, seed=0)
@@ -78,7 +78,7 @@ def test_node_buffers_never_exceed_capacity():
         assert np.all(occ <= env.network.node_buffer + 1e-6)
 
 
-# ---------------------------------------------------------------- Sprint 3
+# ---------------------------------------------------------------- observations and reward terms
 def test_node_occupancy_is_a_live_observable():
     """Regression guard: node queues were previously always zero, silently
     wasting a third of the observation vector."""
@@ -120,9 +120,9 @@ def test_observation_always_within_bounds_under_stress():
         assert env.observation_space.contains(obs)
 
 
-# ---------------------------------------------------------------- Sprint 4
+# ---------------------------------------------------------------- actions matter
 def test_more_bandwidth_yields_no_worse_throughput():
-    """The central premise of Sprint 4: the action must actually matter."""
+    """The central premise of the benchmark: the action must actually matter."""
     def run(weight):
         env = CarlaGymEnv(max_steps=60, seed=8)
         env.reset(seed=8)
@@ -502,3 +502,20 @@ def test_network_rejects_non_finite_allocation_and_routing():
         net.update_routing(-good)
     with pytest.raises(ValueError, match="allocation"):
         net.forward(np.ones(3), 0)
+
+
+# ---------------------------------------------------------------- parameter validation (T3)
+@pytest.mark.parametrize("kwargs", [
+    dict(delay_reference=0.0), dict(delay_reference=-1.0),
+    dict(k=-0.1), dict(c=-1.0), dict(m=-0.5), dict(load_scale=-1.0),
+])
+def test_invalid_reward_and_load_parameters_rejected(kwargs):
+    with pytest.raises(ValueError):
+        CarlaGymEnv(**kwargs)
+
+
+def test_zero_coefficients_and_zero_load_are_valid():
+    env = CarlaGymEnv(k=0.0, c=0.0, m=0.0, load_scale=0.0, max_steps=5, seed=0)
+    env.reset(seed=0)
+    _, reward, _, _, info = env.step(env.action_space.sample())
+    assert reward == 0.0 and info["offered_units"] == 0.0

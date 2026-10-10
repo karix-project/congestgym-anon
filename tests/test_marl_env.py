@@ -97,3 +97,16 @@ def test_wrong_shape_agent_action_rejected():
     acts[env.agents[0]] = np.ones(1, dtype=np.float32)
     with pytest.raises(ValueError, match="must have shape"):
         env.step(acts)
+
+
+def test_step_requires_an_action_for_every_live_agent():
+    """Regression guard: a missing agent's links silently got zero bandwidth."""
+    env = MultiAgentCarlaGymEnv(max_steps=5, seed=0)
+    env.reset(seed=0)
+    acts = {a: env.action_space(a).sample() for a in env.agents}
+    partial = dict(list(acts.items())[:-1])
+    with pytest.raises(ValueError, match="one action per live agent"):
+        env.step(partial)
+    with pytest.raises(ValueError, match="one action per live agent"):
+        env.step({**acts, "node_99": np.zeros(2, dtype=np.float32)})
+    env.step(acts)

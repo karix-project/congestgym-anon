@@ -1,7 +1,7 @@
 """
 examples/random_agent_test.py
 
-Sprint 4 deliverable. Runs a random-action agent and logs every step with
+Sanity run. Runs a random-action agent and logs every step with
 Pandas to verify that actions genuinely move queue lengths, latency and
 reward.
 
@@ -9,7 +9,7 @@ It also runs the rule-based reference policies alongside random. A random agent 
 its own only proves the env *runs*; comparing it against a deliberately
 bad policy (min bandwidth) and a sensible one (max / queue-proportional)
 is what demonstrates there is a real control problem to learn -- which is
-the claim your Phase-1 evaluation actually rests on.
+the property every later evaluation rests on.
 
 Usage:
     python examples/random_agent_test.py --episodes 3 --steps 150
@@ -65,7 +65,7 @@ def run_policy(name, fn, episodes, steps, topology, seed, budget=None, warmup=20
 
 
 def main():
-    p = argparse.ArgumentParser(description="CarlaGym Sprint 4 validation")
+    p = argparse.ArgumentParser(description="CarlaGym sanity run: baselines and six checks")
     p.add_argument("--episodes", type=int, default=3)
     p.add_argument("--steps", type=int, default=150)
     p.add_argument("--topology", type=str, default="grid",
@@ -109,7 +109,7 @@ def main():
                 "loss_ratio", "latency_steps"]].corr()["bandwidth_mean"]
     print(corr.round(3).to_string())
 
-    print("\n=== Sprint 4 checks ===")
+    print("\n=== Sanity checks ===")
     checks = [
         ("node occupancy is a live observable (not constant zero)",
          warm["mean_node_occupancy"].std() > 1e-6),

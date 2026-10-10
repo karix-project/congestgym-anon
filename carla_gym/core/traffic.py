@@ -71,6 +71,8 @@ class TrafficGenerator:
             raise ValueError("Need >=2 nodes to generate src/dst pairs")
         self.nodes = list(nodes)
         self.qos_profiles = qos_profiles or DEFAULT_QOS_PROFILES
+        if load_scale < 0:
+            raise ValueError(f"load_scale must be >= 0, got {load_scale}")
         self.load_scale = load_scale
         self.rng = np.random.default_rng(seed)
 
