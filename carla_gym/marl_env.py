@@ -124,7 +124,13 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
             owned = self.agent_edges[agent]
             if owned:
                 num_owned = len(owned)
-                action = np.clip(np.asarray(action, dtype=np.float32), 0.0, 1.0)
+                action = np.asarray(action, dtype=np.float32)
+                if action.shape != (2 * num_owned,):
+                    raise ValueError(f"action for {agent} must have shape {(2 * num_owned,)}, "
+                                     f"got {action.shape}")
+                if not np.all(np.isfinite(action)):
+                    raise ValueError(f"action for {agent} contains NaN or infinite values")
+                action = np.clip(action, 0.0, 1.0)
                 bw_act = action[:num_owned]
                 rt_act = action[num_owned:]
                 for idx, edge_idx in enumerate(owned):

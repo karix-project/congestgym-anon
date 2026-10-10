@@ -126,7 +126,11 @@ class NetworkModel:
         self.update_routing(np.ones(len(self._edges)))
 
     def update_routing(self, routing_weights: np.ndarray) -> None:
-        """Update edge routing weights and recompute shortest paths (Phase 2 dynamic routing)."""
+        """Update edge routing weights and recompute shortest paths."""
+        routing_weights = np.asarray(routing_weights, dtype=np.float64)
+        if routing_weights.shape != (len(self._edges),) or not np.all(np.isfinite(routing_weights)) \
+                or np.any(routing_weights < 0):
+            raise ValueError("routing_weights must be one finite, non-negative weight per edge")
         for i, (u, v) in enumerate(self._edges):
             # A small epsilon prevents zero-weight cycles if action is 0
             self.graph[u][v]["routing_weight"] = float(routing_weights[i]) + 1e-4
@@ -177,7 +181,12 @@ class NetworkModel:
         """Advance every packet at most one hop, honouring per-link budget
         and downstream buffer space. `allocation` is one weight per edge in
         the canonical edge order (see edge_list())."""
-        alloc = np.clip(np.asarray(allocation, dtype=np.float64), 0.0, 1.0)
+        alloc = np.asarray(allocation, dtype=np.float64)
+        # NaN survives clip and compares false against everything, which would
+        # make a link look unlimited. Refuse it here, whoever the caller is.
+        if alloc.shape != (len(self._edges),) or not np.all(np.isfinite(alloc)):
+            raise ValueError("allocation must be one finite weight per edge")
+        alloc = np.clip(alloc, 0.0, 1.0)
         budget = {self._key(u, v): self._edge_capacity[i] * alloc[i]
                   for i, (u, v) in enumerate(self._edges)}
 

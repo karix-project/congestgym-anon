@@ -77,3 +77,23 @@ def test_missing_pettingzoo_fails_loudly(monkeypatch):
     monkeypatch.setattr(marl, "_HAS_PETTINGZOO", False)
     with pytest.raises(ImportError, match="pettingzoo"):
         MultiAgentCarlaGymEnv()
+
+
+@pytest.mark.parametrize("bad", [np.nan, np.inf])
+def test_non_finite_agent_action_rejected(bad):
+    env = MultiAgentCarlaGymEnv(max_steps=5, seed=0)
+    env.reset(seed=0)
+    acts = {a: np.full(env.action_space(a).shape, 0.5, dtype=np.float32) for a in env.agents}
+    first = env.agents[0]
+    acts[first][0] = bad
+    with pytest.raises(ValueError, match="NaN or infinite"):
+        env.step(acts)
+
+
+def test_wrong_shape_agent_action_rejected():
+    env = MultiAgentCarlaGymEnv(max_steps=5, seed=0)
+    env.reset(seed=0)
+    acts = {a: np.full(env.action_space(a).shape, 0.5, dtype=np.float32) for a in env.agents}
+    acts[env.agents[0]] = np.ones(1, dtype=np.float32)
+    with pytest.raises(ValueError, match="must have shape"):
+        env.step(acts)

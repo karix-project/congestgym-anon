@@ -472,3 +472,33 @@ def test_ci95_matches_hand_computed_interval():
     from carla_gym.utils.stats import ci95
     assert ci95([1.0, 2.0, 3.0, 4.0, 5.0]) == pytest.approx(2.776 * np.std([1, 2, 3, 4, 5], ddof=1) / np.sqrt(5))
     assert np.isnan(ci95([1.0]))
+
+
+# ---------------------------------------------------------------- non-finite actions (T2)
+@pytest.mark.parametrize("bad", [np.nan, np.inf, -np.inf])
+@pytest.mark.parametrize("position", [0, 5, 12, 23])
+def test_non_finite_action_rejected(bad, position):
+    """Regression guard: NaN survived clipping and compared false against the
+    link budget, so a NaN action got unlimited bandwidth (79.9 units through a
+    30-unit link) and scored above any valid policy."""
+    env = CarlaGymEnv(seed=0)
+    env.reset(seed=0)
+    action = np.full(2 * env.num_edges, 0.5, dtype=np.float32)
+    action[position] = bad
+    with pytest.raises(ValueError, match="NaN or infinite"):
+        env.step(action)
+    env.step(np.full(2 * env.num_edges, 0.5, dtype=np.float32))   # env still usable
+
+
+def test_network_rejects_non_finite_allocation_and_routing():
+    net = NetworkModel("grid", 9, seed=0)
+    good = np.ones(net.num_edges())
+    bad = good.copy(); bad[3] = np.nan
+    with pytest.raises(ValueError, match="allocation"):
+        net.forward(bad, 0)
+    with pytest.raises(ValueError, match="routing_weights"):
+        net.update_routing(bad)
+    with pytest.raises(ValueError, match="routing_weights"):
+        net.update_routing(-good)
+    with pytest.raises(ValueError, match="allocation"):
+        net.forward(np.ones(3), 0)

@@ -98,6 +98,8 @@ class CarlaGymEnv(gym.Env):
         if action.shape != self.action_space.shape:
             raise ValueError(f"action must have shape {self.action_space.shape} "
                              f"(E bandwidth weights then E routing weights), got {action.shape}")
+        if not np.all(np.isfinite(action)):
+            raise ValueError("action contains NaN or infinite values")
         action = np.clip(action, 0.0, 1.0)
 
         # Split action into bandwidth allocation (first E) and routing weights (last E)
