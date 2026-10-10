@@ -55,12 +55,20 @@ def scenarios(quick: bool) -> list[dict]:
     out.append({"name": "grid/bottleneck node 4 x0.5/budget 0.8", "family": "bottleneck",
                 "topology": "grid", "num_nodes": 9, "load_scale": 1.0, "budget": 0.8,
                 "bottlenecks": {4: 0.5}})
-    for trace in (["pcap_trace.csv"] if quick else ["pcap_trace.csv", "cs448b_trace.csv"]):
+    # (trace file, target load, label). The pcap trace is benchmarked at load 40,
+    # where it is loaded but not saturated. Load 110 is kept as an overload case.
+    # The cs448b trace loses about half its traffic at any load (a few spike
+    # bins carry most of the volume), so it is a stress case, not a benchmark.
+    traces = [("pcap_trace.csv", 40.0, "pcap trace/load 40")]
+    if not quick:
+        traces += [("pcap_trace.csv", 110.0, "pcap trace/load 110 (overload)"),
+                   ("cs448b_trace.csv", 110.0, "cs448b trace/load 110 (stress case)")]
+    for trace, load, label in traces:
         for budget in ([0.5] if quick else [0.8, 0.5]):
-            out.append({"name": f"{trace.replace('_trace.csv', '')} trace/grid-16/budget {budget:g}",
+            out.append({"name": f"{label}/grid-16/budget {budget:g}",
                         "family": "trace", "topology": "grid", "num_nodes": 16,
                         "load_scale": 1.0, "budget": budget, "trace": trace,
-                        "target_load": 110.0})
+                        "target_load": load})
     return out
 
 
