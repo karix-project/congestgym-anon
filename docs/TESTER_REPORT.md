@@ -50,7 +50,7 @@ after-logs in `qa/after/repro_*.log`.
 | M3 multi-agent | Yes. 8 of 9 star agents (1 to 3 on other topologies) had empty action spaces; PettingZoo undeclared; silent fallback | `eb1d1df`, `a660a6c`: balanced link ownership, nodes without links are not agents, ImportError without PettingZoo, dependency declared | `tests/test_marl_env.py` (15 tests) | empty-action agents: 8 -> 0 (star) |
 | M4 render | Yes, `None` in both modes | `a3f6c58`: `rgb_array` returns an (H, W, 3) uint8 array | `test_render_rgb_array_returns_image`, `test_render_without_mode_returns_none`, `test_gymnasium_api_conformance_with_render` | NoneType -> ndarray (600, 750, 3) |
 | M5 validation | Yes, all five cases (budget -0.5 gave applied sum -6.00; `gym.make(max_steps=500)` cut at 200) | `a3f6c58` | `test_invalid_bandwidth_budget_rejected`, `test_valid_bandwidth_budgets_run`, `test_wrong_length_action_gives_clear_error`, `test_grid_rejects_non_square_node_count`, `test_step_after_truncation_requires_reset`, `test_gym_make_honours_max_steps` | each case now raises a clear error or behaves correctly |
-| M6 hygiene | Yes | `c80a0ff`, `84e3cec`, `a660a6c`: `.gitignore`; `__pycache__`, `.DS_Store`, `.idea` untracked; duplicate trace removed; versions pinned in `constraints.txt`; extras in `pyproject.toml`; `sys.executable` in the subprocess test; informal wording removed | `test_committed_traces_match_the_adapters` | n/a |
+| M6 hygiene | Yes | `c80a0ff`, `84e3cec`, `a660a6c`: `.gitignore`; `.DS_Store` removed (`__pycache__` and `.idea` were NOT untracked by `a660a6c` as first stated here; the QA re-test caught it as T1 and it is fixed in round 2, see section 10); duplicate trace removed; versions pinned in `constraints.txt`; extras in `pyproject.toml`; `sys.executable` in the subprocess test; informal wording removed | `test_committed_traces_match_the_adapters` | n/a |
 | LOW: trace mean load | Yes (pcap trace has 6 empty bins of 252) | `767fadf`: mean taken over all bins | `test_trace_mean_load_matches_target_including_empty_bins` | realised 106.1 (handoff figure) -> 110.6 in notebook 03 |
 | LOW: unseeded random placement | Yes (by reading) | `767fadf`: `topology_seed` parameter and `--topology-seed` | `test_random_topology_placement_uses_the_env_seed` | n/a |
 | LOW: `m` not exposed | Yes | `46fb356`: `CarlaGymEnv(m=...)` | `test_deadline_coefficient_is_configurable` | n/a |
@@ -223,3 +223,21 @@ term clipped at 1; global observation in the multi-agent env.
 14. README commands in PowerShell from a fresh clone, including the install.
 15. Notebook 04 part 2 trains live; its numbers will differ slightly between
     machines. Confirm the text it prints still matches what it plots.
+
+## 10. Round 2: fixes after the QA re-test (`docs/QA_RETEST_REPORT.md`)
+
+| ID | Finding | Fix | Guard |
+|---|---|---|---|
+| T1 | `__pycache__` (8 files) and `.idea` (6 files) were still tracked. I had staged their removal and then ran `git reset` to unstage unrelated files, which undid it; the commit message and this report then claimed something that had not happened. | `git rm -r --cached` on those paths; `git ls-files` now lists none. | none (repository state; check with `git ls-files`) |
+| T2 | A NaN action was served as unlimited bandwidth (reward +0.768, 79.9 units through a 30-unit link). | `CarlaGymEnv.step` and `MultiAgentCarlaGymEnv.step` raise `ValueError` on NaN/inf; the multi-agent env also checks each agent's action shape; `NetworkModel.forward` and `update_routing` refuse non-finite, negative-routing or mis-shaped input. | `test_non_finite_action_rejected` (12 cases), `test_network_rejects_non_finite_allocation_and_routing`, `test_non_finite_agent_action_rejected` (2), `test_wrong_shape_agent_action_rejected` |
+
+After round 2: `python -m pytest -q` -> **114 passed** (`tests/test_env.py` 73,
+`tests/test_dataset_pipeline.py` 23, `tests/test_marl_env.py` 18). The counts
+in sections 5 and 9 (98) describe the state before round 2.
+
+Results are unaffected: with finite actions the simulator behaves exactly as
+before (the tester's determinism probe still reproduces `results/benchmark`
+to 1e-15 and the saved PPO/SAC models reproduce their saved rewards).
+
+Not addressed in round 2, by instruction (only T1 and T2 were requested):
+T3 to T10 in `docs/QA_RETEST_REPORT.md`.
