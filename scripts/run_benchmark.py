@@ -12,7 +12,9 @@ on a node-bottleneck scenario, and on the dataset-driven traces.
 Writes to --out (default results/benchmark/):
     episodes.csv   one row per (scenario, policy, seed): post-warmup means
     summary.csv    mean and 95% confidence interval over seeds
-    summary.md     reward table, one row per scenario, best policy in bold
+    summary.md     reward table, one row per scenario; the best policy is bold
+                   only when its interval overlaps no other, ties are marked ~
+    qos.md         delivered and dropped fraction of traffic per scenario
 
 Every policy sees the same seeds within a scenario. The 95% CI is the
 Student-t interval over the per-seed episode means.
@@ -28,10 +30,14 @@ import pandas as pd
 from carla_gym.baselines import POLICIES
 from carla_gym.core.trace_traffic import TraceTrafficGenerator
 from carla_gym.env import CarlaGymEnv
+from carla_gym.utils.qos import EpisodeQoS
 from carla_gym.utils.stats import ci95
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data")
+# Per-step reward terms, averaged over the episode ...
 METRICS = ["reward", "throughput", "loss", "latency_steps", "deadline_miss"]
+# ... and episode-aggregate QoS from the raw counters (see utils/qos.py).
+QOS = ["delivered_fraction", "dropped_fraction", "latency_delivered", "deadline_miss_per_delivered"]
 
 
 def scenarios(quick: bool) -> list[dict]:
@@ -71,11 +77,14 @@ def run_episode(sc: dict, policy, seed: int, steps: int, warmup: int) -> dict:
     obs, _ = env.reset(seed=seed)
     rng = np.random.default_rng(seed)
     rows = []
-    for _ in range(steps):
+    qos = EpisodeQoS()
+    for t in range(steps):
         obs, reward, _, _, info = env.step(policy(env, obs, rng))
         rows.append((reward, info["reward_throughput"], info["reward_loss"],
                      info["mean_latency_steps"], info["reward_deadline_miss"]))
-    return dict(zip(METRICS, np.mean(rows[warmup:], axis=0)))
+        if t >= warmup:
+            qos.add(info)
+    return {**dict(zip(METRICS, np.mean(rows[warmup:], axis=0))), **qos.summary()}
 
 
 def main():
@@ -101,7 +110,7 @@ def main():
     episodes.to_csv(os.path.join(a.out, "episodes.csv"), index=False)
 
     grouped = episodes.groupby(["scenario", "family", "policy"], sort=False)
-    summary = grouped[METRICS].mean()
+    summary = grouped[METRICS + QOS].mean()
     summary["reward_ci95"] = grouped["reward"].apply(ci95)
     summary["n_seeds"] = grouped["reward"].size()
     summary = summary.reset_index()
@@ -113,15 +122,35 @@ def main():
     for sc_name, block in summary.groupby("scenario", sort=False):
         block = block.set_index("policy")
         best = block["reward"].idxmax()
+        best_low = block.loc[best, "reward"] - block.loc[best, "reward_ci95"]
+        # every policy whose interval overlaps the best one's is a statistical tie
+        tied = [pol for pol in policies
+                if block.loc[pol, "reward"] + block.loc[pol, "reward_ci95"] >= best_low]
         cells = []
         for pol in policies:
             cell = f"{block.loc[pol, 'reward']:+.3f} ± {block.loc[pol, 'reward_ci95']:.3f}"
-            cells.append(f"**{cell}**" if pol == best else cell)
+            if pol == best and len(tied) == 1:
+                cell = f"**{cell}**"
+            elif pol in tied:
+                cell = f"{cell} ~"
+            cells.append(cell)
         lines.append(f"| {sc_name} | " + " | ".join(cells) + " |")
     header = (f"Mean post-warmup reward ± 95% CI over {a.seeds} seeds "
-              f"({a.seed0}..{a.seed0 + a.seeds - 1}), {a.steps} steps, warmup {a.warmup}.\n\n")
+              f"({a.seed0}..{a.seed0 + a.seeds - 1}), {a.steps} steps, warmup {a.warmup}.\n"
+              f"**Bold**: best policy, its interval overlaps no other. "
+              f"`~`: best group, intervals overlap (a statistical tie).\n\n")
     with open(os.path.join(a.out, "summary.md"), "w", encoding="utf-8") as f:
         f.write(header + "\n".join(lines) + "\n")
+
+    qlines = ["| Scenario | " + " | ".join(policies) + " |", "|---|" + "---:|" * len(policies)]
+    for sc_name, block in summary.groupby("scenario", sort=False):
+        block = block.set_index("policy")
+        qlines.append(f"| {sc_name} | " + " | ".join(
+            f"{100 * block.loc[p, 'delivered_fraction']:.1f} / {100 * block.loc[p, 'dropped_fraction']:.1f}"
+            for p in policies) + " |")
+    with open(os.path.join(a.out, "qos.md"), "w", encoding="utf-8") as f:
+        f.write("Traffic delivered / dropped, as % of traffic offered after warm-up "
+                "(episode aggregate; the rest is backlog growth).\n\n" + "\n".join(qlines) + "\n")
     print(f"\nWrote {len(episodes)} episodes to {a.out}")
 
 

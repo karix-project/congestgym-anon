@@ -49,6 +49,9 @@ def run_policy(name, fn, episodes, steps, topology, seed, budget=None, warmup=20
                 "bandwidth_mean": float(np.mean(action[:env.num_edges])),
                 "reward": reward,
                 "throughput": info["reward_throughput"],
+                "offered_units": info["offered_units"],
+                "delivered_units": info["delivered_units"],
+                "dropped_units": info["dropped_units"],
                 "delay_norm": info["reward_delay"],
                 "loss_ratio": info["reward_loss"],
                 "latency_steps": info["mean_latency_steps"],
@@ -98,7 +101,12 @@ def main():
         backlog=("backlog_units", "mean"),
         node_occ=("mean_node_occupancy", "mean"),
     ).sort_values("reward", ascending=False)
-    print("=== Policy comparison (post-warmup means) ===")
+    # `throughput` and `loss` above are means of the per-step reward terms.
+    # The fraction of traffic actually delivered / dropped comes from totals.
+    totals = warm.groupby("policy")[["offered_units", "delivered_units", "dropped_units"]].sum()
+    summary["delivered_frac"] = totals["delivered_units"] / totals["offered_units"]
+    summary["dropped_frac"] = totals["dropped_units"] / totals["offered_units"]
+    print("=== Policy comparison (post-warmup means; *_frac = episode totals) ===")
     print(summary.round(3).to_string())
 
     rnd = warm[warm["policy"] == "random"]

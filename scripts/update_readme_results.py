@@ -16,6 +16,8 @@ ROOT = os.path.join(os.path.dirname(__file__), "..")
 SOURCES = {
     "training": os.path.join("results", "grid_b08", "summary.md"),
     "benchmark": os.path.join("results", "benchmark", "summary.md"),
+    "training_qos": os.path.join("results", "grid_b08", "qos.md"),
+    "benchmark_qos": os.path.join("results", "benchmark", "qos.md"),
 }
 
 

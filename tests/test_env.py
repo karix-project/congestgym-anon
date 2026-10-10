@@ -519,3 +519,29 @@ def test_zero_coefficients_and_zero_load_are_valid():
     env.reset(seed=0)
     _, reward, _, _, info = env.step(env.action_space.sample())
     assert reward == 0.0 and info["offered_units"] == 0.0
+
+
+# ---------------------------------------------------------------- episode-aggregate QoS
+def test_episode_qos_matches_raw_totals_and_differs_from_mean_of_step_ratios():
+    from carla_gym.utils.qos import EpisodeQoS
+    env = CarlaGymEnv(max_steps=120, bandwidth_budget=0.8, seed=21)
+    obs, _ = env.reset(seed=21)
+    qos, off, dlv, drp, step_tput = EpisodeQoS(), 0.0, 0.0, 0.0, []
+    for _ in range(120):
+        _, _, _, _, info = env.step(np.ones(2 * env.num_edges, dtype=np.float32))
+        qos.add(info)
+        off += info["offered_units"]; dlv += info["delivered_units"]; drp += info["dropped_units"]
+        step_tput.append(info["reward_throughput"])
+    s = qos.summary()
+    assert s["delivered_fraction"] == pytest.approx(dlv / off)
+    assert s["dropped_fraction"] == pytest.approx(drp / off)
+    assert s["delivered_fraction"] + s["dropped_fraction"] <= 1.0 + 1e-9
+    assert s["latency_delivered"] >= 1.0
+    # the reason this helper exists: the two notions of throughput are not the same number
+    assert abs(s["delivered_fraction"] - float(np.mean(step_tput))) > 0.005
+
+
+def test_episode_qos_empty_is_finite():
+    from carla_gym.utils.qos import EpisodeQoS
+    s = EpisodeQoS().summary()
+    assert all(np.isfinite(v) for v in s.values()) and s["delivered_fraction"] == 0.0
