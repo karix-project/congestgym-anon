@@ -58,7 +58,7 @@ def make_env(args, seed, rescale=True, monitor_file=None):
                           load_scale=getattr(args, "load_scale", 1.0),
                           traffic=traffic, seed=seed)
         if rescale:
-            env = gym.wrappers.RescaleAction(env, -1.0, 1.0)
+            env = gym.wrappers.RescaleAction(env, np.float32(-1.0), np.float32(1.0))
         return Monitor(env, filename=monitor_file)
     return _f
 
