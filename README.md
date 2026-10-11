@@ -40,6 +40,7 @@ examples/
   random_agent_test.py    # sanity run: all baselines, pandas log, six checks
   train_agent.py          # train PPO / SAC / TD3, held-out evaluation vs baselines
   train_ppo.py            # shortcut for train_agent.py --algo ppo
+  demo.py                 # animated side-by-side comparison of two policies
 scripts/
   prepare_trace.py        # raw dataset -> trace CSV
   run_benchmark.py        # baseline scenario matrix with confidence intervals
@@ -108,6 +109,27 @@ Main constructor options: `topology` (`grid`, `ring`, `star`, `mesh`,
 `random`), `num_nodes`, `link_capacity`, `node_buffer`, `load_scale`,
 `bandwidth_budget`, `bottlenecks`, `traffic`, reward coefficients `k`, `c`,
 `m`, `delay_reference`, `max_steps`, `render_mode` (`human` or `rgb_array`).
+
+## Demo
+
+![Side-by-side demo: the best rule-based policy and the trained PPO agent on the same traffic](docs/demo.gif)
+
+```
+python examples/demo.py                                   # live window
+python examples/demo.py --save demo.gif                   # write the animation to a file
+python examples/demo.py --left max_bandwidth --right queue_proportional
+python examples/demo.py --seed 2005 --bottleneck 4:0.5
+```
+
+Two controllers receive exactly the same traffic. Links are coloured from
+green (idle) to red (saturated), nodes by how full their buffers are, and
+the charts track the share of offered traffic each side has delivered and
+dropped so far. `--left` and `--right` take any baseline name, or `ppo` /
+`sac` for an agent saved by `examples/train_agent.py`. The saved agents were
+trained on the default scenario (3x3 grid, budget 0.8); `--seed` values from
+2000 upwards are traffic they never saw. The percentages cover the whole
+episode from step 0, so they differ slightly from the tables below, which
+skip a 20-step warm-up.
 
 ## Simulation model
 
@@ -452,7 +474,7 @@ python -m pytest -q
 ```
 
 <!-- RESULTS:tests:start -->
-Last run: **129 passed with local copies of the raw datasets in data/raw/; 115 passed, 14 skipped without them (a fresh clone)**.
+Last run: **134 passed with local copies of the raw datasets in data/raw/; 120 passed, 14 skipped without them (a fresh clone)**.
 <!-- RESULTS:tests:end -->
 
 The suite covers Gymnasium API conformance (`check_env`, including rendering),
