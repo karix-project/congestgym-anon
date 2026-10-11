@@ -1,0 +1,19 @@
+on qa/confirm-r7-1 at 5d3b2a8; origin/main 5d3b2a8; same tree as origin/main: yes
+== 1. the change (commit 28d097e, code files only)
+-    python examples/train_agent.py --algo ppo --trace data/pcap_trace.csv --nodes 16 --load 110 --budget 0.5
++    python examples/train_agent.py --algo ppo --trace data/pcap_trace.csv --nodes 16 --load 40 --budget 0.5
+-    python examples/train_ppo.py --trace data/pcap_trace.csv --nodes 16 --load 110 --budget 0.5
++    python examples/train_ppo.py --trace data/pcap_trace.csv --nodes 16 --load 40 --budget 0.5
+other code touched by that commit: 0 files
+== 2. stale guidance
+load-110 guidance outside tests/qa/docs: 0 lines
+load-40 guidance agrees in: README.md examples/train_agent.py examples/train_ppo.py 
+== 3. the documented commands run as written (shortened to 3000 steps)
+  python examples/train_agent.py --algo ppo --trace data/pcap_trace.csv --nodes 16 --load 40 --budget 0.5
+queue_proportional 0.252 0.014;PPO 0.046 0.021;max_bandwidth 0.010 0.030;
+  python examples/train_ppo.py --trace data/pcap_trace.csv --nodes 16 --load 40 --budget 0.5
+1
+== 4. regression
+pytest: 129 passed, 1 warning in 32.52s
+fresh clone of GitHub main at 5d3b2a8: 115 passed, 14 skipped, 1 warning in 8.43s; data: cs448b_trace.csv pcap_trace.csv ; docstring line: load 40
+IPv4-shaped strings in tracked text: 0
