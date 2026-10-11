@@ -353,3 +353,38 @@ Like the raw files, the original string remains in the git history.
 | 2 | Personal email address in `LICENSE`; dataset licence / attribution notice | No decision given. `LICENSE` is unchanged. The README states where each trace came from and that the raw files are not distributed. |
 | 3 | Rename the project because of the CARLA simulator name clash | No decision given. Name unchanged. |
 | 4 | Push the fix branch or open a pull request | **Push the code.** The branch `fix/qa-round-1` is pushed to `origin`; `main` is not modified. |
+
+## 16. Round 7: the two trace items from the final Researcher pass (`docs/RESEARCHER_REVIEW.md`, F5)
+
+| # | Item | What changed |
+|---|---|---|
+| 1 | Document the limit of the per-step reward on bursty load; label cs448b a stress case | README limitations state that the reward averages per-step ratios and is not a measure of delivered traffic under bursty load, with the cs448b numbers and the source log. README Datasets section and the benchmark notes label cs448b a stress case and tell the reader to choose a low `target_load` for traces. `prepare_trace.py` prints the same warning. |
+| 2 | Lower the pcap trace's documented load from 110 to about 30 to 40 | Documented load is now **40**. `scripts/run_benchmark.py` runs the pcap trace at load 40 (2 budgets), keeps load 110 labelled "(overload)", and labels cs448b "(stress case)". `prepare_trace.py` suggests 5% of total link capacity (40 on the 4x4 grid) instead of 15% (110). README command and notebooks 02, 03 and 04 use load 40 and were re-executed (0 errors). |
+
+Evidence:
+
+* The benchmark was re-run in full: 37 scenarios, 2,220 episodes. All 2,100
+  episodes that existed before reproduce with zero difference in reward and
+  in delivered fraction (the four old trace scenarios were only renamed).
+  The 120 new episodes are the pcap trace at load 40.
+* pcap trace at load 40: the heuristics drop 21.6 to 39.7% of traffic;
+  at budget 0.5 `queue_proportional` (+0.240, 77% delivered) is clearly ahead
+  of `max_bandwidth` (-0.002, 59% delivered). At load 110: 54.4 to 69.2%
+  dropped. cs448b: 55.7 to 63.4% dropped with positive reward.
+* The reward table now has 10 rows with a clear best policy and 27 ties.
+* Notebook 04's live run (pcap, load 40, one seed, 40k steps): PPO moves
+  from +0.028 to +0.070, above five baselines and below `queue_proportional`.
+* No simulator, reward or observation code changed; tests unchanged at
+  **129 passed** (115 passed, 14 skipped without the raw files).
+
+Earlier sections of this report, and the QA and Researcher reports, refer to
+"35 scenarios" and to trace runs at load 110. Those statements describe the
+state at the time they were written.
+
+## 17. Round 8: R7-1 from the round-7 confirmation
+
+The usage examples in the docstrings of `examples/train_agent.py` and
+`examples/train_ppo.py` showed `--load 110` for the pcap trace. Both now show
+`--load 40`, matching the README and `scripts/prepare_trace.py`. No stale
+load-110 guidance remains outside the tests (which use 100 and 110 to test
+mechanics). Docstrings only: **129 passed**.

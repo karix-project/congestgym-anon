@@ -6,4 +6,4 @@ tests/test_env.py::test_gymnasium_api_conformance_with_render
     logger.warn(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-129 passed, 1 warning in 28.10s
+129 passed, 1 warning in 28.85s

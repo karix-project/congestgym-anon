@@ -280,3 +280,34 @@ in the log, so the log does not put the original string back into the repo).
 
 For the record, unchanged: the original string is reachable in 2 commits of
 the git history, alongside the raw datasets and the old notebook 03 output.
+
+## 13. Confirmation pass on round 7 (branch `research/final-review`, commit `0477000`)
+
+Round 7 addressed the two trace items from the final Researcher pass. Script
+and log: `qa/retest/confirm_round7.py`, `qa/retest/confirm_round7.log`.
+19 checks, 1 problem.
+
+| Check | Result |
+|---|---|
+| Scope | No package, test or example code changed since `main`; only `scripts/run_benchmark.py` and `scripts/prepare_trace.py`, plus results, notebooks and docs |
+| Earlier results | All 2,100 earlier benchmark episodes are identical to the file on `main` in 8 columns (the four old trace scenarios were renamed only) |
+| New results | Exactly 120 new episodes, all the pcap trace at load 40. I recomputed 18 of them independently (reward, delivered, dropped): agreement to 1e-16. Realised mean load at target 40: 38.2 |
+| Tables | All 222 reward cells and 222 delivered/dropped cells are in the README; means and intervals recompute from the episodes; tie marks correct in all 37 rows (10 clear, 27 ties) |
+| README statements | "22 to 40% dropped" at load 40 (data 21.6 to 39.7); "54 to 69%" at 110 (54.4 to 69.2); cs448b "56 to 63%" (55.7 to 63.4); the reward-limit sentence (+0.21 to +0.40 while delivered falls 52% to 45%) matches the Researcher's sweep log |
+| Notebooks 02, 03, 04 | Executed, 0 errors, no load 110 left in their source; notebook 04's "Higher than" list equals what its own numbers imply |
+| `prepare_trace.py` | Suggests load 40 and prints the delivered/dropped warning; its output trace is byte-identical to the committed one |
+| Tests | **129 passed**; fresh clone of the branch: **115 passed, 14 skipped**, no raw files |
+| Address scan | No IPv4-shaped string in tracked text or notebooks |
+
+**Round 7 is confirmed, with one leftover.**
+
+### R7-1 (LOW): stale `--load 110` in two docstrings
+
+The usage examples at the top of `examples/train_agent.py` and
+`examples/train_ppo.py` still show
+`--trace data/pcap_trace.csv --nodes 16 --load 110 --budget 0.5`. The README
+and `prepare_trace.py` now say 40, and the README states that 110 is deep in
+overload for this trace. A user copying the docstring would train in the
+regime the project now advises against. One-word fix in each file, for the
+Developer. (The tests also use loads of 100 and 110; that is fine, they test
+mechanics, not a recommended setting.)

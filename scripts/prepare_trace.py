@@ -66,7 +66,11 @@ def main():
     net = NetworkModel(topology=args.topology, num_nodes=n_nodes, seed=args.topology_seed)
     default_link_capacity = 30.0
     total_capacity_per_step = net.num_edges() * default_link_capacity
-    suggested_load = round(0.15 * total_capacity_per_step, -1) or 10.0
+    # About 5% of total link capacity: a trace concentrates its load on few
+    # node pairs and few time bins, so it saturates far below the level that
+    # evenly spread synthetic traffic tolerates (the pcap trace delivers
+    # roughly 77% at load 40 on the 4x4 grid and 43% at load 110).
+    suggested_load = round(0.05 * total_capacity_per_step, -1) or 10.0
 
     print(f"Wrote {args.out_path}")
     print(f"  rows            : {len(df)}")
@@ -86,6 +90,8 @@ def main():
           f"this trace's volume is heavy-tailed, so the right value still\n"
           f"depends on how much burst headroom you want):")
     print(f"  --trace {args.out_path} --nodes {n_nodes} --load {suggested_load:.0f} --budget 0.5")
+    print("Check the delivered / dropped fraction, not only the reward: on bursty\n"
+          "traces the mean per-step reward can look fine while most traffic is lost.")
     print(f"\nNote: --budget 0.5, not the 0.8 used for synthetic Poisson traffic. Real\n"
           f"traces concentrate load on fewer src/dst pairs, so a congestion-aware\n"
           f"policy only beats uniform allocation once the budget is tighter -- see\n"

@@ -313,10 +313,12 @@ Mean post-warmup reward ± 95% CI over 10 seeds (2000..2009), 200 steps, warmup 
 | random/load x2/budget 0.8 | -1.419 ± 0.071 | -1.848 ± 0.015 | -0.746 ± 0.210 ~ | -0.589 ± 0.252 ~ | -0.669 ± 0.225 ~ | -0.587 ± 0.252 ~ |
 | random/load x2/budget 0.5 | -1.466 ± 0.066 | -1.848 ± 0.015 | -1.259 ± 0.136 ~ | -1.229 ± 0.152 ~ | -1.255 ± 0.127 ~ | -1.241 ± 0.133 ~ |
 | grid/bottleneck node 4 x0.5/budget 0.8 | -1.147 ± 0.025 | -1.836 ± 0.005 | -0.196 ± 0.037 | -0.034 ± 0.026 ~ | -0.061 ± 0.029 | +0.003 ± 0.033 ~ |
-| pcap trace/grid-16/budget 0.8 | -0.484 ± 0.022 | -1.187 ± 0.023 | -0.105 ± 0.015 | -0.043 ± 0.019 ~ | -0.079 ± 0.016 ~ | -0.110 ± 0.022 |
-| pcap trace/grid-16/budget 0.5 | -0.517 ± 0.019 | -1.187 ± 0.023 | -0.426 ± 0.012 | **-0.043 ± 0.019** | -0.380 ± 0.017 | -0.098 ± 0.023 |
-| cs448b trace/grid-16/budget 0.8 | -0.169 ± 0.038 | -1.496 ± 0.018 | +0.482 ± 0.014 ~ | +0.414 ± 0.017 | +0.471 ± 0.013 ~ | +0.322 ± 0.019 |
-| cs448b trace/grid-16/budget 0.5 | -0.239 ± 0.039 | -1.496 ± 0.018 | +0.169 ± 0.019 | **+0.414 ± 0.017** | +0.237 ± 0.024 | +0.323 ± 0.016 |
+| pcap trace/load 40/grid-16/budget 0.8 | -0.099 ± 0.019 | -0.956 ± 0.016 | +0.239 ± 0.012 ~ | +0.240 ± 0.017 ~ | +0.228 ± 0.010 ~ | +0.114 ± 0.019 |
+| pcap trace/load 40/grid-16/budget 0.5 | -0.136 ± 0.013 | -0.956 ± 0.016 | -0.002 ± 0.020 | **+0.240 ± 0.017** | +0.047 ± 0.017 | +0.114 ± 0.019 |
+| pcap trace/load 110 (overload)/grid-16/budget 0.8 | -0.484 ± 0.022 | -1.187 ± 0.023 | -0.105 ± 0.015 | -0.043 ± 0.019 ~ | -0.079 ± 0.016 ~ | -0.110 ± 0.022 |
+| pcap trace/load 110 (overload)/grid-16/budget 0.5 | -0.517 ± 0.019 | -1.187 ± 0.023 | -0.426 ± 0.012 | **-0.043 ± 0.019** | -0.380 ± 0.017 | -0.098 ± 0.023 |
+| cs448b trace/load 110 (stress case)/grid-16/budget 0.8 | -0.169 ± 0.038 | -1.496 ± 0.018 | +0.482 ± 0.014 ~ | +0.414 ± 0.017 | +0.471 ± 0.013 ~ | +0.322 ± 0.019 |
+| cs448b trace/load 110 (stress case)/grid-16/budget 0.5 | -0.239 ± 0.039 | -1.496 ± 0.018 | +0.169 ± 0.019 | **+0.414 ± 0.017** | +0.237 ± 0.024 | +0.323 ± 0.016 |
 <!-- RESULTS:benchmark:end -->
 
 In most scenarios the leading heuristics are statistically tied; a policy is
@@ -361,17 +363,21 @@ Traffic delivered / dropped, as % of traffic offered after warm-up (episode aggr
 | random/load x2/budget 0.8 | 17.8 / 82.2 | 2.0 / 98.0 | 39.1 / 61.1 | 43.2 / 57.0 | 41.9 / 58.3 | 43.7 / 56.4 |
 | random/load x2/budget 0.5 | 16.5 / 83.6 | 2.0 / 98.0 | 24.2 / 75.8 | 25.0 / 75.0 | 24.4 / 75.6 | 24.9 / 75.2 |
 | grid/bottleneck node 4 x0.5/budget 0.8 | 28.9 / 71.2 | 2.6 / 97.4 | 60.2 / 39.6 | 66.2 / 33.6 | 66.7 / 33.2 | 68.9 / 30.8 |
-| pcap trace/grid-16/budget 0.8 | 27.2 / 71.3 | 3.9 / 90.4 | 39.9 / 59.3 | 43.3 / 55.8 | 43.2 / 55.8 | 43.5 / 55.0 |
-| pcap trace/grid-16/budget 0.5 | 26.0 / 72.5 | 3.9 / 90.4 | 29.2 / 69.2 | 43.3 / 55.8 | 31.1 / 67.2 | 44.3 / 54.4 |
-| cs448b trace/grid-16/budget 0.8 | 31.8 / 68.5 | 3.9 / 94.5 | 42.6 / 57.6 | 43.1 / 57.5 | 44.8 / 55.7 | 43.3 / 57.3 |
-| cs448b trace/grid-16/budget 0.5 | 30.5 / 69.8 | 3.9 / 94.5 | 37.0 / 63.4 | 43.1 / 57.5 | 40.7 / 59.8 | 43.5 / 57.1 |
+| pcap trace/load 40/grid-16/budget 0.8 | 54.5 / 43.6 | 10.2 / 77.7 | 72.9 / 25.9 | 76.5 / 21.9 | 76.5 / 21.6 | 75.0 / 22.8 |
+| pcap trace/load 40/grid-16/budget 0.5 | 52.8 / 45.1 | 10.2 / 77.7 | 58.6 / 39.7 | 76.5 / 21.9 | 65.5 / 32.3 | 75.0 / 22.7 |
+| pcap trace/load 110 (overload)/grid-16/budget 0.8 | 27.2 / 71.3 | 3.9 / 90.4 | 39.9 / 59.3 | 43.3 / 55.8 | 43.2 / 55.8 | 43.5 / 55.0 |
+| pcap trace/load 110 (overload)/grid-16/budget 0.5 | 26.0 / 72.5 | 3.9 / 90.4 | 29.2 / 69.2 | 43.3 / 55.8 | 31.1 / 67.2 | 44.3 / 54.4 |
+| cs448b trace/load 110 (stress case)/grid-16/budget 0.8 | 31.8 / 68.5 | 3.9 / 94.5 | 42.6 / 57.6 | 43.1 / 57.5 | 44.8 / 55.7 | 43.3 / 57.3 |
+| cs448b trace/load 110 (stress case)/grid-16/budget 0.5 | 30.5 / 69.8 | 3.9 / 94.5 | 37.0 / 63.4 | 43.1 / 57.5 | 40.7 / 59.8 | 43.5 / 57.1 |
 <!-- RESULTS:benchmark_qos:end -->
 
-Both trace scenarios are heavily overloaded in aggregate: 54 to 69% of the
-offered traffic is dropped under every heuristic, although the per-step loss
-term of the reward is far lower. The traces are bursty, so most traffic
-arrives in a few heavy steps, and a per-step ratio weighs a quiet step as
-much as a heavy one. Quote the aggregate figures for the trace scenarios.
+The trace scenarios show why the delivered / dropped table matters. At a
+mean load of 40 the pcap trace is loaded but workable: the heuristics drop 22
+to 40% of its traffic and separate clearly at the tighter budget. At 110 it
+is in overload (54 to 69% dropped). The cs448b trace is a stress case: it
+drops 56 to 63% whatever the policy, because a few spike bins carry most of
+its volume, yet its reward is positive. The reward averages per-step ratios,
+so a quiet step counts as much as a heavy one (see Limitations).
 
 ## Datasets
 
@@ -392,7 +398,7 @@ over time and across node pairs survives: treat the traces as load shapes
 derived from real measurements, not as a replay of real traffic.
 
 ```
-python examples/train_agent.py --algo ppo --trace data/pcap_trace.csv --nodes 16 --load 110 --budget 0.5
+python examples/train_agent.py --algo ppo --trace data/pcap_trace.csv --nodes 16 --load 40 --budget 0.5
 ```
 
 To build a trace from your own data, put a CSV in one of the two supported
@@ -415,6 +421,13 @@ Design points:
   `--topology random`, pass `--topology-seed` equal to the env's seed.
 * Trace volume is rescaled so the mean offered load per step, over all time
   bins including empty ones, equals `target_load`.
+* Choose `target_load` well below the synthetic default. Trace load is
+  concentrated on few node pairs and few time bins: on the 4x4 grid the pcap
+  trace is a sensible scenario at a mean load of about 40 and is deep in
+  overload at 110.
+* The cs448b trace is a stress case, not a benchmark. Its busiest 10% of time
+  bins carry 64% of the volume, so about half its traffic is lost at any mean
+  load.
 
 ## Notebooks
 
@@ -471,6 +484,14 @@ datasets in `data/raw/` and are skipped otherwise.
 * In a step with no offered traffic (for example after a non-looping trace
   ends) the throughput term is 0, so draining a backlog then earns no
   throughput credit.
+* **The reward averages per-step ratios, so on strongly bursty load it is not
+  a measure of delivered traffic.** A quiet step counts as much as a spike
+  step. On the cs448b trace the reward of equal split rises from +0.21 to
+  +0.40 as the mean load goes from 20 to 60 while the delivered fraction
+  falls from 52% to 45% (`qa/research/trace_load_sweep.log`). On stationary
+  synthetic traffic the reward and the delivered fraction rank policies the
+  same way. Always report the delivered / dropped tables next to the reward
+  for trace-driven results.
 * The per-step throughput term is clipped at 1, so a draining backlog and
   steady state look the same to that term (the delay term separates them).
 * The multi-agent environment gives every agent the global observation.
