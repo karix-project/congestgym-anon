@@ -380,3 +380,11 @@ Evidence:
 Earlier sections of this report, and the QA and Researcher reports, refer to
 "35 scenarios" and to trace runs at load 110. Those statements describe the
 state at the time they were written.
+
+## 17. Round 8: R7-1 from the round-7 confirmation
+
+The usage examples in the docstrings of `examples/train_agent.py` and
+`examples/train_ppo.py` showed `--load 110` for the pcap trace. Both now show
+`--load 40`, matching the README and `scripts/prepare_trace.py`. No stale
+load-110 guidance remains outside the tests (which use 100 and 110 to test
+mechanics). Docstrings only: **129 passed**.
