@@ -545,3 +545,40 @@ def test_episode_qos_empty_is_finite():
     from carla_gym.utils.qos import EpisodeQoS
     s = EpisodeQoS().summary()
     assert all(np.isfinite(v) for v in s.values()) and s["delivered_fraction"] == 0.0
+
+
+# ---------------------------------------------------------------- ablation wrapper
+@pytest.mark.parametrize("control,fixed_slice", [("bandwidth", slice(12, 24)), ("routing", slice(0, 12))])
+def test_control_subset_wrapper_fixes_the_other_half(control, fixed_slice):
+    from carla_gym.wrappers import ControlSubsetWrapper
+    env = ControlSubsetWrapper(CarlaGymEnv(max_steps=10, seed=0), control)
+    assert env.action_space.shape == (12,)
+    agent_action = np.linspace(0.1, 0.9, 12, dtype=np.float32)
+    full = env.action(agent_action)
+    assert full.shape == (24,) and np.all(full[fixed_slice] == 1.0)
+    kept = np.delete(full, np.arange(24)[fixed_slice])
+    assert np.allclose(kept, agent_action)
+    env.reset(seed=0)
+    obs, reward, *_ = env.step(agent_action)
+    assert env.observation_space.contains(obs) and np.isfinite(reward)
+
+
+def test_control_subset_wrapper_matches_manual_action_and_rejects_bad_mode():
+    from carla_gym.wrappers import ControlSubsetWrapper
+    a = ControlSubsetWrapper(CarlaGymEnv(max_steps=20, seed=3), "bandwidth")
+    b = CarlaGymEnv(max_steps=20, seed=3)
+    a.reset(seed=3); b.reset(seed=3)
+    act = np.full(12, 0.6, dtype=np.float32)
+    ra = [a.step(act)[1] for _ in range(20)]
+    rb = [b.step(np.concatenate([act, np.ones(12, dtype=np.float32)]))[1] for _ in range(20)]
+    assert ra == rb
+    same = ControlSubsetWrapper(CarlaGymEnv(seed=0), "both")
+    assert same.action_space.shape == (24,)
+    with pytest.raises(ValueError, match="control"):
+        ControlSubsetWrapper(CarlaGymEnv(seed=0), "neither")
+
+
+def test_train_agent_parses_bottleneck_spec():
+    from examples.train_agent import parse_bottlenecks
+    assert parse_bottlenecks("4:0.5,7:0.3") == {4: 0.5, 7: 0.3}
+    assert parse_bottlenecks(None) is None and parse_bottlenecks("") is None
