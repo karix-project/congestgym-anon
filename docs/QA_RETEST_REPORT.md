@@ -311,3 +311,25 @@ overload for this trace. A user copying the docstring would train in the
 regime the project now advises against. One-word fix in each file, for the
 Developer. (The tests also use loads of 100 and 110; that is fine, they test
 mechanics, not a recommended setting.)
+
+## 14. Confirmation of R7-1, on `main` at `5d3b2a8` (after PR #2)
+
+Log: `qa/retest/confirm_r7_1.log`.
+
+| Check | Result |
+|---|---|
+| The change | One word in each of two docstrings (`examples/train_agent.py` line 8, `examples/train_ppo.py` line 9): `--load 110` became `--load 40`. No other code in that commit. |
+| Stale guidance | No load-110 guidance left outside tests, QA logs and historical reports. README and both docstrings agree on 40; `scripts/prepare_trace.py` computes and prints 40 for the 4x4 grid. |
+| The documented commands, run exactly as written (shortened to 3,000 steps) | Both run to completion on the pcap trace and write their outputs. |
+| Regression | **129 passed** locally. A fresh clone taken from GitHub `main` (`5d3b2a8`): **115 passed, 14 skipped**; `data/` holds only the two derived traces; the docstring there says load 40. |
+| Address scan | No IPv4-shaped string in tracked text. |
+
+**R7-1 is confirmed fixed. No open defects from the Tester/QA role.**
+
+State of the published code: local `main`, GitHub `main` and the reviewed
+branch have identical contents. This confirmation is the first one made
+against a clone taken from GitHub itself, not from the local repository.
+
+Outside the Tester's reach, unchanged: Python 3.10 to 3.13, Linux and macOS
+are untested; the raw datasets remain in the git history by the user's
+decision.
