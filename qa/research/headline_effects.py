@@ -1,6 +1,6 @@
 """Paired (same validation seed) effects of each action half on delivered
-traffic, with 95% CIs, for every scenario of a sweep that met all five
-criteria of headline_sweep.py.
+traffic, with 95% CIs, for every scenario of a sweep that met every
+criterion of its set in headline_sweep.py.
 
     PYTHONPATH=. python qa/research/headline_effects.py                 # headline sweep
     PYTHONPATH=. python qa/research/headline_effects.py second_topology
@@ -23,7 +23,8 @@ def main(prefix="headline"):
     here = os.path.dirname(__file__)
     df = pd.read_csv(os.path.join(here, f"{prefix}_sweep_episodes.csv"))
     summary = pd.read_csv(os.path.join(here, f"{prefix}_sweep_summary.csv"))
-    finalists = summary[summary.n_met == 5].scenario.tolist()
+    # criteria_met has a digit per criterion met and "." per criterion missed
+    finalists = summary[~summary.criteria_met.str.contains(".", regex=False)].scenario.tolist()
     print("delivered-fraction effects in points, paired over validation seeds 1000-1009, mean +/- 95% CI")
     for sc in finalists:
         g = df[df.scenario == sc].pivot(index="seed", columns="policy", values="delivered") * 100
@@ -32,7 +33,7 @@ def main(prefix="headline"):
             d = (g[a] - g[b]).to_numpy()
             print(f"   {label:38s} {d.mean():+6.2f} +/- {ci95(d):.2f}")
     if not finalists:
-        print("(no scenario met all five criteria)")
+        print("(no scenario met every criterion)")
 
 
 if __name__ == "__main__":

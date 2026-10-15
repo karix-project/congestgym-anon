@@ -79,3 +79,73 @@ unknown until the multi-commodity-flow bound (readiness plan item 3b) exists.
 
 The test-seed matrix figures in this table are descriptive only; any
 replacement for `ring_b08` should be chosen on validation seeds as above.
+
+## Second topology: none qualifies (15 Oct 2026)
+
+`python qa/research/headline_sweep.py second_topology` scored 29 cells on
+validation seeds 1000-1009: ring (9 links), the fixed random graph
+(`topology_seed` 0, 15 links), full mesh (36 links) and, for comparison,
+the 4x4 grid. Criteria fixed before it ran: C1-C5 as above plus
+
+* **C6** controlling both halves beats each half alone (congestion_aware
+  minus load_aware_routing, and minus queue_proportional, paired over seeds,
+  95% CI lower bound > 0).
+
+Tie-breaks were set as non-grid first, then smallest action space. Star was
+excluded: it is a tree, so routing weights cannot change a path.
+
+**Result: no cell met all six** (`qa/research/second_topology_sweep.log`).
+
+| Topology | Best cells | What fails |
+|---|---|---|
+| ring9 | at most 2 of 6 | Routing has no leverage (at most 0.8 points); with two ways round a ring that is expected |
+| random9 | load 1.25 / budget 0.5 and load 1.5 / budget 0.6 meet C1-C5 | C6. Bandwidth matters a lot (16 to 20 points), but load-aware routing helps little with equal split (+2.4 and +1.0 points) and **hurts** with proportional bandwidth (-3.5 and -3.4 points, from the per-policy table in the log) |
+| mesh9 | 4 of 6 | C6 always, plus C1 or C3; same pattern as random9 |
+| grid16 | 4 of 6 | C4 and C6 in the best cells |
+
+Two defects in my own criteria, found on reading these results. Neither
+changes the outcome, and the script is left as it ran:
+
+* **C2 and C3 use absolute differences**, so a routing heuristic that
+  *hurts* counts as "routing matters". random9 passes C3 only that way.
+  In the headline sweep every chosen effect was positive, so the headline
+  choice is unaffected.
+* **C4's threshold 0.67 rejects tau = 2/3** (one discordant pair of six),
+  which I meant to allow. With 2/3 allowed, grid16 load 1.5 / budget 0.6
+  and load 1.75 / budget 0.7 would meet C1-C5; both still fail C6.
+
+### What this means
+
+Off the 3x3 grid, the routing-aware heuristics are neutral or harmful. The
+sweep cannot tell whether that is because **routing has little leverage on
+those graphs** or because **the heuristic is a poor router**; both read the
+same through criterion C3. Two things would separate them:
+
+1. the multi-commodity-flow bound (readiness plan item 3b), computed once
+   with routing fixed to shortest paths and once with free multipath
+   routing. The gap is the leverage routing has, independent of any policy;
+2. a trained routing-only agent on that graph.
+
+### Recommendation
+
+Do not hold up the training queue for this. Put **one** second-topology
+scenario in the queue, labelled as *bandwidth-dominated*, not as a
+replication of the headline:
+
+* **`random9_l15_b06`: random graph, `--topology random --load-scale 1.5
+  --budget 0.6`.** It meets C1-C5 (C3 only in the absolute sense above).
+  Between it and load 1.25 / budget 0.5, which are nearly identical, the
+  pre-set tie-breaks do not decide; I chose budget 0.6 after seeing the
+  results, so that the headline and this scenario differ in topology and
+  load but not in budget.
+* Train PPO and SAC, and **add a routing-only PPO ablation** there (5 runs).
+  If a learned router gains on this graph where the heuristic loses, that is
+  a result in its own right; if it does not, the paper reports that the
+  joint-control benefit is topology-dependent.
+* Drop `ring_b08`. Keep the 4x4 grid for the scale experiment, not as a
+  second topology.
+
+Paper wording this supports today: *on the 3x3 grid the two action halves
+are complementary; on the random graph tested, bandwidth allocation carries
+most of the benefit.* Not supported: any claim that joint control helps in
+general.
