@@ -18,6 +18,9 @@ stable-baselines3>=2.3
 # multi-agent env: carla_gym/marl_env.py
 pettingzoo>=1.24
 
+# flow upper bound: carla_gym/bounds.py, scripts/flow_bound.py
+scipy>=1.10
+
 # notebooks
 jupyter>=1.0
 nbformat>=5.9

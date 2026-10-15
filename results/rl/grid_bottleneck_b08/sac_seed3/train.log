@@ -1,0 +1,23 @@
+[eval] timesteps=   10000  held-out reward=-0.784 +/- 0.027
+[eval] timesteps=   20000  held-out reward=-0.385 +/- 0.073
+[eval] timesteps=   30000  held-out reward=-0.166 +/- 0.091
+[eval] timesteps=   40000  held-out reward=+0.131 +/- 0.033
+[eval] timesteps=   50000  held-out reward=+0.333 +/- 0.043
+[eval] timesteps=   60000  held-out reward=+0.350 +/- 0.023
+[eval] timesteps=   70000  held-out reward=+0.366 +/- 0.022
+[eval] timesteps=   80000  held-out reward=+0.404 +/- 0.013
+[eval] timesteps=   90000  held-out reward=+0.392 +/- 0.021
+[eval] timesteps=  100000  held-out reward=+0.399 +/- 0.034
+
+=== Held-out evaluation (test seeds) ===
+                    reward_mean  reward_std
+policy                                     
+SAC                       0.436       0.038
+load_aware_routing        0.397       0.029
+congestion_aware          0.368       0.019
+queue_proportional        0.153       0.031
+max_bandwidth            -0.104       0.050
+random                   -0.845       0.040
+min_bandwidth            -1.729       0.010
+
+Saved to results\rl\grid_bottleneck_b08\sac_seed3

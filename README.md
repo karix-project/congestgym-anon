@@ -10,7 +10,7 @@ CarlaGym is a Python reinforcement-learning framework built on the standard
 packet network: every step it decides **how much bandwidth each link gets** and
 **how traffic is routed**, and it is rewarded on QoS metrics (throughput, delay,
 packet loss, deadline misses). The framework ships with customizable
-topologies, volatile synthetic and dataset-driven traffic, node-bottleneck
+topologies, stationary synthetic (Poisson) and dataset-driven traffic, node-bottleneck
 scenarios, rule-based traffic-engineering baselines, and scripts to train,
 evaluate and benchmark RL agents against them.
 
@@ -25,6 +25,8 @@ carla_gym/
   env.py                  # CarlaGymEnv(gymnasium.Env): spaces, step()/reset()
   marl_env.py             # MultiAgentCarlaGymEnv (PettingZoo ParallelEnv)
   baselines.py            # rule-based reference policies (bandwidth and routing-aware)
+  wrappers.py             # ControlSubsetWrapper: ablations controlling one action half
+  bounds.py               # fluid multi-commodity-flow upper bound (needs SciPy)
   core/
     network.py            # topologies, node buffers, link service, store-and-forward
     step.py               # one simulation step, shared by both envs
@@ -46,13 +48,16 @@ scripts/
   run_benchmark.py        # baseline scenario matrix with confidence intervals
   summarize_training.py   # aggregate multi-seed training runs
   evaluate_saved.py       # delivered / dropped / delay table for saved agents
+  run_training_matrix.py  # queue the RL training runs, N at a time, restartable
+  flow_bound.py           # flow upper bound for training and benchmark scenarios
+  rl_overview.py          # one delivered-traffic table over the training matrix
   update_readme_results.py  # copy result tables from results/ into this file
 notebooks/                # four executed notebooks (see below)
 data/                     # dataset-derived traces (raw sources are not distributed)
 results/                  # outputs of the runs reported below
 tests/                    # pytest suite
 qa/                       # reproduction scripts and logs for the QA round
-docs/                     # tester report and researcher note
+docs/                     # reviews, QA reports, scenario choice and results readings
 ```
 
 ## Install
@@ -79,8 +84,8 @@ export PYTHONPATH=.
 `constraints.txt` pins the versions everything here was run with; drop
 `-c constraints.txt` to take the newest compatible releases. As a package:
 `pip install -e .` for the core environment, or `pip install -e ".[all]"` to add
-the extras `rl` (PyTorch, Stable-Baselines3), `marl` (PettingZoo), `notebooks`
-and `dev`.
+the extras `rl` (PyTorch, Stable-Baselines3), `marl` (PettingZoo), `bounds`
+(SciPy, for the flow upper bound), `notebooks` and `dev`.
 
 The commands below are the same in both shells once `PYTHONPATH` is set.
 
@@ -108,7 +113,9 @@ for _ in range(200):
 Main constructor options: `topology` (`grid`, `ring`, `star`, `mesh`,
 `random`), `num_nodes`, `link_capacity`, `node_buffer`, `load_scale`,
 `bandwidth_budget`, `bottlenecks`, `traffic`, reward coefficients `k`, `c`,
-`m`, `delay_reference`, `max_steps`, `render_mode` (`human` or `rgb_array`).
+`m`, `delay_reference`, `max_steps`, `render_mode` (`human` or `rgb_array`),
+and the simulator options `topology_seed`, `queueing`, `tie_break`,
+`service_order` (see Simulation model).
 
 ## Demo
 
@@ -248,65 +255,117 @@ Everything in this section is copied from files under `results/` by
 Rewards are the mean per-step reward after a 20-step warm-up, over 200-step
 episodes.
 
-### RL agents vs baselines (3x3 grid, synthetic traffic, budget 0.8)
+### RL agents vs baselines (0.4.0 training matrix)
 
-> **These runs used the 0.3.0 simulator** (one FIFO per node, fixed
-> tie-breaks, nodes served in id order) and have not yet been repeated on
-> 0.4.0. They are not comparable with the baseline matrix below, and under
-> 0.4.0 every baseline delivers about 95% of traffic in this scenario
-> (`qa/research/probe_after_fixes.log`), so it is no longer a congested
-> setting.
+PPO and SAC on four scenarios, five training seeds each, plus three PPO
+ablations that control only one half of the action. The scenarios were chosen
+before training, on validation seeds, from the baseline results alone
+(`docs/HEADLINE_SCENARIO.md`).
 
 ```
-python examples/train_agent.py --algo ppo --timesteps 500000 --seed S --eval-every 25000 --out results/grid_b08/ppo_seedS
-python examples/train_agent.py --algo sac --timesteps 100000 --seed S --eval-every 10000 --out results/grid_b08/sac_seedS
-python scripts/summarize_training.py results/grid_b08
+python scripts/run_training_matrix.py --workers 10 --ppo-steps 500000 --sac-steps 100000
+python scripts/summarize_training.py results/rl/<folder>     # reward table, learning curves
+python scripts/evaluate_saved.py results/rl/<folder>         # delivered / dropped / delay
+python scripts/flow_bound.py                                 # fluid upper bound
+python scripts/rl_overview.py                                # the overview table below
 ```
 
-for `S` in 0..4. Agents train on a `[-1, 1]` action space
-(`gymnasium.wrappers.RescaleAction`). Training envs draw fresh traffic every
-episode, learning curves use validation seeds (1000+), and the table uses test
-seeds (2000 to 2009) that neither training nor the curves saw. For RL agents
-the interval is over the five training seeds; for baselines it is over the ten
-test episodes, each averaged over the ten run directories (this only matters
-for `random`, whose actions differ per run).
+Budgets: PPO 500,000 steps, SAC 100,000 (SAC is about ten times slower per
+step). Agents train on a `[-1, 1]` action space
+(`gymnasium.wrappers.RescaleAction`); training envs draw fresh traffic every
+episode, learning curves use validation seeds (1000+), and every table uses
+test seeds 2000 to 2009, which neither training nor the curves saw.
+`evaluate_saved.py` rebuilds each scenario from the training queue's flags and
+checks that its rewards equal those recorded at the end of training.
+
+All folders, delivered traffic:
+
+<!-- RESULTS:rl_overview:start -->
+Delivered % of offered traffic, test seeds 2000-2009, steps 20..199, mean ± 95% CI (agents: over 5 training seeds; rule-based: over test episodes). The best rule-based policy is picked per row on the test seeds. Ablation rows: PPO controls one half of the action, the rule-based policies both. Flow bound: carla_gym/bounds.py, an upper limit that is loose (see docs/RL_RESULTS_0.4.0.md, section 2.6).
+
+| Training folder | Flags | PPO | SAC | Best rule-based policy | Flow bound |
+|---|---|---:|---:|---|---:|
+| `grid_l125_b06` | `--load-scale 1.25 --budget 0.6` | 73.5 ± 0.6 | 68.6 ± 1.3 | congestion_aware 74.1 ± 1.4 | 90.3 |
+| `grid_bottleneck_b08` | `--bottleneck 4:0.5` | 94.6 ± 0.3 | 90.3 ± 1.4 | load_aware_routing 85.0 ± 0.8 | 100.0 |
+| `pcap40_grid16_b05` | `--trace data/pcap_trace.csv --nodes 16 --load 40 --budget 0.5` | 79.1 ± 0.7 | 75.4 ± 1.1 | congestion_aware 75.2 ± 1.6 | 100.0 |
+| `random9_l15_b06` | `--topology random --topology-seed 0 --load-scale 1.5 --budget 0.6` | 81.3 ± 0.4 | 76.1 ± 1.8 | queue_proportional 79.7 ± 0.7 | 99.4 |
+| `grid_l125_b06_bandwidth_only` | `--load-scale 1.25 --budget 0.6 --control bandwidth` | 72.9 ± 0.3 | n/a | congestion_aware 74.1 ± 1.4 | 90.3 |
+| `grid_l125_b06_routing_only` | `--load-scale 1.25 --budget 0.6 --control routing` | 72.2 ± 0.2 | n/a | congestion_aware 74.1 ± 1.4 | 90.3 |
+| `random9_l15_b06_routing_only` | `--topology random --topology-seed 0 --load-scale 1.5 --budget 0.6 --control routing` | 66.3 ± 0.2 | n/a | queue_proportional 79.7 ± 0.7 | 99.4 |
+<!-- RESULTS:rl_overview:end -->
+
+PPO delivers more than every rule-based policy in three of the four scenarios,
+most on the bottleneck. On the headline scenario it does not: it delivers
+about as much as `congestion_aware` but with longer delays and more missed
+deadlines, so its reward is lower. Controlling both halves of the action does
+not help PPO on the headline compared with bandwidth alone. Paired statistics,
+convergence and the ablations are in `docs/RL_RESULTS_0.4.0.md`; QA checks in
+`docs/QA_RL_RESULTS_REPORT.md`.
+
+Headline scenario (3x3 grid, load x1.25, budget 0.6), reward:
 
 <!-- RESULTS:training:start -->
 | Policy | Kind | Reward (mean ± 95% CI) | n | CI over |
 |---|---|---:|---:|---|
-| PPO | RL agent | +0.494 ± 0.013 | 5 | training seeds |
-| queue_proportional | baseline | +0.404 ± 0.024 | 10 | test episodes |
-| congestion_aware | baseline | +0.386 ± 0.021 | 10 | test episodes |
-| SAC | RL agent | +0.383 ± 0.028 | 5 | training seeds |
-| load_aware_routing | baseline | +0.378 ± 0.026 | 10 | test episodes |
-| max_bandwidth | baseline | +0.317 ± 0.030 | 10 | test episodes |
-| random | baseline | -0.901 ± 0.026 | 10 | test episodes |
-| min_bandwidth | baseline | -1.803 ± 0.008 | 10 | test episodes |
+| congestion_aware | baseline | +0.099 ± 0.025 | 10 | test episodes |
+| queue_proportional | baseline | +0.093 ± 0.025 | 10 | test episodes |
+| load_aware_routing | baseline | +0.045 ± 0.020 | 10 | test episodes |
+| PPO | RL agent | +0.037 ± 0.016 | 5 | training seeds |
+| max_bandwidth | baseline | -0.034 ± 0.033 | 10 | test episodes |
+| SAC | RL agent | -0.059 ± 0.033 | 5 | training seeds |
+| random | baseline | -0.581 ± 0.019 | 10 | test episodes |
+| min_bandwidth | baseline | -1.729 ± 0.007 | 10 | test episodes |
 <!-- RESULTS:training:end -->
 
-![Learning curves](results/grid_b08/learning_curves.png)
+![Learning curves](results/rl/grid_l125_b06/learning_curves.png)
 
-The same agents and baselines in network terms (`python scripts/evaluate_saved.py results/grid_b08`):
+The same scenario in network terms:
 
 <!-- RESULTS:training_qos:start -->
-Episode aggregates over steps 20..199 of test seeds 2000..2009, mean ± 95% CI (agents: over training seeds; baselines: over test episodes). Delivered % and Dropped % are of traffic offered in the same window; the remainder is backlog growth.
+Scenario `grid_l125_b06` (--load-scale 1.25 --budget 0.6). Episode aggregates over steps 20..199 of test seeds 2000..2009, mean ± 95% CI (agents: over training seeds; baselines: over test episodes). Delivered % and Dropped % are of traffic offered in the same window; the remainder is backlog growth. The `random` row draws its own actions here, so its reward differs slightly from the reward table. Agent and deterministic-baseline rewards match final_eval.csv (600 compared, max difference 2.2e-16).
 
 | Policy | Reward | Delivered % | Dropped % | Delay of delivered packets (steps) | Deadline misses per delivered packet |
 |---|---:|---:|---:|---:|---:|
-| PPO | +0.494 | 92.2 ± 0.5 | 7.7 ± 0.5 | 3.89 ± 0.07 | 0.192 ± 0.008 |
-| queue_proportional | +0.404 | 87.0 ± 1.4 | 13.0 ± 1.4 | 3.88 ± 0.06 | 0.194 ± 0.005 |
-| congestion_aware | +0.386 | 86.6 ± 1.0 | 13.4 ± 1.0 | 4.00 ± 0.07 | 0.211 ± 0.009 |
-| SAC | +0.383 | 87.6 ± 0.9 | 12.3 ± 0.9 | 4.30 ± 0.22 | 0.237 ± 0.021 |
-| load_aware_routing | +0.378 | 86.2 ± 1.2 | 13.9 ± 1.3 | 4.00 ± 0.12 | 0.212 ± 0.014 |
-| max_bandwidth | +0.317 | 82.6 ± 1.5 | 17.3 ± 1.5 | 4.02 ± 0.09 | 0.208 ± 0.011 |
-| random | -0.898 | 39.4 ± 1.5 | 60.3 ± 1.7 | 12.01 ± 0.32 | 0.867 ± 0.026 |
-| min_bandwidth | -1.803 | 3.6 ± 0.2 | 96.4 ± 0.2 | 81.59 ± 1.37 | 4.194 ± 0.240 |
+| congestion_aware | +0.099 | 74.1 ± 1.4 | 25.8 ± 1.2 | 5.16 ± 0.09 | 0.330 ± 0.010 |
+| queue_proportional | +0.093 | 73.2 ± 1.5 | 26.9 ± 1.4 | 5.03 ± 0.09 | 0.319 ± 0.007 |
+| load_aware_routing | +0.045 | 72.5 ± 1.5 | 27.5 ± 1.2 | 5.42 ± 0.06 | 0.349 ± 0.005 |
+| PPO | +0.037 | 73.5 ± 0.6 | 26.4 ± 0.5 | 5.82 ± 0.11 | 0.370 ± 0.006 |
+| max_bandwidth | -0.034 | 68.5 ± 1.5 | 31.4 ± 1.3 | 5.38 ± 0.09 | 0.358 ± 0.010 |
+| SAC | -0.059 | 68.6 ± 1.3 | 31.3 ± 1.2 | 5.82 ± 0.40 | 0.381 ± 0.023 |
+| random | -0.581 | 49.4 ± 1.0 | 50.4 ± 0.8 | 7.96 ± 0.22 | 0.602 ± 0.010 |
+| min_bandwidth | -1.729 | 5.5 ± 0.3 | 94.5 ± 0.3 | 52.02 ± 2.35 | 2.545 ± 0.050 |
 <!-- RESULTS:training_qos:end -->
 
-Read "delivered" and "dropped" from this table, not from the reward terms:
+Read "delivered" and "dropped" from these tables, not from the reward terms:
 the `throughput` and `loss` terms in the reward are ratios within a single
 step (and throughput is clipped at 1), so their average over an episode is
 not the fraction of traffic delivered.
+
+**Flow upper bound.** `carla_gym/bounds.py` (optional extra `bounds`, SciPy)
+solves a fluid multi-commodity-flow LP: the expected traffic matrix, link
+capacities and the budget, with the allocation chosen optimally. No policy
+can exceed it in the long run. It is loose: it ignores queueing and lets the
+optimiser drop the longest-distance traffic first, which no policy here can
+do. Read the room below it as an upper limit, not as headroom
+(`docs/QA_BOUNDS_REPORT.md`).
+
+<!-- RESULTS:bounds:start -->
+Fluid flow upper bound on the delivered fraction (%), from carla_gym/bounds.py: the expected traffic matrix, link capacities and the bandwidth budget, with the allocation chosen optimally. No policy can exceed it in the long run; a finite window can exceed it slightly through backlog carried in. Policy figures: delivered % on test seeds 2000-2009, steps 20..199. The bound is loose (docs/RL_RESULTS_0.4.0.md, section 2.6): the room below it is an upper limit on what any policy could gain, not a measure of it. The pcap row's bound uses the trace's mean matrix and ignores bursts.
+
+| Scenario | Bound, free routing | Bound, shortest paths | Best heuristic | PPO | SAC |
+|---|---:|---:|---|---:|---:|
+| grid_l125_b06 | 90.3 | 90.3 | congestion_aware 74.1 | 73.5 | 68.6 |
+| grid_bottleneck_b08 | 100.0 | 100.0 | load_aware_routing 85.0 | 94.6 | 90.3 |
+| pcap40_grid16_b05 | 100.0 | 100.0 | congestion_aware 75.2 | 79.1 | 75.4 |
+| random9_l15_b06 | 99.4 | 99.4 | queue_proportional 79.7 | 81.3 | 76.1 |
+<!-- RESULTS:bounds:end -->
+
+The bound is the same with free multipath routing and with shortest-path
+routing in every scenario tested, so the routing action's gains here are
+dynamic (spreading load as queues change), not extra capacity.
+
+The 0.3.0 runs (`results/grid_b08/`) are kept as a record. They were trained
+on the 0.3.0 simulator and are not comparable with anything above.
 
 ### Baseline scenario matrix
 
@@ -491,7 +550,7 @@ python -m pytest -q
 ```
 
 <!-- RESULTS:tests:start -->
-Last run: **163 passed**.
+Last run: **183 passed**.
 <!-- RESULTS:tests:end -->
 
 The suite covers Gymnasium API conformance (`check_env`, including rendering),
@@ -527,15 +586,19 @@ datasets in `data/raw/` and are skipped otherwise.
   a measure of delivered traffic.** A quiet step counts as much as a spike
   step. On the cs448b trace the reward of equal split rises from +0.21 to
   +0.40 as the mean load goes from 20 to 60 while the delivered fraction
-  falls from 52% to 45% (`qa/research/trace_load_sweep.log`). On stationary
-  synthetic traffic the reward and the delivered fraction rank policies the
-  same way. Always report the delivered / dropped tables next to the reward
-  for trace-driven results.
+  falls from 52% to 45% (`qa/research/trace_load_sweep.log`). Even on
+  stationary synthetic traffic the two can rank policies differently,
+  because the reward also weighs delay and deadlines: on the headline
+  scenario PPO is second on delivered traffic and fourth on reward
+  (`docs/RL_RESULTS_0.4.0.md`, section 2.5). Always report the delivered,
+  dropped and delay tables next to the reward.
 * The per-step throughput term is clipped at 1, so a draining backlog and
   steady state look the same to that term (the delay term separates them).
 * The multi-agent environment gives every agent the global observation.
-* RL results are reported for one training scenario; the scenario matrix
-  covers the rule-based baselines only.
+* RL results cover four scenarios and three ablations, at medium budgets
+  (PPO 500k steps, SAC 100k) with one untuned hyperparameter set. On the
+  headline scenario PPO does not beat the best rule-based policy. The flow
+  bound is too loose to say how far any policy is from the optimum.
 * Tested on Python 3.14 (Windows 11). The code parses under the Python 3.10
   grammar but has not been run on 3.10 to 3.13.
 

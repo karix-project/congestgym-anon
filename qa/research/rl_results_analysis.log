@@ -1,0 +1,57 @@
+====================================================================================================
+1. Agent minus best heuristic, paired on test seeds; CI over 5 training seeds
+====================================================================================================
+
+grid_l125_b06   (best heuristic by reward: congestion_aware; by delivered: congestion_aware)
+   PPO: reward -0.062 +/- 0.016 (wins 0/50)   delivered -0.62 +/- 0.56 pts (wins 16/50)
+   SAC: reward -0.158 +/- 0.033 (wins 0/50)   delivered -5.45 +/- 1.31 pts (wins 0/50)
+
+grid_bottleneck_b08   (best heuristic by reward: load_aware_routing; by delivered: load_aware_routing)
+   PPO: reward +0.173 +/- 0.016 (wins 50/50)   delivered +9.65 +/- 0.32 pts (wins 50/50)
+   SAC: reward +0.059 +/- 0.037 (wins 50/50)   delivered +5.33 +/- 1.43 pts (wins 50/50)
+
+pcap40_grid16_b05   (best heuristic by reward: queue_proportional; by delivered: congestion_aware)
+   PPO: reward +0.056 +/- 0.006 (wins 50/50)   delivered +3.95 +/- 0.68 pts (wins 50/50)
+   SAC: reward -0.024 +/- 0.013 (wins 10/50)   delivered +0.22 +/- 1.06 pts (wins 26/50)
+
+random9_l15_b06   (best heuristic by reward: queue_proportional; by delivered: queue_proportional)
+   PPO: reward +0.025 +/- 0.008 (wins 44/50)   delivered +1.61 +/- 0.37 pts (wins 47/50)
+   SAC: reward -0.114 +/- 0.051 (wins 0/50)   delivered -3.55 +/- 1.83 pts (wins 0/50)
+
+====================================================================================================
+2. Convergence: validation reward (seeds 1000-1004), mean over training seeds
+====================================================================================================
+   grid_l125_b06                  PPO  last 3 checkpoints +0.025 +0.022 +0.025   change 400k->500k +0.011 +/- 0.018
+   grid_l125_b06                  SAC  last 3 checkpoints -0.083 -0.061 -0.070   change 80k->100k +0.012 +/- 0.060
+   grid_bottleneck_b08            PPO  last 3 checkpoints +0.533 +0.535 +0.541   change 400k->500k +0.032 +/- 0.026
+   grid_bottleneck_b08            SAC  last 3 checkpoints +0.404 +0.413 +0.421   change 80k->100k +0.017 +/- 0.027
+   pcap40_grid16_b05              PPO  last 3 checkpoints +0.298 +0.297 +0.294   change 400k->500k -0.000 +/- 0.009
+   pcap40_grid16_b05              SAC  last 3 checkpoints +0.226 +0.233 +0.223   change 80k->100k -0.003 +/- 0.025
+   random9_l15_b06                PPO  last 3 checkpoints +0.388 +0.393 +0.397   change 400k->500k +0.017 +/- 0.011
+   random9_l15_b06                SAC  last 3 checkpoints +0.233 +0.245 +0.250   change 80k->100k +0.017 +/- 0.030
+   grid_l125_b06_bandwidth_only   PPO  last 3 checkpoints +0.025 +0.028 +0.029   change 400k->500k +0.003 +/- 0.009
+   grid_l125_b06_routing_only     PPO  last 3 checkpoints -0.020 -0.020 -0.019   change 400k->500k +0.007 +/- 0.021
+   random9_l15_b06_routing_only   PPO  last 3 checkpoints -0.015 -0.015 -0.021   change 400k->500k +0.002 +/- 0.010
+
+====================================================================================================
+3. Ablations: full-control PPO minus one-half PPO, paired on (training seed, test seed)
+====================================================================================================
+   grid_l125_b06 PPO minus bandwidth_only PPO, reward             -0.013 +/- 0.015
+   grid_l125_b06 PPO minus bandwidth_only PPO, delivered_fraction +0.521 pts +/- 0.624
+   grid_l125_b06 PPO minus routing_only PPO, reward             +0.038 +/- 0.020
+   grid_l125_b06 PPO minus routing_only PPO, delivered_fraction +1.250 pts +/- 0.648
+   grid_l125_b06_bandwidth_only   PPO: reward +0.051, delivered 72.9%
+   grid_l125_b06_routing_only     PPO: reward -0.001, delivered 72.2%
+   grid_l125_b06                  PPO: reward +0.037, delivered 73.5%
+   random9_l15_b06 PPO minus routing_only PPO, reward             +0.413 +/- 0.011
+   random9_l15_b06 PPO minus routing_only PPO, delivered_fraction +14.991 pts +/- 0.411
+   random9_l15_b06_routing_only   PPO: reward -0.060, delivered 66.3%
+   random9_l15_b06                PPO: reward +0.353, delivered 81.3%
+
+====================================================================================================
+4. Reward vs delivered ranking of all policies except random/min (Kendall tau)
+====================================================================================================
+   grid_l125_b06          tau +0.60   by reward: congestion_aware > queue_proportional > load_aware_routing > PPO > max_bandwidth > SAC
+   grid_bottleneck_b08    tau +1.00   by reward: PPO > SAC > load_aware_routing > congestion_aware > queue_proportional > max_bandwidth
+   pcap40_grid16_b05      tau +0.73   by reward: PPO > queue_proportional > SAC > congestion_aware > load_aware_routing > max_bandwidth
+   random9_l15_b06        tau +0.87   by reward: PPO > queue_proportional > congestion_aware > SAC > load_aware_routing > max_bandwidth

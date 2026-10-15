@@ -1,0 +1,35 @@
+Fluid flow upper bound on the delivered fraction (%), from carla_gym/bounds.py: the expected traffic matrix, link capacities and the bandwidth budget, with the allocation chosen optimally. No policy can exceed it in the long run; a finite window can exceed it slightly through backlog carried in. Policy figures: delivered % on test seeds 2000-2009, steps 20..199. The bound is loose (docs/RL_RESULTS_0.4.0.md, section 2.6): the room below it is an upper limit on what any policy could gain, not a measure of it.
+
+| Scenario | Bound, free routing | Bound, shortest paths | Best heuristic | Best heuristic delivers | Room below the bound (points, upper limit) |
+|---|---:|---:|---|---:|---:|
+| grid/load x0.5/budget 0.8 | 100.0 | 100.0 | max_bandwidth | 100.3 | -0.3 |
+| grid/load x0.5/budget 0.5 | 100.0 | 100.0 | congestion_aware | 99.9 | +0.1 |
+| grid/load x1/budget 0.8 | 100.0 | 100.0 | load_aware_routing | 97.4 | +2.6 |
+| grid/load x1/budget 0.5 | 92.6 | 92.6 | congestion_aware | 79.3 | +13.3 |
+| grid/load x2/budget 0.8 | 81.1 | 81.1 | congestion_aware | 58.6 | +22.5 |
+| grid/load x2/budget 0.5 | 59.7 | 59.7 | congestion_aware | 34.6 | +25.2 |
+| ring/load x0.5/budget 0.8 | 100.0 | 100.0 | queue_proportional | 100.2 | -0.2 |
+| ring/load x0.5/budget 0.5 | 100.0 | 100.0 | queue_proportional | 94.7 | +5.3 |
+| ring/load x1/budget 0.8 | 89.2 | 89.2 | queue_proportional | 75.2 | +14.0 |
+| ring/load x1/budget 0.5 | 68.1 | 68.1 | queue_proportional | 42.7 | +25.4 |
+| ring/load x2/budget 0.8 | 59.4 | 59.4 | congestion_aware | 31.7 | +27.7 |
+| ring/load x2/budget 0.5 | 44.8 | 44.8 | queue_proportional | 18.6 | +26.2 |
+| star/load x0.5/budget 0.8 | 100.0 | 100.0 | max_bandwidth | 94.1 | +5.9 |
+| star/load x0.5/budget 0.5 | 100.0 | 100.0 | queue_proportional | 83.4 | +16.6 |
+| star/load x1/budget 0.8 | 100.0 | 100.0 | max_bandwidth | 59.1 | +40.9 |
+| star/load x1/budget 0.5 | 68.5 | 68.5 | queue_proportional | 41.0 | +27.5 |
+| star/load x2/budget 0.8 | 57.0 | 57.0 | queue_proportional | 29.0 | +28.1 |
+| star/load x2/budget 0.5 | 39.8 | 39.8 | queue_proportional | 21.3 | +18.5 |
+| mesh/load x0.5/budget 0.8 | 100.0 | 100.0 | congestion_aware | 100.1 | -0.1 |
+| mesh/load x0.5/budget 0.5 | 100.0 | 100.0 | congestion_aware | 100.1 | -0.1 |
+| mesh/load x1/budget 0.8 | 100.0 | 100.0 | load_aware_routing | 100.0 | +0.0 |
+| mesh/load x1/budget 0.5 | 100.0 | 100.0 | load_aware_routing | 100.0 | +0.0 |
+| mesh/load x2/budget 0.8 | 100.0 | 100.0 | queue_proportional | 100.0 | +0.0 |
+| mesh/load x2/budget 0.5 | 100.0 | 100.0 | max_bandwidth | 100.0 | -0.0 |
+| random/load x0.5/budget 0.8 | 100.0 | 100.0 | load_aware_routing | 100.2 | -0.2 |
+| random/load x0.5/budget 0.5 | 100.0 | 100.0 | load_aware_routing | 100.2 | -0.2 |
+| random/load x1/budget 0.8 | 100.0 | 100.0 | load_aware_routing | 97.4 | +2.6 |
+| random/load x1/budget 0.5 | 100.0 | 100.0 | queue_proportional | 94.7 | +5.3 |
+| random/load x2/budget 0.8 | 89.8 | 89.8 | queue_proportional | 73.0 | +16.8 |
+| random/load x2/budget 0.5 | 74.7 | 74.7 | queue_proportional | 51.8 | +22.8 |
+| grid/bottleneck node 4 x0.5/budget 0.8 | 100.0 | 100.0 | load_aware_routing | 85.0 | +15.0 |

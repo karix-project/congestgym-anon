@@ -37,6 +37,7 @@ from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from carla_gym.baselines import POLICIES
 from carla_gym.core.trace_traffic import TraceTrafficGenerator
 from carla_gym.env import CarlaGymEnv
+from carla_gym.wrappers import ControlSubsetWrapper
 
 ALGOS = {"ppo": PPO, "sac": SAC, "td3": TD3}
 VALIDATION_SEED0 = 1000
@@ -56,11 +57,24 @@ def make_env(args, seed, rescale=True, monitor_file=None):
         env = CarlaGymEnv(topology=args.topology, num_nodes=args.nodes,
                           max_steps=args.steps, bandwidth_budget=args.budget,
                           load_scale=getattr(args, "load_scale", 1.0),
+                          bottlenecks=parse_bottlenecks(getattr(args, "bottleneck", None)),
+                          topology_seed=getattr(args, "topology_seed", 0),
                           traffic=traffic, seed=seed)
+        # Ablations: the agent controls one half of the action. Baselines are
+        # evaluated on the native env (rescale=False) and keep full control.
+        if rescale and getattr(args, "control", "both") != "both":
+            env = ControlSubsetWrapper(env, args.control)
         if rescale:
             env = gym.wrappers.RescaleAction(env, np.float32(-1.0), np.float32(1.0))
         return Monitor(env, filename=monitor_file)
     return _f
+
+
+def parse_bottlenecks(spec):
+    """'4:0.5,7:0.3' -> {4: 0.5, 7: 0.3}; None or '' -> None."""
+    if not spec:
+        return None
+    return {int(n): float(s) for n, s in (item.split(":") for item in spec.split(","))}
 
 
 def rollout_rewards(env, act_fn, seeds, steps, warmup=20):
@@ -132,10 +146,16 @@ def parse_args(argv=None, default_algo="ppo"):
     p.add_argument("--timesteps", type=int, default=300_000)
     p.add_argument("--steps", type=int, default=200, help="episode length")
     p.add_argument("--topology", default="grid")
+    p.add_argument("--topology-seed", type=int, default=0,
+                   help="graph seed for --topology random; fixed so every run sees one graph")
     p.add_argument("--nodes", type=int, default=9)
     p.add_argument("--budget", type=float, default=0.8)
     p.add_argument("--load-scale", type=float, default=1.0,
                    help="multiplier on synthetic Poisson arrival rates")
+    p.add_argument("--bottleneck", default=None,
+                   help="degraded nodes as node:scale pairs, e.g. 4:0.5 or 4:0.5,7:0.3")
+    p.add_argument("--control", choices=["both", "bandwidth", "routing"], default="both",
+                   help="ablation: let the agent control only one half of the action")
     p.add_argument("--trace", default=None, help="CSV: step,src,dst,volume")
     p.add_argument("--load", type=float, default=104.0, help="trace target load")
     p.add_argument("--n-envs", type=int, default=None,

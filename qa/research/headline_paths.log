@@ -1,0 +1,6 @@
+headline flags: --load-scale 1.25 --budget 0.6; test seeds 2000-2009; packets born at step >= 20, delivered
+congestion_aware (over test seeds) hops 1.872 +/- 0.007   stretch 1.000 +/- 0.000   share of packets on a longer-than-shortest path 0.0% +/- 0.0
+queue_proportional (over test seeds) hops 1.859 +/- 0.008   stretch 1.000 +/- 0.000   share of packets on a longer-than-shortest path 0.0% +/- 0.0
+load_aware_routing (over test seeds) hops 1.859 +/- 0.011   stretch 1.000 +/- 0.000   share of packets on a longer-than-shortest path 0.0% +/- 0.0
+max_bandwidth (over test seeds) hops 1.832 +/- 0.010   stretch 1.000 +/- 0.000   share of packets on a longer-than-shortest path 0.0% +/- 0.0
+PPO (over 5 train seeds) hops 1.868 +/- 0.006   stretch 1.000 +/- 0.000   share of packets on a longer-than-shortest path 0.0% +/- 0.0
