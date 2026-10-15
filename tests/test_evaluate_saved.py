@@ -5,13 +5,13 @@ pytest.importorskip("stable_baselines3")
 
 from examples.train_agent import parse_args as train_args          # noqa: E402
 from scripts.evaluate_saved import scenario_flags                  # noqa: E402
-from scripts.run_training_matrix import ABLATIONS, SCENARIOS       # noqa: E402
+from scripts.run_training_matrix import known_configurations      # noqa: E402
 
 
-@pytest.mark.parametrize("name", sorted({**SCENARIOS, **ABLATIONS}))
+@pytest.mark.parametrize("name", sorted(known_configurations()))
 def test_every_queue_entry_is_recognised_from_its_directory(name):
     found, flags = scenario_flags(f"results/rl/{name}/", None, [])
-    assert found == name and flags == list({**SCENARIOS, **ABLATIONS}[name])
+    assert found == name and flags == list(known_configurations()[name])
     train_args(flags)                                               # flags parse as train_agent flags
 
 

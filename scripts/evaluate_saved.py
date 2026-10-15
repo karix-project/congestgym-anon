@@ -46,7 +46,7 @@ from carla_gym.baselines import POLICIES, policy_rng
 from carla_gym.utils.qos import EpisodeQoS
 from carla_gym.utils.stats import ci95
 from examples.train_agent import make_env, parse_args as train_args
-from scripts.run_training_matrix import ABLATIONS, SCENARIOS
+from scripts.run_training_matrix import known_configurations
 
 ALGOS = {"ppo": PPO, "sac": SAC, "td3": TD3}
 COLS = ["reward", "delivered_fraction", "dropped_fraction", "latency_delivered",
@@ -70,7 +70,7 @@ def episode(targs, act_fn, seed, rescale, warmup):
 
 def scenario_flags(root, name, extra):
     """(scenario name or None, train_agent.py flags) for this directory."""
-    known = {**SCENARIOS, **ABLATIONS}
+    known = known_configurations()
     name = name or os.path.basename(os.path.normpath(root))
     if name not in known:
         return None, list(extra)
