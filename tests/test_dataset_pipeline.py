@@ -296,11 +296,11 @@ def test_committed_traces_match_the_adapters(raw, committed, kind):
 
 
 @needs_raw
-def test_random_topology_placement_uses_the_env_seed():
+def test_random_topology_placement_uses_the_env_topology_seed():
     """Regression guard: placement used an unseeded random graph, which need
     not be the graph the env builds."""
     order = _topology_degree_order("random", 16, seed=7)
-    net = NetworkModel(topology="random", num_nodes=16, seed=7)
+    net = NetworkModel(topology="random", num_nodes=16, topology_seed=7)
     degs = dict(net.graph.degree())
     assert order == sorted(degs, key=lambda n: (-degs[n], n))
     df = convert_packet_capture(PCAP_NUMERIC, topology="random", topology_seed=7)

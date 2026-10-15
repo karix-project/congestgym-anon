@@ -1,0 +1,4 @@
+tie=fixed  order=id      delivered 0.826  per-source min 0.716 max 0.957 spread 0.241  node0 0.716 node8 0.957
+tie=fixed  order=shuffle delivered 0.804  per-source min 0.712 max 0.947 spread 0.235  node0 0.746 node8 0.947
+tie=random order=id      delivered 0.787  per-source min 0.715 max 0.853 spread 0.138  node0 0.853 node8 0.802
+tie=random order=shuffle delivered 0.800  per-source min 0.747 max 0.841 spread 0.095  node0 0.826 node8 0.841

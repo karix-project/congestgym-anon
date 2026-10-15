@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "carla-gym"
-version = "0.3.0"
+version = "0.4.0"
 description = "Gymnasium environment for reinforcement learning on congested network traffic: bandwidth allocation and routing with QoS-aware reward"
 readme = "README.md"
 requires-python = ">=3.10"

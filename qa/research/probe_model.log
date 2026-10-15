@@ -1,0 +1,16 @@
+== 1 and 2: per-source delivered fraction, HOL waste (grid 3x3, budget 0.8, load 1, 10 test seeds)
+   node layout:  0 1 2 / 3 4 5 / 6 7 8 ; corners 0,2,6,8 ; edges 1,3,5,7 ; centre 4
+max_bandwidth        corners [0.716 0.875 0.718 0.957]  edges [0.847 0.738 0.884 0.847]  centre 0.850  | node0-node8 -0.241 | HOL-wasted budget 16.1%
+queue_proportional   corners [0.788 0.893 0.81  0.967]  edges [0.885 0.806 0.924 0.858]  centre 0.882  | node0-node8 -0.179 | HOL-wasted budget 18.6%
+congestion_aware     corners [0.881 0.892 0.859 0.883]  edges [0.867 0.863 0.86  0.843]  centre 0.848  | node0-node8 -0.003 | HOL-wasted budget 19.7%
+
+== 3: speed vs size (grid, max_bandwidth, load scaled with N/9, 300 steps)
+N=  9 E= 12    509.1 steps/s   routing share 23.9%
+N= 16 E= 24    224.9 steps/s   routing share 33.8%
+N= 25 E= 40    148.7 steps/s   routing share 43.2%
+N= 36 E= 60    118.8 steps/s   routing share 51.0%
+N= 49 E= 84     67.8 steps/s   routing share 58.7%
+N= 64 E=112     41.8 steps/s   routing share 65.0%
+
+== 4: random topology edge count by seed (9 nodes)
+[15, 12, 12, 16, 11, 16, 11, 9]
