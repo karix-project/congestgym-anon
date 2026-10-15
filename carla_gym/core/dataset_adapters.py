@@ -64,23 +64,23 @@ def _stable_hash(value) -> int:
 
 
 def _topology_degree_order(topology: str, num_nodes: int,
-                           seed: int | None = None) -> list[int]:
+                           seed: int | None = 0) -> list[int]:
     """Real node ids of `topology`, sorted best-connected first. Used to
     decide WHERE a heavy traffic concentration should land -- a hub stuck
     on a 2-link grid corner is a bottleneck no amount of bandwidth budget
     can fix, so placement has to be topology-aware, not arbitrary.
 
-    `seed` only matters for topology="random": pass the seed the env will be
-    built with, so placement is computed on the same graph."""
+    `seed` only matters for topology="random": pass the `topology_seed` the
+    env will be built with, so placement is computed on the same graph."""
     from carla_gym.core.network import NetworkModel
-    net = NetworkModel(topology=topology, num_nodes=num_nodes, seed=seed)
+    net = NetworkModel(topology=topology, num_nodes=num_nodes, topology_seed=seed)
     degrees = dict(net.graph.degree())
     return sorted(degrees, key=lambda n: (-degrees[n], n))
 
 
 def _place_by_volume(logical_src: pd.Series, logical_dst: pd.Series,
                      volume: pd.Series, topology: str, num_nodes: int,
-                     topology_seed: int | None = None) -> tuple[pd.Series, pd.Series]:
+                     topology_seed: int | None = 0) -> tuple[pd.Series, pd.Series]:
     """`logical_src`/`logical_dst` are provisional node ids (e.g. straight
     from a hash bucket) that carry no information about which topology
     position they'll land on. This computes each logical id's total
@@ -106,7 +106,7 @@ def _place_by_volume(logical_src: pd.Series, logical_dst: pd.Series,
 def convert_cs448b(path: str, out_path: str | None = None,
                     internal_nodes: int = 10, external_buckets: int = 6,
                     topology: str = "grid",
-                    topology_seed: int | None = None) -> pd.DataFrame:
+                    topology_seed: int | None = 0) -> pd.DataFrame:
     """
     Local hosts (l_ipn, already 0..9) and remote ASNs (2000+, hash-bucketed
     into `external_buckets` logical slots) are jointly placed onto real
@@ -160,7 +160,7 @@ def convert_cs448b(path: str, out_path: str | None = None,
 def convert_packet_capture(path: str, out_path: str | None = None,
                            num_nodes: int = 16, bin_seconds: float = 5.0,
                            topology: str = "grid",
-                           topology_seed: int | None = None) -> pd.DataFrame:
+                           topology_seed: int | None = 0) -> pd.DataFrame:
     """
     Auto-detects whether `path` is the numeric export (Timestamp/Source
     IP/Destination IP/Length) or the Wireshark text export

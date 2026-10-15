@@ -142,13 +142,22 @@ approximation.
 * Packets advance **at most one hop per step**. Service is **fractional**: a
   packet larger than the budget a link has left is partly transmitted and
   finishes the hop on a later step, so any positive allocation moves traffic.
-* Each node forwards in FIFO order with **head-of-line blocking**.
+* Each node keeps **one FIFO queue per outgoing link**, all sharing the
+  node's buffer. A packet waiting for an exhausted link blocks only traffic
+  for that link (`queueing="shared_fifo"` restores one FIFO per node, where
+  the head packet blocks every link).
+* Nodes are served in a **fresh random order each step**, so no node gets
+  first use of a shared link because of its id (`service_order="id"`).
 * A packet moves on only if the next node had room at the start of the step
   (plus what has arrived since); otherwise it is dropped. Buffers therefore
   never exceed `node_buffer`.
-* **Routing** is decided when a packet is admitted: Dijkstra shortest path
-  under the per-link routing weights in the current action. Uniform weights
-  give hop-count shortest paths.
+* **Routing** is decided when a packet is admitted: shortest path under the
+  per-link routing weights in the current action. Among equal-cost next
+  hops the packet picks one at random (per-packet ECMP); `tie_break="first"`
+  takes the lowest id. Uniform weights give hop-count shortest paths.
+* **Randomness**: `seed` drives traffic, tie-breaks and service order; the
+  `random` topology is drawn from `topology_seed` (default 0), so the graph
+  and the action space do not change with the episode seed.
 * **Latency is measured** in steps from injection to delivery.
 * **Loss** occurs on admission overflow, downstream buffer overflow, or when
   no route exists.
@@ -241,6 +250,13 @@ episodes.
 
 ### RL agents vs baselines (3x3 grid, synthetic traffic, budget 0.8)
 
+> **These runs used the 0.3.0 simulator** (one FIFO per node, fixed
+> tie-breaks, nodes served in id order) and have not yet been repeated on
+> 0.4.0. They are not comparable with the baseline matrix below, and under
+> 0.4.0 every baseline delivers about 95% of traffic in this scenario
+> (`qa/research/probe_after_fixes.log`), so it is no longer a congested
+> setting.
+
 ```
 python examples/train_agent.py --algo ppo --timesteps 500000 --seed S --eval-every 25000 --out results/grid_b08/ppo_seedS
 python examples/train_agent.py --algo sac --timesteps 100000 --seed S --eval-every 10000 --out results/grid_b08/sac_seedS
@@ -304,43 +320,43 @@ Mean post-warmup reward ± 95% CI over 10 seeds (2000..2009), 200 steps, warmup 
 
 | Scenario | random | min_bandwidth | max_bandwidth | queue_proportional | load_aware_routing | congestion_aware |
 |---|---:|---:|---:|---:|---:|---:|
-| grid/load x0.5/budget 0.8 | -0.126 ± 0.031 | -1.644 ± 0.021 | **+0.702 ± 0.010** | +0.582 ± 0.013 | +0.674 ± 0.009 | +0.548 ± 0.012 |
-| grid/load x0.5/budget 0.5 | -0.234 ± 0.039 | -1.644 ± 0.021 | +0.341 ± 0.062 | +0.537 ± 0.020 ~ | +0.432 ± 0.037 | +0.508 ± 0.018 ~ |
-| grid/load x1/budget 0.8 | -0.898 ± 0.040 | -1.803 ± 0.008 | +0.317 ± 0.030 | +0.404 ± 0.024 ~ | +0.378 ± 0.026 ~ | +0.386 ± 0.021 ~ |
-| grid/load x1/budget 0.5 | -0.974 ± 0.024 | -1.803 ± 0.008 | -0.581 ± 0.041 | -0.475 ± 0.048 ~ | -0.543 ± 0.041 ~ | -0.507 ± 0.032 ~ |
-| grid/load x2/budget 0.8 | -1.404 ± 0.013 | -1.858 ± 0.006 | -0.718 ± 0.025 | -0.655 ± 0.034 ~ | -0.636 ± 0.024 ~ | -0.623 ± 0.015 ~ |
-| grid/load x2/budget 0.5 | -1.451 ± 0.013 | -1.858 ± 0.006 | -1.281 ± 0.013 ~ | -1.270 ± 0.019 ~ | -1.284 ± 0.016 ~ | -1.275 ± 0.017 ~ |
-| ring/load x0.5/budget 0.8 | -0.471 ± 0.046 | -1.727 ± 0.011 | +0.526 ± 0.031 ~ | +0.462 ± 0.014 | +0.506 ± 0.028 ~ | +0.452 ± 0.012 |
-| ring/load x0.5/budget 0.5 | -0.556 ± 0.040 | -1.727 ± 0.011 | -0.227 ± 0.061 ~ | -0.134 ± 0.083 ~ | -0.244 ± 0.068 ~ | -0.139 ± 0.073 ~ |
-| ring/load x1/budget 0.8 | -1.146 ± 0.028 | -1.844 ± 0.008 | -0.329 ± 0.042 ~ | -0.288 ± 0.045 ~ | -0.332 ± 0.050 ~ | -0.286 ± 0.045 ~ |
-| ring/load x1/budget 0.5 | -1.216 ± 0.031 | -1.844 ± 0.008 | -1.050 ± 0.024 ~ | -1.059 ± 0.037 ~ | -1.057 ± 0.033 ~ | -1.055 ± 0.027 ~ |
-| ring/load x2/budget 0.8 | -1.535 ± 0.012 | -1.888 ± 0.004 | -1.100 ± 0.012 ~ | -1.105 ± 0.022 ~ | -1.105 ± 0.019 ~ | -1.110 ± 0.016 ~ |
-| ring/load x2/budget 0.5 | -1.569 ± 0.012 | -1.888 ± 0.004 | -1.507 ± 0.010 ~ | -1.513 ± 0.015 ~ | -1.508 ± 0.013 ~ | -1.509 ± 0.016 ~ |
-| star/load x0.5/budget 0.8 | -0.334 ± 0.062 | -1.669 ± 0.021 | +0.695 ± 0.009 ~ | +0.413 ± 0.023 | +0.695 ± 0.009 ~ | +0.413 ± 0.023 |
-| star/load x0.5/budget 0.5 | -0.439 ± 0.033 | -1.669 ± 0.021 | +0.345 ± 0.036 ~ | +0.282 ± 0.039 ~ | +0.345 ± 0.036 ~ | +0.282 ± 0.039 ~ |
-| star/load x1/budget 0.8 | -0.834 ± 0.028 | -1.807 ± 0.010 | +0.185 ± 0.018 ~ | +0.030 ± 0.018 | +0.185 ± 0.018 ~ | +0.030 ± 0.018 |
-| star/load x1/budget 0.5 | -0.950 ± 0.019 | -1.807 ± 0.010 | -0.587 ± 0.020 ~ | -0.573 ± 0.027 ~ | -0.587 ± 0.020 ~ | -0.573 ± 0.027 ~ |
-| star/load x2/budget 0.8 | -1.345 ± 0.013 | -1.868 ± 0.005 | -0.707 ± 0.006 ~ | -0.704 ± 0.008 ~ | -0.707 ± 0.006 ~ | -0.704 ± 0.008 ~ |
-| star/load x2/budget 0.5 | -1.425 ± 0.008 | -1.868 ± 0.005 | -1.214 ± 0.004 ~ | -1.222 ± 0.006 ~ | -1.214 ± 0.004 ~ | -1.222 ± 0.006 ~ |
-| mesh/load x0.5/budget 0.8 | +0.407 ± 0.029 | -1.155 ± 0.026 | **+0.927 ± 0.003** | +0.731 ± 0.005 | +0.851 ± 0.006 | +0.697 ± 0.006 |
-| mesh/load x0.5/budget 0.5 | +0.375 ± 0.038 | -1.155 ± 0.026 | **+0.849 ± 0.008** | +0.731 ± 0.005 | +0.807 ± 0.005 | +0.697 ± 0.006 |
-| mesh/load x1/budget 0.8 | -0.292 ± 0.033 | -1.490 ± 0.011 | **+0.911 ± 0.003** | +0.766 ± 0.006 | +0.830 ± 0.003 | +0.700 ± 0.008 |
-| mesh/load x1/budget 0.5 | -0.338 ± 0.042 | -1.490 ± 0.011 | **+0.832 ± 0.004** | +0.766 ± 0.006 | +0.764 ± 0.008 | +0.700 ± 0.008 |
-| mesh/load x2/budget 0.8 | -1.015 ± 0.012 | -1.641 ± 0.003 | **+0.879 ± 0.005** | +0.769 ± 0.006 | +0.744 ± 0.010 | +0.652 ± 0.006 |
-| mesh/load x2/budget 0.5 | -1.073 ± 0.027 | -1.641 ± 0.003 | +0.693 ± 0.013 | **+0.770 ± 0.005** | +0.504 ± 0.013 | +0.620 ± 0.008 |
-| random/load x0.5/budget 0.8 | -0.218 ± 0.224 | -1.638 ± 0.040 | +0.633 ± 0.119 ~ | +0.522 ± 0.122 ~ | +0.615 ± 0.094 ~ | +0.479 ± 0.097 ~ |
-| random/load x0.5/budget 0.5 | -0.327 ± 0.232 | -1.638 ± 0.040 | +0.143 ± 0.286 ~ | +0.483 ± 0.136 ~ | +0.238 ± 0.266 ~ | +0.401 ± 0.143 ~ |
-| random/load x1/budget 0.8 | -0.934 ± 0.130 | -1.789 ± 0.020 | +0.072 ± 0.310 ~ | +0.231 ± 0.243 ~ | +0.175 ± 0.306 ~ | +0.249 ± 0.211 ~ |
-| random/load x1/budget 0.5 | -1.020 ± 0.104 | -1.789 ± 0.020 | -0.681 ± 0.194 ~ | -0.401 ± 0.287 ~ | -0.570 ± 0.225 ~ | -0.425 ± 0.271 ~ |
-| random/load x2/budget 0.8 | -1.419 ± 0.071 | -1.848 ± 0.015 | -0.746 ± 0.210 ~ | -0.589 ± 0.252 ~ | -0.669 ± 0.225 ~ | -0.587 ± 0.252 ~ |
-| random/load x2/budget 0.5 | -1.466 ± 0.066 | -1.848 ± 0.015 | -1.259 ± 0.136 ~ | -1.229 ± 0.152 ~ | -1.255 ± 0.127 ~ | -1.241 ± 0.133 ~ |
-| grid/bottleneck node 4 x0.5/budget 0.8 | -1.147 ± 0.025 | -1.836 ± 0.005 | -0.196 ± 0.037 | -0.034 ± 0.026 ~ | -0.061 ± 0.029 | +0.003 ± 0.033 ~ |
-| pcap trace/load 40/grid-16/budget 0.8 | -0.099 ± 0.019 | -0.956 ± 0.016 | +0.239 ± 0.012 ~ | +0.240 ± 0.017 ~ | +0.228 ± 0.010 ~ | +0.114 ± 0.019 |
-| pcap trace/load 40/grid-16/budget 0.5 | -0.136 ± 0.013 | -0.956 ± 0.016 | -0.002 ± 0.020 | **+0.240 ± 0.017** | +0.047 ± 0.017 | +0.114 ± 0.019 |
-| pcap trace/load 110 (overload)/grid-16/budget 0.8 | -0.484 ± 0.022 | -1.187 ± 0.023 | -0.105 ± 0.015 | -0.043 ± 0.019 ~ | -0.079 ± 0.016 ~ | -0.110 ± 0.022 |
-| pcap trace/load 110 (overload)/grid-16/budget 0.5 | -0.517 ± 0.019 | -1.187 ± 0.023 | -0.426 ± 0.012 | **-0.043 ± 0.019** | -0.380 ± 0.017 | -0.098 ± 0.023 |
-| cs448b trace/load 110 (stress case)/grid-16/budget 0.8 | -0.169 ± 0.038 | -1.496 ± 0.018 | +0.482 ± 0.014 ~ | +0.414 ± 0.017 | +0.471 ± 0.013 ~ | +0.322 ± 0.019 |
-| cs448b trace/load 110 (stress case)/grid-16/budget 0.5 | -0.239 ± 0.039 | -1.496 ± 0.018 | +0.169 ± 0.019 | **+0.414 ± 0.017** | +0.237 ± 0.024 | +0.323 ± 0.016 |
+| grid/load x0.5/budget 0.8 | +0.435 ± 0.017 | -1.481 ± 0.016 | **+0.720 ± 0.008** | +0.614 ± 0.010 | +0.695 ± 0.007 | +0.586 ± 0.010 |
+| grid/load x0.5/budget 0.5 | +0.386 ± 0.024 | -1.481 ± 0.016 | +0.627 ± 0.013 ~ | +0.604 ± 0.007 | +0.626 ± 0.006 ~ | +0.582 ± 0.010 |
+| grid/load x1/budget 0.8 | -0.284 ± 0.034 | -1.691 ± 0.005 | +0.631 ± 0.011 | +0.600 ± 0.011 | **+0.665 ± 0.012** | +0.587 ± 0.012 |
+| grid/load x1/budget 0.5 | -0.392 ± 0.027 | -1.691 ± 0.005 | -0.028 ± 0.020 | +0.119 ± 0.030 ~ | +0.052 ± 0.041 | +0.133 ± 0.033 ~ |
+| grid/load x2/budget 0.8 | -1.021 ± 0.022 | -1.793 ± 0.005 | -0.211 ± 0.020 | -0.154 ± 0.022 ~ | -0.169 ± 0.018 ~ | -0.137 ± 0.018 ~ |
+| grid/load x2/budget 0.5 | -1.088 ± 0.022 | -1.793 ± 0.005 | -0.909 ± 0.014 | -0.871 ± 0.014 ~ | -0.891 ± 0.014 | -0.862 ± 0.009 ~ |
+| ring/load x0.5/budget 0.8 | -0.082 ± 0.042 | -1.675 ± 0.017 | +0.630 ± 0.010 ~ | +0.535 ± 0.007 | +0.611 ± 0.012 ~ | +0.520 ± 0.010 |
+| ring/load x0.5/budget 0.5 | -0.186 ± 0.044 | -1.675 ± 0.017 | +0.165 ± 0.069 ~ | +0.276 ± 0.059 ~ | +0.167 ± 0.063 ~ | +0.263 ± 0.057 ~ |
+| ring/load x1/budget 0.8 | -0.916 ± 0.035 | -1.814 ± 0.009 | -0.003 ± 0.043 ~ | +0.030 ± 0.038 ~ | -0.013 ± 0.045 ~ | +0.036 ± 0.043 ~ |
+| ring/load x1/budget 0.5 | -0.990 ± 0.025 | -1.814 ± 0.009 | -0.855 ± 0.034 ~ | -0.843 ± 0.031 ~ | -0.860 ± 0.029 ~ | -0.844 ± 0.026 ~ |
+| ring/load x2/budget 0.8 | -1.408 ± 0.013 | -1.870 ± 0.004 | -0.940 ± 0.019 ~ | -0.920 ± 0.017 ~ | -0.940 ± 0.014 ~ | -0.921 ± 0.015 ~ |
+| ring/load x2/budget 0.5 | -1.458 ± 0.011 | -1.870 ± 0.004 | -1.407 ± 0.011 ~ | -1.401 ± 0.015 ~ | -1.405 ± 0.013 ~ | -1.401 ± 0.013 ~ |
+| star/load x0.5/budget 0.8 | +0.199 ± 0.036 | -1.543 ± 0.024 | +0.660 ± 0.010 ~ | +0.484 ± 0.018 | +0.660 ± 0.010 ~ | +0.484 ± 0.018 |
+| star/load x0.5/budget 0.5 | +0.103 ± 0.050 | -1.543 ± 0.024 | +0.395 ± 0.034 ~ | +0.421 ± 0.023 ~ | +0.395 ± 0.034 ~ | +0.421 ± 0.023 ~ |
+| star/load x1/budget 0.8 | -0.738 ± 0.030 | -1.718 ± 0.010 | +0.073 ± 0.028 ~ | +0.012 ± 0.018 | +0.073 ± 0.028 ~ | +0.012 ± 0.018 |
+| star/load x1/budget 0.5 | -0.862 ± 0.030 | -1.718 ± 0.010 | -0.674 ± 0.031 ~ | -0.628 ± 0.033 ~ | -0.674 ± 0.031 ~ | -0.628 ± 0.033 ~ |
+| star/load x2/budget 0.8 | -1.310 ± 0.009 | -1.781 ± 0.009 | -0.843 ± 0.009 ~ | -0.842 ± 0.009 ~ | -0.843 ± 0.009 ~ | -0.842 ± 0.009 ~ |
+| star/load x2/budget 0.5 | -1.381 ± 0.010 | -1.781 ± 0.009 | -1.289 ± 0.009 ~ | -1.282 ± 0.010 ~ | -1.289 ± 0.009 ~ | -1.282 ± 0.010 ~ |
+| mesh/load x0.5/budget 0.8 | +0.635 ± 0.010 | -0.077 ± 0.031 | **+0.928 ± 0.002** | +0.736 ± 0.005 | +0.854 ± 0.004 | +0.702 ± 0.006 |
+| mesh/load x0.5/budget 0.5 | +0.631 ± 0.011 | -0.077 ± 0.031 | **+0.863 ± 0.007** | +0.736 ± 0.005 | +0.817 ± 0.006 | +0.702 ± 0.006 |
+| mesh/load x1/budget 0.8 | +0.541 ± 0.016 | -0.743 ± 0.019 | **+0.918 ± 0.002** | +0.781 ± 0.006 | +0.834 ± 0.005 | +0.733 ± 0.005 |
+| mesh/load x1/budget 0.5 | +0.525 ± 0.019 | -0.743 ± 0.019 | **+0.857 ± 0.004** | +0.781 ± 0.006 | +0.802 ± 0.006 | +0.733 ± 0.005 |
+| mesh/load x2/budget 0.8 | -0.023 ± 0.022 | -1.220 ± 0.006 | **+0.904 ± 0.002** | +0.812 ± 0.003 | +0.816 ± 0.004 | +0.728 ± 0.007 |
+| mesh/load x2/budget 0.5 | -0.057 ± 0.021 | -1.220 ± 0.006 | **+0.857 ± 0.003** | +0.812 ± 0.003 | +0.783 ± 0.004 | +0.730 ± 0.004 |
+| random/load x0.5/budget 0.8 | +0.495 ± 0.027 | -1.326 ± 0.020 | **+0.750 ± 0.008** | +0.665 ± 0.005 | +0.708 ± 0.007 | +0.601 ± 0.008 |
+| random/load x0.5/budget 0.5 | +0.461 ± 0.036 | -1.326 ± 0.020 | **+0.691 ± 0.012** | +0.665 ± 0.006 | +0.655 ± 0.011 | +0.597 ± 0.009 |
+| random/load x1/budget 0.8 | -0.190 ± 0.041 | -1.589 ± 0.011 | +0.682 ± 0.023 ~ | +0.657 ± 0.008 ~ | +0.678 ± 0.014 ~ | +0.598 ± 0.011 |
+| random/load x1/budget 0.5 | -0.268 ± 0.047 | -1.589 ± 0.011 | +0.055 ± 0.047 | **+0.602 ± 0.020** | +0.115 ± 0.041 | +0.487 ± 0.026 |
+| random/load x2/budget 0.8 | -0.910 ± 0.026 | -1.721 ± 0.006 | -0.080 ± 0.022 | **+0.221 ± 0.019** | -0.045 ± 0.024 | +0.189 ± 0.014 |
+| random/load x2/budget 0.5 | -0.974 ± 0.023 | -1.721 ± 0.006 | -0.792 ± 0.025 | -0.396 ± 0.018 ~ | -0.767 ± 0.021 | -0.405 ± 0.024 ~ |
+| grid/bottleneck node 4 x0.5/budget 0.8 | -0.888 ± 0.033 | -1.737 ± 0.007 | -0.151 ± 0.021 | +0.143 ± 0.015 | +0.400 ± 0.014 ~ | +0.377 ± 0.017 ~ |
+| pcap trace/load 40/grid-16/budget 0.8 | -0.057 ± 0.016 | -0.976 ± 0.023 | +0.220 ± 0.015 | +0.235 ± 0.015 ~ | +0.266 ± 0.017 ~ | +0.127 ± 0.019 |
+| pcap trace/load 40/grid-16/budget 0.5 | -0.084 ± 0.015 | -0.976 ± 0.023 | +0.002 ± 0.013 | **+0.235 ± 0.015** | +0.114 ± 0.020 | +0.127 ± 0.019 |
+| pcap trace/load 110 (overload)/grid-16/budget 0.8 | -0.399 ± 0.022 | -1.219 ± 0.029 | -0.085 ± 0.017 | -0.039 ± 0.016 ~ | -0.013 ± 0.016 ~ | -0.077 ± 0.023 |
+| pcap trace/load 110 (overload)/grid-16/budget 0.5 | -0.434 ± 0.025 | -1.219 ± 0.029 | -0.345 ± 0.016 | -0.039 ± 0.016 ~ | -0.296 ± 0.024 | -0.073 ± 0.023 ~ |
+| cs448b trace/load 110 (stress case)/grid-16/budget 0.8 | +0.161 ± 0.040 | -1.328 ± 0.020 | **+0.556 ± 0.009** | +0.470 ± 0.020 | +0.520 ± 0.009 | +0.364 ± 0.021 |
+| cs448b trace/load 110 (stress case)/grid-16/budget 0.5 | +0.136 ± 0.040 | -1.328 ± 0.020 | +0.351 ± 0.021 | **+0.470 ± 0.020** | +0.415 ± 0.011 | +0.365 ± 0.021 |
 <!-- RESULTS:benchmark:end -->
 
 In most scenarios the leading heuristics are statistically tied; a policy is
@@ -354,50 +370,51 @@ Traffic delivered / dropped, as % of traffic offered after warm-up (episode aggr
 
 | Scenario | random | min_bandwidth | max_bandwidth | queue_proportional | load_aware_routing | congestion_aware |
 |---|---:|---:|---:|---:|---:|---:|
-| grid/load x0.5/budget 0.8 | 74.7 / 25.2 | 7.7 / 90.8 | 99.8 / 0.2 | 99.6 / 0.7 | 100.0 / 0.2 | 99.5 / 0.7 |
-| grid/load x0.5/budget 0.5 | 70.9 / 28.9 | 7.7 / 90.8 | 91.3 / 8.4 | 98.5 / 1.6 | 96.1 / 3.7 | 98.5 / 1.7 |
-| grid/load x1/budget 0.8 | 39.4 / 60.3 | 3.6 / 96.4 | 82.6 / 17.3 | 87.0 / 13.0 | 86.2 / 13.9 | 86.6 / 13.4 |
-| grid/load x1/budget 0.5 | 36.7 / 62.9 | 3.6 / 96.4 | 51.9 / 47.7 | 55.5 / 44.2 | 52.8 / 47.1 | 54.0 / 46.0 |
-| grid/load x2/budget 0.8 | 18.4 / 81.6 | 1.8 / 98.2 | 41.7 / 58.4 | 43.3 / 56.7 | 41.8 / 58.2 | 41.8 / 58.3 |
-| grid/load x2/budget 0.5 | 17.0 / 83.0 | 1.8 / 98.2 | 23.6 / 76.3 | 24.1 / 75.8 | 23.5 / 76.6 | 23.8 / 76.1 |
-| ring/load x0.5/budget 0.8 | 62.7 / 36.9 | 4.8 / 93.9 | 98.0 / 2.3 | 98.2 / 2.0 | 98.1 / 2.1 | 98.2 / 2.0 |
-| ring/load x0.5/budget 0.5 | 57.7 / 41.4 | 4.8 / 93.9 | 73.1 / 26.2 | 77.3 / 21.8 | 72.6 / 26.7 | 77.3 / 21.8 |
-| ring/load x1/budget 0.8 | 29.4 / 70.5 | 2.4 / 97.6 | 59.3 / 40.3 | 60.9 / 38.9 | 59.4 / 40.5 | 61.0 / 38.9 |
-| ring/load x1/budget 0.5 | 26.5 / 73.3 | 2.4 / 97.6 | 33.6 / 66.2 | 33.2 / 66.6 | 33.1 / 66.6 | 33.4 / 66.4 |
-| ring/load x2/budget 0.8 | 13.6 / 86.4 | 1.3 / 98.7 | 26.0 / 74.1 | 25.9 / 74.1 | 25.6 / 74.4 | 25.9 / 74.2 |
-| ring/load x2/budget 0.5 | 12.5 / 87.5 | 1.3 / 98.7 | 14.9 / 85.1 | 14.6 / 85.4 | 14.8 / 85.2 | 14.8 / 85.2 |
-| star/load x0.5/budget 0.8 | 52.7 / 47.4 | 6.3 / 91.9 | 95.8 / 4.4 | 83.4 / 16.7 | 95.8 / 4.4 | 83.4 / 16.7 |
-| star/load x0.5/budget 0.5 | 48.1 / 52.0 | 6.3 / 91.9 | 81.1 / 18.9 | 76.5 / 23.7 | 81.1 / 18.9 | 76.5 / 23.7 |
-| star/load x1/budget 0.8 | 32.0 / 67.6 | 3.1 / 96.9 | 66.4 / 33.7 | 58.1 / 42.0 | 66.4 / 33.7 | 58.1 / 42.0 |
-| star/load x1/budget 0.5 | 29.1 / 70.3 | 3.1 / 96.9 | 46.6 / 52.2 | 46.8 / 51.8 | 46.6 / 52.2 | 46.8 / 51.8 |
-| star/load x2/budget 0.8 | 17.0 / 83.0 | 1.6 / 98.4 | 38.1 / 61.9 | 38.2 / 61.8 | 38.1 / 61.9 | 38.2 / 61.8 |
-| star/load x2/budget 0.5 | 15.2 / 84.8 | 1.6 / 98.4 | 25.0 / 75.0 | 24.7 / 75.4 | 25.0 / 75.0 | 24.7 / 75.4 |
-| mesh/load x0.5/budget 0.8 | 96.6 / 3.2 | 26.7 / 71.1 | 100.0 / 0.0 | 99.9 / 0.0 | 99.9 / 0.0 | 100.0 / 0.0 |
-| mesh/load x0.5/budget 0.5 | 95.8 / 4.0 | 26.7 / 71.1 | 100.0 / 0.0 | 99.9 / 0.0 | 100.0 / 0.0 | 100.0 / 0.0 |
-| mesh/load x1/budget 0.8 | 64.1 / 35.7 | 13.8 / 86.2 | 100.0 / 0.0 | 99.9 / 0.0 | 100.0 / 0.0 | 99.7 / 0.1 |
-| mesh/load x1/budget 0.5 | 62.3 / 37.5 | 13.8 / 86.2 | 100.0 / 0.0 | 99.9 / 0.0 | 99.7 / 0.2 | 99.7 / 0.1 |
-| mesh/load x2/budget 0.8 | 31.0 / 69.0 | 7.3 / 92.7 | 99.9 / 0.0 | 99.1 / 1.0 | 96.9 / 3.2 | 94.3 / 5.7 |
-| mesh/load x2/budget 0.5 | 29.4 / 70.7 | 7.3 / 92.7 | 95.8 / 4.4 | 99.0 / 1.0 | 88.7 / 11.5 | 93.1 / 7.1 |
-| random/load x0.5/budget 0.8 | 69.4 / 30.5 | 8.1 / 90.4 | 96.4 / 3.7 | 94.9 / 4.9 | 97.0 / 2.9 | 95.6 / 4.3 |
-| random/load x0.5/budget 0.5 | 65.3 / 34.6 | 8.1 / 90.4 | 80.5 / 19.3 | 93.5 / 6.4 | 86.1 / 13.8 | 92.8 / 7.3 |
-| random/load x1/budget 0.8 | 37.1 / 62.7 | 3.9 / 96.1 | 71.5 / 28.6 | 77.5 / 22.7 | 76.8 / 23.3 | 79.7 / 20.5 |
-| random/load x1/budget 0.5 | 34.3 / 65.7 | 3.9 / 96.1 | 46.4 / 53.5 | 55.6 / 44.3 | 50.8 / 49.0 | 55.7 / 44.1 |
-| random/load x2/budget 0.8 | 17.8 / 82.2 | 2.0 / 98.0 | 39.1 / 61.1 | 43.2 / 57.0 | 41.9 / 58.3 | 43.7 / 56.4 |
-| random/load x2/budget 0.5 | 16.5 / 83.6 | 2.0 / 98.0 | 24.2 / 75.8 | 25.0 / 75.0 | 24.4 / 75.6 | 24.9 / 75.2 |
-| grid/bottleneck node 4 x0.5/budget 0.8 | 28.9 / 71.2 | 2.6 / 97.4 | 60.2 / 39.6 | 66.2 / 33.6 | 66.7 / 33.2 | 68.9 / 30.8 |
-| pcap trace/load 40/grid-16/budget 0.8 | 54.5 / 43.6 | 10.2 / 77.7 | 72.9 / 25.9 | 76.5 / 21.9 | 76.5 / 21.6 | 75.0 / 22.8 |
-| pcap trace/load 40/grid-16/budget 0.5 | 52.8 / 45.1 | 10.2 / 77.7 | 58.6 / 39.7 | 76.5 / 21.9 | 65.5 / 32.3 | 75.0 / 22.7 |
-| pcap trace/load 110 (overload)/grid-16/budget 0.8 | 27.2 / 71.3 | 3.9 / 90.4 | 39.9 / 59.3 | 43.3 / 55.8 | 43.2 / 55.8 | 43.5 / 55.0 |
-| pcap trace/load 110 (overload)/grid-16/budget 0.5 | 26.0 / 72.5 | 3.9 / 90.4 | 29.2 / 69.2 | 43.3 / 55.8 | 31.1 / 67.2 | 44.3 / 54.4 |
-| cs448b trace/load 110 (stress case)/grid-16/budget 0.8 | 31.8 / 68.5 | 3.9 / 94.5 | 42.6 / 57.6 | 43.1 / 57.5 | 44.8 / 55.7 | 43.3 / 57.3 |
-| cs448b trace/load 110 (stress case)/grid-16/budget 0.5 | 30.5 / 69.8 | 3.9 / 94.5 | 37.0 / 63.4 | 43.1 / 57.5 | 40.7 / 59.8 | 43.5 / 57.1 |
+| grid/load x0.5/budget 0.8 | 96.6 / 3.4 | 13.6 / 84.9 | 100.2 / 0.0 | 100.1 / 0.2 | 100.2 / 0.0 | 99.9 / 0.3 |
+| grid/load x0.5/budget 0.5 | 95.3 / 4.6 | 13.6 / 84.9 | 99.5 / 0.7 | 99.9 / 0.3 | 100.0 / 0.1 | 99.9 / 0.2 |
+| grid/load x1/budget 0.8 | 62.4 / 37.4 | 6.7 / 93.2 | 95.5 / 4.4 | 95.3 / 4.7 | 97.5 / 2.4 | 95.2 / 4.7 |
+| grid/load x1/budget 0.5 | 58.7 / 41.0 | 6.7 / 93.2 | 72.5 / 27.1 | 77.7 / 22.0 | 76.3 / 23.3 | 78.9 / 20.7 |
+| grid/load x2/budget 0.8 | 29.9 / 70.2 | 3.3 / 96.7 | 56.4 / 43.7 | 58.2 / 41.8 | 57.9 / 42.0 | 58.9 / 41.2 |
+| grid/load x2/budget 0.5 | 28.0 / 72.0 | 3.3 / 96.7 | 33.8 / 66.2 | 34.6 / 65.4 | 34.5 / 65.5 | 34.8 / 65.2 |
+| ring/load x0.5/budget 0.8 | 82.0 / 17.5 | 6.5 / 92.2 | 100.1 / 0.1 | 100.1 / 0.3 | 100.1 / 0.1 | 100.1 / 0.3 |
+| ring/load x0.5/budget 0.5 | 77.2 / 21.9 | 6.5 / 92.2 | 90.5 / 8.9 | 94.6 / 5.0 | 90.8 / 8.5 | 94.5 / 5.4 |
+| ring/load x1/budget 0.8 | 39.3 / 60.6 | 3.1 / 96.8 | 73.7 / 26.1 | 75.1 / 24.8 | 73.5 / 26.3 | 74.9 / 24.9 |
+| ring/load x1/budget 0.5 | 36.0 / 63.7 | 3.1 / 96.8 | 42.2 / 57.5 | 42.7 / 57.2 | 42.1 / 57.8 | 42.6 / 57.2 |
+| ring/load x2/budget 0.8 | 17.9 / 82.2 | 1.7 / 98.3 | 31.2 / 68.9 | 31.6 / 68.5 | 31.2 / 68.9 | 31.7 / 68.4 |
+| ring/load x2/budget 0.5 | 16.2 / 83.8 | 1.7 / 98.3 | 17.9 / 82.1 | 18.3 / 81.7 | 18.1 / 81.9 | 18.3 / 81.7 |
+| star/load x0.5/budget 0.8 | 74.7 / 25.4 | 11.1 / 87.3 | 94.0 / 6.0 | 85.8 / 14.2 | 94.0 / 6.0 | 85.8 / 14.2 |
+| star/load x0.5/budget 0.5 | 71.2 / 28.9 | 11.1 / 87.3 | 82.4 / 17.7 | 83.2 / 16.9 | 82.4 / 17.7 | 83.2 / 16.9 |
+| star/load x1/budget 0.8 | 37.2 / 62.3 | 5.5 / 94.5 | 59.4 / 40.7 | 56.5 / 43.7 | 59.4 / 40.7 | 56.5 / 43.7 |
+| star/load x1/budget 0.5 | 34.7 / 64.7 | 5.5 / 94.5 | 40.4 / 58.7 | 40.7 / 58.4 | 40.4 / 58.7 | 40.7 / 58.4 |
+| star/load x2/budget 0.8 | 19.2 / 80.9 | 2.9 / 97.1 | 28.6 / 71.3 | 28.6 / 71.5 | 28.6 / 71.3 | 28.6 / 71.5 |
+| star/load x2/budget 0.5 | 18.3 / 81.7 | 2.9 / 97.1 | 20.8 / 79.2 | 21.0 / 79.0 | 20.8 / 79.2 | 21.0 / 79.0 |
+| mesh/load x0.5/budget 0.8 | 100.2 / 0.0 | 82.4 / 15.2 | 100.0 / 0.0 | 99.9 / 0.0 | 99.9 / 0.0 | 100.0 / 0.0 |
+| mesh/load x0.5/budget 0.5 | 100.2 / 0.1 | 82.4 / 15.2 | 100.0 / 0.0 | 99.9 / 0.0 | 99.9 / 0.0 | 100.0 / 0.0 |
+| mesh/load x1/budget 0.8 | 95.1 / 4.7 | 45.5 / 54.2 | 100.0 / 0.0 | 100.0 / 0.0 | 100.0 / 0.0 | 99.9 / 0.1 |
+| mesh/load x1/budget 0.5 | 94.7 / 5.2 | 45.5 / 54.2 | 100.0 / 0.0 | 100.0 / 0.0 | 99.9 / 0.0 | 99.9 / 0.1 |
+| mesh/load x2/budget 0.8 | 64.4 / 35.6 | 24.1 / 75.9 | 100.0 / 0.0 | 100.0 / 0.0 | 99.4 / 0.6 | 97.3 / 2.8 |
+| mesh/load x2/budget 0.5 | 63.1 / 37.0 | 24.1 / 75.9 | 100.0 / 0.0 | 100.0 / 0.0 | 98.9 / 1.1 | 97.4 / 2.7 |
+| random/load x0.5/budget 0.8 | 98.0 / 1.8 | 19.2 / 79.1 | 100.2 / 0.0 | 100.2 / 0.1 | 100.1 / 0.1 | 100.1 / 0.1 |
+| random/load x0.5/budget 0.5 | 97.2 / 2.6 | 19.2 / 79.1 | 99.9 / 0.1 | 100.2 / 0.1 | 100.1 / 0.1 | 99.9 / 0.2 |
+| random/load x1/budget 0.8 | 66.8 / 32.8 | 9.6 / 90.2 | 96.5 / 3.5 | 96.6 / 3.3 | 97.2 / 2.7 | 95.1 / 4.7 |
+| random/load x1/budget 0.5 | 64.0 / 35.7 | 9.6 / 90.2 | 76.6 / 23.0 | 94.4 / 5.5 | 78.5 / 21.5 | 91.5 / 8.4 |
+| random/load x2/budget 0.8 | 34.1 / 65.8 | 4.8 / 95.2 | 62.9 / 37.0 | 72.7 / 27.3 | 64.0 / 36.1 | 71.2 / 28.9 |
+| random/load x2/budget 0.5 | 32.4 / 67.5 | 4.8 / 95.2 | 40.6 / 59.4 | 51.7 / 48.4 | 41.6 / 58.3 | 51.6 / 48.6 |
+| grid/bottleneck node 4 x0.5/budget 0.8 | 38.3 / 61.6 | 5.1 / 94.9 | 63.2 / 36.3 | 73.2 / 26.6 | 85.0 / 14.8 | 84.3 / 15.7 |
+| pcap trace/load 40/grid-16/budget 0.8 | 57.1 / 41.1 | 9.5 / 80.0 | 70.7 / 28.1 | 75.2 / 23.4 | 79.6 / 18.6 | 75.8 / 21.4 |
+| pcap trace/load 40/grid-16/budget 0.5 | 55.7 / 42.5 | 9.5 / 80.0 | 57.1 / 41.4 | 75.2 / 23.4 | 70.5 / 27.3 | 75.8 / 21.4 |
+| pcap trace/load 110 (overload)/grid-16/budget 0.8 | 29.5 / 69.2 | 3.4 / 92.0 | 39.3 / 60.1 | 42.7 / 56.6 | 45.9 / 53.1 | 45.7 / 53.0 |
+| pcap trace/load 110 (overload)/grid-16/budget 0.5 | 28.5 / 70.1 | 3.4 / 92.0 | 29.8 / 69.2 | 42.7 / 56.6 | 33.8 / 64.6 | 45.6 / 53.2 |
+| cs448b trace/load 110 (stress case)/grid-16/budget 0.8 | 38.7 / 61.8 | 6.6 / 91.9 | 44.3 / 55.9 | 44.5 / 56.0 | 45.9 / 54.6 | 44.6 / 56.0 |
+| cs448b trace/load 110 (stress case)/grid-16/budget 0.5 | 38.1 / 62.3 | 6.6 / 91.9 | 40.8 / 59.7 | 44.5 / 56.0 | 44.8 / 55.8 | 44.6 / 55.9 |
 <!-- RESULTS:benchmark_qos:end -->
 
 The trace scenarios show why the delivered / dropped table matters. At a
-mean load of 40 the pcap trace is loaded but workable: the heuristics drop 22
-to 40% of its traffic and separate clearly at the tighter budget. At 110 it
-is in overload (54 to 69% dropped). The cs448b trace is a stress case: it
-drops 56 to 63% whatever the policy, because a few spike bins carry most of
+mean load of 40 the pcap trace is loaded but workable: the four heuristics
+(all policies except random and min_bandwidth) drop 19 to 41% of its traffic
+and separate clearly at the tighter budget. At 110 it is in overload (53 to
+69% dropped). The cs448b trace is a stress case: the heuristics drop 55 to
+60% of it, because a few spike bins carry most of
 its volume, yet its reward is positive. The reward averages per-step ratios,
 so a quiet step counts as much as a heavy one (see Limitations).
 
@@ -474,7 +491,7 @@ python -m pytest -q
 ```
 
 <!-- RESULTS:tests:start -->
-Last run: **134 passed with local copies of the raw datasets in data/raw/; 120 passed, 14 skipped without them (a fresh clone)**.
+Last run: **160 passed**.
 <!-- RESULTS:tests:end -->
 
 The suite covers Gymnasium API conformance (`check_env`, including rendering),
@@ -488,10 +505,10 @@ datasets in `data/raw/` and are skipped otherwise.
 
 * Time is slotted and packets move one hop per step; there is no propagation
   delay, retransmission or transport-layer behaviour.
-* A link's budget is shared by both directions and nodes are served in id
-  order, so lower-numbered nodes get first use of a contested link.
-* Each node has a single FIFO queue; there is no per-class scheduling inside a
-  node. QoS classes differ only in size, deadline and reward weight.
+* A link's budget is shared by both directions. Which direction uses it
+  first in a step depends on the (random) service order.
+* Queues are FIFO per outgoing link; there is no per-class scheduling inside
+  a node. QoS classes differ only in size, deadline and reward weight.
 * A packet's route is fixed at admission; routing weights do not re-route
   packets already queued.
 * There is no backpressure. A packet that has crossed a link is dropped if the
@@ -521,6 +538,25 @@ datasets in `data/raw/` and are skipped otherwise.
   covers the rule-based baselines only.
 * Tested on Python 3.14 (Windows 11). The code parses under the Python 3.10
   grammar but has not been run on 3.10 to 3.13.
+
+## Changes in 0.4.0
+
+Dynamics changed, so results from 0.3.0 are not comparable. The reasons and
+measurements are in `docs/CODE_REVIEW_FOR_PUBLICATION.md` (F1 to F3).
+
+* Equal-cost paths are chosen at random, and nodes are served in a random
+  order each step. In 0.3.0 the four corners of the 3x3 grid delivered 72%
+  to 96% of their traffic under hop-count routing; the gap is now under 4
+  points.
+* One FIFO per outgoing link replaces one FIFO per node. In 0.3.0, 16% to 20%
+  of allocated link bandwidth went unused while traffic waited for it.
+* The `random` topology comes from `topology_seed`, not the episode seed.
+  In 0.3.0 its edge count, and so the action space, changed with the seed.
+* New options on both envs and `NetworkModel`: `topology_seed`,
+  `queueing`, `tie_break`, `service_order`. The 0.3.0-style behaviour is
+  `queueing="shared_fifo", tie_break="first", service_order="id"`
+  (its tie-break rule differs from 0.3.0's, so results are close, not equal).
+* Routing distances use vectorised Floyd-Warshall instead of networkx.
 
 ## Changes in 0.3.0
 

@@ -36,8 +36,8 @@ def main():
     p.add_argument("--internal-nodes", type=int, default=10, help="cs448b adapter only")
     p.add_argument("--external-buckets", type=int, default=6, help="cs448b adapter only")
     p.add_argument("--topology", default="grid", help="topology to place heavy nodes against")
-    p.add_argument("--topology-seed", type=int, default=None,
-                   help="for --topology random: the seed the env will be built with")
+    p.add_argument("--topology-seed", type=int, default=0,
+                   help="for --topology random: the topology_seed the env will be built with (env default 0)")
     args = p.parse_args()
 
     fmt = detect_format(args.in_path) if args.format == "auto" else args.format
@@ -63,7 +63,7 @@ def main():
     # default env's link budget (link_capacity=30 across num_edges links),
     # using the fraction our own calibration runs found non-degenerate.
     from carla_gym.core.network import NetworkModel
-    net = NetworkModel(topology=args.topology, num_nodes=n_nodes, seed=args.topology_seed)
+    net = NetworkModel(topology=args.topology, num_nodes=n_nodes, topology_seed=args.topology_seed)
     default_link_capacity = 30.0
     total_capacity_per_step = net.num_edges() * default_link_capacity
     # About 5% of total link capacity: a trace concentrates its load on few

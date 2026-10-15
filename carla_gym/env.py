@@ -28,6 +28,8 @@ class CarlaGymEnv(gym.Env):
                  delay_reference: float = 10.0,
                  bandwidth_budget: float | None = 0.8,
                  traffic=None, bottlenecks: dict[int, float] | None = None,
+                 topology_seed: int | None = 0, queueing: str = "per_link",
+                 tie_break: str = "random", service_order: str = "random",
                  render_mode: str | None = None, seed: int | None = None):
         """
         k, c, m : reward coefficients for delay, packet loss and deadline
@@ -35,9 +37,14 @@ class CarlaGymEnv(gym.Env):
         bottlenecks : optional {node id: scale in (0, 1]} of degraded nodes;
             see NetworkModel. Observations stay normalised to each link's and
             node's own (possibly reduced) capacity.
+        topology_seed, queueing, tie_break, service_order : simulator
+            options; see core/network.py. `seed` seeds traffic, tie-breaks
+            and service order; the graph comes from `topology_seed` only.
         bandwidth_budget : if set (0, 1], the agent may only spend that
-            fraction of total link capacity per step; actions summing above
-            it are rescaled down. Without this constraint the optimal policy
+            fraction of the maximum total allocation (every link at 1.0) per
+            step; actions summing above it are rescaled down. The budget is
+            counted in allocation weights, not capacity units, so on links
+            with reduced capacity (bottlenecks) a weight costs the same. Without this constraint the optimal policy
             is degenerate ("allocate 1.0 everywhere") and there is nothing
             interesting to learn.
         """
@@ -57,7 +64,9 @@ class CarlaGymEnv(gym.Env):
         self.network = NetworkModel(topology=topology, num_nodes=num_nodes,
                                     link_capacity=link_capacity,
                                     node_buffer=node_buffer, seed=seed,
-                                    bottlenecks=bottlenecks)
+                                    bottlenecks=bottlenecks, topology_seed=topology_seed,
+                                    queueing=queueing, tie_break=tie_break,
+                                    service_order=service_order)
         # `traffic`: optional pre-built generator (e.g. TraceTrafficGenerator).
         self.traffic = traffic or TrafficGenerator(nodes=list(self.network.graph.nodes()),
                                         load_scale=load_scale, seed=seed)
@@ -80,7 +89,7 @@ class CarlaGymEnv(gym.Env):
     # ---------------------------------------------------------------- #
     def reset(self, *, seed: int | None = None, options: dict | None = None):
         super().reset(seed=seed)
-        self.network.reset()
+        self.network.reset(seed=seed)
         # Re-seed traffic only on an explicit seed. The constructor seed already
         # seeded the generator once; un-seeded resets must continue that stream
         # so successive episodes see fresh traffic.
