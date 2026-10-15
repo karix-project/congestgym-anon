@@ -41,8 +41,14 @@ On the headline, PPO delivers about as much traffic as congestion_aware
 (73.5% against 74.1%; difference -0.6 +/- 0.6 points), but its delivered
 packets take longer (5.82 against 5.16 steps) and miss more deadlines
 (0.370 against 0.330 per delivered packet). The reward's delay and deadline
-terms make that a clear loss in reward (-0.062). So PPO matches the
-throughput but serves traffic in a worse order or over longer paths.
+terms make that a clear loss in reward (-0.062).
+
+It is not a matter of longer paths (`qa/research/headline_paths.log`): PPO's
+delivered packets travel 1.868 +/- 0.006 hops on average, congestion_aware's
+1.872 +/- 0.007, and every policy delivers every packet on a shortest path
+(stretch 1.000). Since delay is hops plus steps spent waiting, PPO's extra
+delay is queueing delay, which points at its bandwidth allocation, not its
+routing.
 
 ### 2.2 The ablations do not show the joint-control benefit for the learner
 Headline, full-control PPO minus one-half PPO (paired):
@@ -72,17 +78,27 @@ Change in validation reward over the last fifth of training (400k to 500k
 for PPO, 80k to 100k for SAC), mean +/- 95% CI over training seeds:
 
 * **Flat:** headline PPO (+0.011 +/- 0.018), pcap PPO (-0.000 +/- 0.009), all
-  three ablations (+0.002 to +0.007), pcap SAC.
+  three ablations (+0.002 to +0.007).
 * **Still rising slightly:** bottleneck PPO (+0.032 +/- 0.026) and
   random-graph PPO (+0.017 +/- 0.011).
-* **SAC:** intervals of +/- 0.025 to 0.060, too wide to call.
+* **SAC:** changes of -0.003 to +0.017 with intervals of +/- 0.025 to 0.060
+  in all four scenarios, too wide to call either way.
 
 So more PPO steps would probably not change the headline verdict, but could
 widen the wins on the bottleneck and the random graph. Untuned
 hyperparameters (one set, gamma 0.95) remain a more likely lever than steps
 on the headline.
 
-### 2.4 Reward and delivered traffic
+### 2.4 On the headline grid, routing never takes a detour
+In the same measurement, no policy sends any delivered packet over a path
+longer than the shortest one: not the load-aware heuristics, not PPO. On the
+3x3 grid, every routing effect in this report (heuristic or learned) comes
+from choosing among equal-length shortest paths, not from steering traffic
+around congestion on longer routes. Say so wherever the paper discusses
+routing on this scenario. Whether detours occur on the bottleneck or the
+random graph was not measured.
+
+### 2.5 Reward and delivered traffic
 Kendall tau between the reward ranking and the delivered ranking of all
 policies except random and min_bandwidth: bottleneck 1.00, random graph
 0.87, pcap 0.73, headline 0.60. The headline disagreement is the PPO effect
@@ -123,3 +139,9 @@ Not supported:
    graph), not across the matrix.
 5. Keep the headline as chosen. Swapping it after seeing that RL loses there
    would be selection on the outcome.
+
+## Changes after QA (15 Oct 2026)
+QA findings QR-1 and QR-2 (`docs/QA_RL_RESULTS_REPORT.md`): the SAC
+convergence wording is made consistent (2.3), and the unmeasured "worse order
+or longer paths" is replaced by a measurement (2.1, new 2.4,
+`qa/research/headline_paths.py` / `.log`).
