@@ -1,39 +1,39 @@
                                    scenario     best_heuristic  best_reward  ci95  best_delivered_%  random_delivered_%  bandwidth_effect_pts  routing_effect_pts  kendall_tau criteria_met  n_met
-                    grid9/load 1/budget 0.5   congestion_aware        0.097 0.034              77.3                57.9                   5.4                 3.9         1.00        1234.      4
-                    grid9/load 1/budget 0.6   congestion_aware        0.420 0.022              89.4                60.9                   5.7                 4.9         1.00        .2345      4
-                    grid9/load 1/budget 0.7 load_aware_routing        0.567 0.011              94.6                61.5                   3.1                 4.0         1.00        .2345      4
-                 grid9/load 1.25/budget 0.5   congestion_aware       -0.282 0.029              60.2                46.4                   2.9                 2.1         1.00        ...45      2
-                 grid9/load 1.25/budget 0.6   congestion_aware        0.097 0.027              73.9                49.1                   3.8                 3.1         1.00        12345      5
-                 grid9/load 1.25/budget 0.7   congestion_aware        0.343 0.020              83.3                49.8                   4.6                 4.4         1.00        12345      5
-                  grid9/load 1.5/budget 0.5   congestion_aware       -0.557 0.029              48.0                37.7                   1.7                 1.4         1.00        ...45      2
-                  grid9/load 1.5/budget 0.6   congestion_aware       -0.220 0.033              59.5                40.0                   2.3                 1.7         1.00        ...4.      1
-                  grid9/load 1.5/budget 0.7   congestion_aware        0.064 0.033              69.8                40.1                   3.1                 2.5         1.00        12.4.      3
-   grid9 bottleneck 4x0.5/load 1/budget 0.6   congestion_aware        0.003 0.026              71.3                38.0                  11.5                20.8         1.00        12345      5
-   grid9 bottleneck 4x0.5/load 1/budget 0.8 load_aware_routing        0.383 0.023              84.6                38.0                   9.5                21.9         1.00        12345      5
-grid9 bottleneck 4x0.5/load 1.25/budget 0.6   congestion_aware       -0.356 0.031              55.4                31.2                   7.5                13.7         1.00        .234.      3
-grid9 bottleneck 4x0.5/load 1.25/budget 0.8   congestion_aware        0.136 0.021              72.6                31.4                   9.2                20.4         1.00        12345      5
-                 grid16/load 1.5/budget 0.5 queue_proportional       -0.009 0.034              72.5                50.4                   9.5                 1.4         0.33        12...      2
-                 grid16/load 1.5/budget 0.7   congestion_aware        0.394 0.014              88.2                52.8                   5.6                 5.6         1.00        .2345      4
-                   grid16/load 2/budget 0.5 queue_proportional       -0.489 0.027              51.4                37.4                   5.6                 0.4         0.33        .2..5      2
-                   grid16/load 2/budget 0.7 queue_proportional        0.105 0.022              72.5                39.4                   6.6                 1.8         0.67        12..5      3
+                    grid9/load 1/budget 0.5   congestion_aware        0.098 0.028              77.4                57.8                   5.1                 3.4         1.00        12345      5
+                    grid9/load 1/budget 0.6   congestion_aware        0.427 0.024              89.9                60.8                   5.5                 4.8         1.00        .2345      4
+                    grid9/load 1/budget 0.7 load_aware_routing        0.572 0.016              94.9                61.3                   2.8                 3.9         0.67        ..3.5      2
+                 grid9/load 1.25/budget 0.5   congestion_aware       -0.283 0.018              60.1                46.3                   3.2                 2.6         1.00        .2.45      3
+                 grid9/load 1.25/budget 0.6   congestion_aware        0.086 0.032              73.7                48.9                   4.5                 3.4         1.00        1234.      4
+                 grid9/load 1.25/budget 0.7 queue_proportional        0.347 0.024              83.5                49.3                   4.5                 4.1         0.67        123.5      4
+                  grid9/load 1.5/budget 0.5   congestion_aware       -0.554 0.026              48.1                37.7                   1.2                 1.0         1.00        ...45      2
+                  grid9/load 1.5/budget 0.6   congestion_aware       -0.216 0.028              59.4                40.2                   2.3                 1.9         1.00        ...45      2
+                  grid9/load 1.5/budget 0.7   congestion_aware        0.071 0.034              70.3                40.5                   2.9                 2.2         1.00        1..4.      2
+   grid9 bottleneck 4x0.5/load 1/budget 0.6   congestion_aware       -0.008 0.029              71.0                37.5                  12.4                21.6         1.00        12345      5
+   grid9 bottleneck 4x0.5/load 1/budget 0.8 load_aware_routing        0.388 0.020              84.6                37.5                   8.9                21.5         1.00        12345      5
+grid9 bottleneck 4x0.5/load 1.25/budget 0.6   congestion_aware       -0.356 0.028              55.5                31.4                   8.1                14.5         1.00        .2345      4
+grid9 bottleneck 4x0.5/load 1.25/budget 0.8   congestion_aware        0.132 0.022              72.7                31.7                   9.1                21.2         1.00        12345      5
+                 grid16/load 1.5/budget 0.5   congestion_aware       -0.013 0.032              72.7                50.8                   9.5                 2.0         1.00        12.4.      3
+                 grid16/load 1.5/budget 0.7 queue_proportional        0.396 0.021              87.8                53.1                   5.5                 4.6         0.67        123.5      4
+                   grid16/load 2/budget 0.5 queue_proportional       -0.487 0.030              51.7                37.5                   5.7                 0.5         0.33        .2..5      2
+                   grid16/load 2/budget 0.7 queue_proportional        0.097 0.026              72.6                39.5                   6.5                 2.4         0.67        12..5      3
 
 per-policy delivered % (validation seeds):
 policy                                       random  max_bandwidth  queue_proportional  load_aware_routing  congestion_aware
 scenario                                                                                                                    
-grid9/load 1/budget 0.5                        57.9           71.2                76.6                75.0              77.3
-grid9/load 1/budget 0.6                        60.9           82.8                88.5                87.7              89.4
-grid9/load 1/budget 0.7                        61.5           90.7                93.8                94.6              93.6
-grid9/load 1.25/budget 0.5                     46.4           56.8                59.7                58.9              60.2
-grid9/load 1.25/budget 0.6                     49.1           68.7                72.5                71.8              73.9
-grid9/load 1.25/budget 0.7                     49.8           78.3                82.9                82.7              83.3
-grid9/load 1.5/budget 0.5                      37.7           45.9                47.6                47.3              48.0
-grid9/load 1.5/budget 0.6                      40.0           56.2                58.5                57.9              59.5
-grid9/load 1.5/budget 0.7                      40.1           66.1                69.3                68.7              69.8
-grid9 bottleneck 4x0.5/load 1/budget 0.6       38.0           48.0                59.5                68.8              71.3
-grid9 bottleneck 4x0.5/load 1/budget 0.8       38.0           62.7                72.2                84.6              83.6
-grid9 bottleneck 4x0.5/load 1.25/budget 0.6    31.2           40.0                47.5                53.7              55.4
-grid9 bottleneck 4x0.5/load 1.25/budget 0.8    31.4           51.8                61.0                72.2              72.6
-grid16/load 1.5/budget 0.5                     50.4           62.3                71.8                63.7              72.5
-grid16/load 1.5/budget 0.7                     52.8           81.6                87.3                87.2              88.2
-grid16/load 2/budget 0.5                       37.4           45.6                51.0                45.8              51.4
-grid16/load 2/budget 0.7                       39.4           65.6                72.3                67.5              72.5
+grid9/load 1/budget 0.5                        57.8           71.5                76.6                74.9              77.4
+grid9/load 1/budget 0.6                        60.8           83.2                88.8                88.0              89.9
+grid9/load 1/budget 0.7                        61.3           91.0                93.8                94.9              94.2
+grid9/load 1.25/budget 0.5                     46.3           56.3                59.5                58.8              60.1
+grid9/load 1.25/budget 0.6                     48.9           68.1                72.6                71.5              73.7
+grid9/load 1.25/budget 0.7                     49.3           78.4                83.0                82.5              83.5
+grid9/load 1.5/budget 0.5                      37.7           46.4                47.6                47.4              48.1
+grid9/load 1.5/budget 0.6                      40.2           56.4                58.7                58.2              59.4
+grid9/load 1.5/budget 0.7                      40.5           66.3                69.2                68.5              70.3
+grid9 bottleneck 4x0.5/load 1/budget 0.6       37.5           47.8                60.2                69.4              71.0
+grid9 bottleneck 4x0.5/load 1/budget 0.8       37.5           63.1                72.0                84.6              83.8
+grid9 bottleneck 4x0.5/load 1.25/budget 0.6    31.4           39.3                47.4                53.8              55.5
+grid9 bottleneck 4x0.5/load 1.25/budget 0.8    31.7           51.0                60.1                72.2              72.7
+grid16/load 1.5/budget 0.5                     50.8           62.2                71.6                64.1              72.7
+grid16/load 1.5/budget 0.7                     53.1           81.9                87.5                86.5              87.8
+grid16/load 2/budget 0.5                       37.5           45.8                51.2                46.0              51.7
+grid16/load 2/budget 0.7                       39.5           65.3                71.9                67.7              72.6

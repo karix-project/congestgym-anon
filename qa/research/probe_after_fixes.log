@@ -1,18 +1,18 @@
 grid 3x3, budget 0.8, load x1, test seeds 2000-2009
 policy               options delivered  per-source min/max/spread   corners 0/2/6/8          HOL-wasted budget
 max_bandwidth        legacy  0.769      0.606/0.910/0.304          [0.638 0.63  0.91  0.869]   14.3%
-max_bandwidth        new     0.955      0.942/0.971/0.028          [0.96  0.962 0.962 0.971]   2.7%
+max_bandwidth        new     0.953      0.939/0.967/0.028          [0.958 0.961 0.961 0.953]   2.8%
 queue_proportional   legacy  0.840      0.756/0.914/0.158          [0.756 0.77  0.914 0.906]   18.2%
-queue_proportional   new     0.953      0.937/0.970/0.033          [0.952 0.961 0.952 0.97 ]   4.1%
+queue_proportional   new     0.950      0.939/0.960/0.020          [0.951 0.956 0.96  0.958]   4.2%
 congestion_aware     legacy  0.867      0.839/0.891/0.052          [0.867 0.891 0.871 0.882]   20.1%
-congestion_aware     new     0.952      0.944/0.961/0.017          [0.961 0.956 0.947 0.952]   4.2%
+congestion_aware     new     0.954      0.946/0.968/0.022          [0.968 0.958 0.956 0.965]   4.2%
 
 speed: grid, load scaled with N/9, equal split, 300 steps, new defaults
-N=  9    573.9 steps/s
-N= 16    259.5 steps/s
-N= 25    150.7 steps/s
-N= 36    108.0 steps/s
-N= 49     68.2 steps/s
-N= 64     44.3 steps/s
+N=  9    624.1 steps/s
+N= 16    322.1 steps/s
+N= 25    195.5 steps/s
+N= 36    124.0 steps/s
+N= 49     82.3 steps/s
+N= 64     57.7 steps/s
 
 random topology, 9 nodes, edges for env seeds 0-7: [15, 15, 15, 15, 15, 15, 15, 15]

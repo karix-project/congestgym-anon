@@ -155,17 +155,21 @@ regenerated from the new runs, not carried over. The venue advice in
 F1, F2 and F3 are fixed; the defaults are now per-link queues, random
 equal-cost tie-breaks and random service order, with the graph drawn from
 `topology_seed`. The 0.3.0-style behaviour stays available as options.
-`tests/test_model_options.py` adds 26 tests (160 pass in total).
+`tests/test_model_options.py` adds 29 tests (163 pass in total), including
+the regression tests for QA findings Q1 and R2-2 (`docs/QA_PR5_REPORT.md`).
+The table reflects the code after those fixes.
 Measured with `qa/research/probe_after_fixes.py`, same seeds as above:
 
 | Policy | Delivered, legacy options / new | Spread across sources, legacy / new | Unused allocated budget with traffic waiting, legacy / new |
 |---|---|---|---|
-| max_bandwidth | 0.769 / 0.955 | 0.304 / 0.028 | 14.3% / 2.7% |
-| queue_proportional | 0.840 / 0.953 | 0.158 / 0.033 | 18.2% / 4.1% |
-| congestion_aware | 0.867 / 0.952 | 0.052 / 0.017 | 20.1% / 4.2% |
+| max_bandwidth | 0.769 / 0.953 | 0.304 / 0.028 | 14.3% / 2.8% |
+| queue_proportional | 0.840 / 0.950 | 0.158 / 0.020 | 18.2% / 4.2% |
+| congestion_aware | 0.867 / 0.954 | 0.052 / 0.022 | 20.1% / 4.2% |
 
 The random topology now has 15 edges for every episode seed. Speed is about
-the same as before (574 steps/s at 9 nodes, 68 at 49, 44 at 64); F4 is still
+the same as before: 624 steps/s at 9 nodes, 82 at 49, 58 at 64 on an idle
+machine (`probe_after_fixes.log`); an earlier run of the same probe gave
+574, 68 and 44, so read these as +/- 20%. F4 is still
 open.
 
 **Consequence for the experiments.** At grid 3x3, load x1, budget 0.8 every

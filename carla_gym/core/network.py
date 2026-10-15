@@ -34,6 +34,8 @@ Model
 Randomness: the graph is drawn from `topology_seed` (only the "random"
 topology uses it), so it does not change with the episode seed; tie-breaks
 and service order are drawn from `seed`, reseeded by `reset(seed=...)`.
+That stream is derived from the seed with a fixed tag (`_STREAM_TAG`), so
+it is independent of a traffic generator given the same seed.
 """
 
 from __future__ import annotations
@@ -92,7 +94,7 @@ class NetworkModel:
         self.queueing = queueing
         self.tie_break = tie_break
         self.service_order = service_order
-        self.rng = np.random.default_rng(seed)
+        self.rng = self._stream(seed)
 
         self.graph = self._build_topology()
         self.num_nodes = self.graph.number_of_nodes()
@@ -143,6 +145,16 @@ class NetworkModel:
             raise ValueError(t)
         return g
 
+    # Envs seed the traffic generator with default_rng(seed). Seeding this
+    # model the same way would give it the very same raw numbers, coupling
+    # tie-breaks and service order to packet arrivals. Mixing in a tag gives
+    # an independent stream that is still a pure function of the seed.
+    _STREAM_TAG = 0x6E6574
+
+    @classmethod
+    def _stream(cls, seed: int | None) -> np.random.Generator:
+        return np.random.default_rng(None if seed is None else [int(seed), cls._STREAM_TAG])
+
     @staticmethod
     def _key(u: int, v: int) -> tuple[int, int]:
         """Undirected links share one budget; normalize endpoint order."""
@@ -155,7 +167,7 @@ class NetworkModel:
         """Empty the network. An explicit `seed` reseeds tie-breaks and service
         order; without one the existing stream continues (as for traffic)."""
         if seed is not None:
-            self.rng = np.random.default_rng(seed)
+            self.rng = self._stream(seed)
         self.buffers: dict[int, list[Packet]] = {n: [] for n in self.graph.nodes()}
         self._served = np.zeros(len(self._edges), dtype=np.float64)
         for i, (u, v) in enumerate(self._edges):

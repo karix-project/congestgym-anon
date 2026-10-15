@@ -1,26 +1,21 @@
 delivered-fraction effects in points, paired over validation seeds 1000-1009, mean +/- 95% CI
-grid9/load 1.25/budget 0.6
-   bandwidth (queue_prop - max_bw)         +3.76 +/- 0.66
-   bandwidth (congestion - load_aware)     +2.06 +/- 1.03
-   routing (load_aware - max_bw)           +3.09 +/- 1.22
-   routing (congestion - queue_prop)       +1.39 +/- 0.46
-grid9/load 1.25/budget 0.7
-   bandwidth (queue_prop - max_bw)         +4.60 +/- 0.57
-   bandwidth (congestion - load_aware)     +0.58 +/- 0.58
-   routing (load_aware - max_bw)           +4.42 +/- 0.97
-   routing (congestion - queue_prop)       +0.40 +/- 0.67
+grid9/load 1/budget 0.5
+   bandwidth (queue_prop - max_bw)         +5.05 +/- 1.18
+   bandwidth (congestion - load_aware)     +2.46 +/- 0.55
+   routing (load_aware - max_bw)           +3.39 +/- 1.35
+   routing (congestion - queue_prop)       +0.79 +/- 0.37
 grid9 bottleneck 4x0.5/load 1/budget 0.6
-   bandwidth (queue_prop - max_bw)        +11.50 +/- 0.88
-   bandwidth (congestion - load_aware)     +2.52 +/- 0.66
-   routing (load_aware - max_bw)          +20.80 +/- 0.95
-   routing (congestion - queue_prop)      +11.82 +/- 0.65
+   bandwidth (queue_prop - max_bw)        +12.44 +/- 0.68
+   bandwidth (congestion - load_aware)     +1.63 +/- 0.84
+   routing (load_aware - max_bw)          +21.55 +/- 1.43
+   routing (congestion - queue_prop)      +10.75 +/- 0.94
 grid9 bottleneck 4x0.5/load 1/budget 0.8
-   bandwidth (queue_prop - max_bw)         +9.51 +/- 0.61
-   bandwidth (congestion - load_aware)     -1.01 +/- 0.58
-   routing (load_aware - max_bw)          +21.91 +/- 1.08
-   routing (congestion - queue_prop)      +11.39 +/- 1.15
+   bandwidth (queue_prop - max_bw)         +8.91 +/- 0.91
+   bandwidth (congestion - load_aware)     -0.84 +/- 0.71
+   routing (load_aware - max_bw)          +21.53 +/- 2.00
+   routing (congestion - queue_prop)      +11.78 +/- 1.41
 grid9 bottleneck 4x0.5/load 1.25/budget 0.8
-   bandwidth (queue_prop - max_bw)         +9.22 +/- 0.77
-   bandwidth (congestion - load_aware)     +0.40 +/- 0.83
-   routing (load_aware - max_bw)          +20.41 +/- 1.58
-   routing (congestion - queue_prop)      +11.59 +/- 1.32
+   bandwidth (queue_prop - max_bw)         +9.11 +/- 0.71
+   bandwidth (congestion - load_aware)     +0.49 +/- 0.67
+   routing (load_aware - max_bw)          +21.25 +/- 1.35
+   routing (congestion - queue_prop)      +12.63 +/- 1.20
