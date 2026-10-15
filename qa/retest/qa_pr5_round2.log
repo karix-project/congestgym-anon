@@ -1,0 +1,13 @@
+PASS A invariants: 192 fuzz episodes (6 topologies x 8 option combos x bottleneck on/off x 2 seeds)
+PASS B same seed gives identical trajectories, also after an unseeded episode, for all 8 option combos
+PASS B different seeds give different trajectories
+PASS C offered traffic identical across all 6 policies on one seed (synthetic)
+PASS C offered traffic identical across all 6 policies on one seed (pcap trace)
+PASS D single and multi-agent rewards equal for the same global action, options default
+PASS D single and multi-agent rewards equal for the same global action, options {'queueing': 'shared_fifo', 'tie_break': 'first', 'service_order': 'id'}
+PASS D single and multi-agent rewards equal for the same global action, options {'topology': 'random', 'topology_seed': 4}
+Passed Parallel API test
+Passed Parallel API test
+PASS E Gymnasium check_env and PettingZoo parallel_api_test pass with non-default options
+
+RESULT (A-E): ALL PASS

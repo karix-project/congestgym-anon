@@ -86,3 +86,36 @@ messages match their logs: 72-96% corners, 16-20% unused budget, 9-16 edges,
 Python 3.10 to 3.13, Linux and macOS (no CI); the 14 raw-data tests outside
 this machine; training under 0.4.0 beyond the smoke test; `render_mode`
 `"human"` with a window.
+
+## Round 2 (15 Oct 2026, partial)
+
+Reviewed the **local working tree** of `fix/model-f1-f3`, not GitHub: the
+fixes were not yet pushed. Same session, same independence caveat.
+
+| Item | Result |
+|---|---|
+| Q1 code | **Fixed.** `NetworkModel` draws from `default_rng([seed, 0x6E6574])` at construction and on `reset(seed)`; distinct entropy from the traffic's `default_rng(seed)`, still a pure function of the seed. Two regression tests added; the first fails on the unfixed code |
+| Q1 behaviour | **Fixed.** Generators no longer share a state or raw draws (`qa/retest/qa_pr5_round2_extra.log`) |
+| A-E, H rerun on the fix | PASS (`qa/retest/qa_pr5_round2.log`; `qa_pr5.py` was run cut off before check F, since the benchmark was still being regenerated) |
+| Q2 | Wording fixed in substance, but the sentence before it now lacks a full stop: `...service_order="id"` runs into `It reproduces...` (R2-1) |
+| Q3 | Not yet done (PR description still to be edited) |
+| F, benchmark reproduction | Still to do, against the regenerated `results/benchmark/` after the push |
+
+### R2-1 (trivial, docs)
+README "Changes in 0.4.0": add a full stop after
+`service_order="id"`.
+
+### R2-2 (low, pre-existing): the `random` baseline draws from the traffic stream
+Same class of error as Q1, older than this PR. `scripts/run_benchmark.py`
+(line 86), `scripts/evaluate_saved.py` (line 83) and
+`examples/random_agent_test.py` (line 42) build the policy generator with
+`default_rng(seed)` for the same `seed` as the episode's traffic, so the
+`random` baseline's actions are the traffic's own random numbers. Only the
+`random` rows are affected; the heuristics are deterministic and the RL
+agent does not use this generator. Fix as for Q1 (a tagged seed). Fixing it
+changes the `random` rows of the benchmark, so either fix it before the
+benchmark is regenerated for this PR, or record it as a known issue.
+
+### Round 2 verdict
+Q1 is fixed and verified. Approval waits on: R2-1, Q3, a decision on R2-2,
+and check F against the pushed, regenerated results.
