@@ -51,14 +51,12 @@ def training():
                      "ppo_delivered": mean.get("PPO"), "sac_delivered": mean.get("SAC")})
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(OUT, "training.csv"), index=False)
-    lines = ["| Scenario | Bound, free routing | Bound, shortest paths | Best heuristic | PPO | SAC | PPO's share of the gap from best heuristic to bound |",
-             "|---|---:|---:|---|---:|---:|---:|"]
+    lines = ["| Scenario | Bound, free routing | Bound, shortest paths | Best heuristic | PPO | SAC |",
+             "|---|---:|---:|---|---:|---:|"]
     for r in df.itertuples():
-        gap = r.bound_free - r.best_heuristic_delivered
-        share = (r.ppo_delivered - r.best_heuristic_delivered) / gap if gap > 1e-9 else float("nan")
         lines.append(f"| {r.scenario} | {pct(r.bound_free)} | {pct(r.bound_shortest)} | "
                      f"{r.best_heuristic} {pct(r.best_heuristic_delivered)} | {pct(r.ppo_delivered)} | "
-                     f"{pct(r.sac_delivered)} | {100 * share:+.0f}% |")
+                     f"{pct(r.sac_delivered)} |")
     return lines
 
 
@@ -78,7 +76,7 @@ def benchmark():
                      "best_heuristic_delivered": b.delivered_fraction})
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(OUT, "benchmark.csv"), index=False)
-    lines = ["| Scenario | Bound, free routing | Bound, shortest paths | Best heuristic | Best heuristic delivers | Gap to bound (points) |",
+    lines = ["| Scenario | Bound, free routing | Bound, shortest paths | Best heuristic | Best heuristic delivers | Room below the bound (points, upper limit) |",
              "|---|---:|---:|---|---:|---:|"]
     for r in df.itertuples():
         lines.append(f"| {r.scenario} | {pct(r.bound_free)} | {pct(r.bound_shortest)} | {r.best_heuristic} | "
@@ -92,7 +90,8 @@ def main():
             "expected traffic matrix, link capacities and the bandwidth budget, with the allocation "
             "chosen optimally. No policy can exceed it in the long run; a finite window can exceed it "
             "slightly through backlog carried in. Policy figures: delivered % on test seeds 2000-2009, "
-            "steps 20..199.")
+            "steps 20..199. The bound is loose (docs/RL_RESULTS_0.4.0.md, section 2.6): the room "
+            "below it is an upper limit on what any policy could gain, not a measure of it.")
     t = training()
     with open(os.path.join(OUT, "training.md"), "w", encoding="utf-8") as f:
         f.write(head + " The pcap row's bound uses the trace's mean matrix and ignores bursts.\n\n" + "\n".join(t) + "\n")

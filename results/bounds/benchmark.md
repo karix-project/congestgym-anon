@@ -1,6 +1,6 @@
-Fluid flow upper bound on the delivered fraction (%), from carla_gym/bounds.py: the expected traffic matrix, link capacities and the bandwidth budget, with the allocation chosen optimally. No policy can exceed it in the long run; a finite window can exceed it slightly through backlog carried in. Policy figures: delivered % on test seeds 2000-2009, steps 20..199.
+Fluid flow upper bound on the delivered fraction (%), from carla_gym/bounds.py: the expected traffic matrix, link capacities and the bandwidth budget, with the allocation chosen optimally. No policy can exceed it in the long run; a finite window can exceed it slightly through backlog carried in. Policy figures: delivered % on test seeds 2000-2009, steps 20..199. The bound is loose (docs/RL_RESULTS_0.4.0.md, section 2.6): the room below it is an upper limit on what any policy could gain, not a measure of it.
 
-| Scenario | Bound, free routing | Bound, shortest paths | Best heuristic | Best heuristic delivers | Gap to bound (points) |
+| Scenario | Bound, free routing | Bound, shortest paths | Best heuristic | Best heuristic delivers | Room below the bound (points, upper limit) |
 |---|---:|---:|---|---:|---:|
 | grid/load x0.5/budget 0.8 | 100.0 | 100.0 | max_bandwidth | 100.3 | -0.3 |
 | grid/load x0.5/budget 0.5 | 100.0 | 100.0 | congestion_aware | 99.9 | +0.1 |

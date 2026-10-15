@@ -105,6 +105,54 @@ policies except random and min_bandwidth: bottleneck 1.00, random graph
 in 2.1 (fourth on reward, second on delivered). Report delivered, delay and
 deadline tables next to the reward, as the README already advises.
 
+### 2.6 The flow upper bound, and why it cannot settle the headline
+`scripts/flow_bound.py` (`results/bounds/training.md`) gives a fluid upper
+bound on the delivered fraction: the expected traffic matrix, link capacities
+and the budget, with the allocation chosen optimally. No policy exceeds it
+by more than 0.3 points in any of 35 scenarios (that excess is backlog
+carried into the window), so it behaves as a bound.
+
+| Scenario | Flow bound | Bound's allocation as a fixed policy (scaled to the full budget) | Best heuristic | PPO |
+|---|---|---|---|---|
+| Headline grid | 90.3 | 66.8 +/- 1.5 | 74.1 | 73.5 |
+| Bottleneck | 100.0 | 62.8 +/- 0.8 | 85.0 | 94.6 |
+| pcap trace | 100.0 | 60.7 +/- 1.5 | 75.2 | 79.1 |
+| Random graph | 99.4 | 71.1 +/- 1.6 | 79.7 | 81.3 |
+
+Delivered %, test seeds 2000-2009 (`qa/research/lp_static_policy.log`).
+
+* **The bound is loose.** Playing its own optimal allocation as a fixed policy
+  delivers less than every adaptive policy, and on the headline less than
+  equal split (68.5%). An allocation that is optimal for the mean load is a
+  poor policy, because what the heuristics and PPO gain comes from reacting
+  to queues as they form, which the fluid model leaves out.
+* **The bound also assumes a choice no policy has.** On the headline its
+  optimum is exactly a fractional knapsack (`qa/retest/qa_bounds.log`): it
+  serves the shortest source-destination pairs first and drops the longest
+  pairs entirely. In this environment no policy chooses which traffic to
+  drop; admission depends only on buffer space. For comparison only, giving
+  every pair the same delivered fraction under the same budget gives about
+  82.7% (`docs/QA_BOUNDS_REPORT.md`, QB-2). That figure is **not** an upper
+  bound, since a policy may favour short pairs indirectly; it shows that
+  several of the 16 points between 74.1% and 90.3% come from this effect
+  alone.
+* **So the headline question stays open.** The optimum lies somewhere between
+  74.1% (the best policy found) and 90.3% (the bound); this does not show
+  whether congestion_aware is near-optimal there, or how much room PPO left.
+  The room below the bound is an upper limit on what any policy could gain,
+  not a measure of headroom, and the paper must not present it as one.
+  (`results/bounds/training.md` had a "share of the gap" column; it was
+  removed for this reason.)
+* **Detours add no capacity.** The bound is the same with free multipath
+  routing and with routing restricted to shortest paths, in all 35
+  scenarios. A likely reason is that the budget can be moved between links,
+  so spending it on the shortest routes was at least as good here; per-link
+  limits did bind on 1 to 2 links in some LP solutions without changing
+  this. With 2.4, this means every routing
+  gain in this simulator is dynamic (spreading load across equal-length
+  paths as queues change, avoiding buffer overflow), not a matter of
+  capacity. That is how the paper should present the routing action.
+
 ## 3. What the paper can claim from this
 
 Supported:
@@ -115,19 +163,24 @@ Supported:
   matches PPO on delivered traffic and beats it on delay and deadlines.
 * PPO outperforms SAC at the budgets used (SAC had a fifth of PPO's steps;
   state the budgets).
+* No policy exceeds the fluid flow bound; on the bottleneck PPO reaches
+  94.6% of a 100% bound.
+* Routing gains are dynamic: detours add no capacity in any scenario tested.
 
 Not supported:
 * "RL beats heuristics" without qualification.
 * Any claim that the learner benefits from controlling both action halves.
   The heuristics show complementarity on the headline; the learner does not.
 * The 0.3.0 numbers. They must not appear in the paper as current results.
+* That the heuristic is near-optimal on the headline, or that PPO leaves a
+  measured amount of headroom there. The fluid bound is too loose to say.
 
 ## 4. Recommended next steps
 
-1. **The flow upper bound** (readiness plan item 3b) on the headline. If the
-   bound is close to 74%, congestion_aware is near-optimal there and the
-   headline verdict is a property of the scenario, not of the learner. This
-   decides how to present 2.1.
+1. **Done: the flow upper bound** (2.6). It is too loose to decide the
+   headline. A tighter reference needs to account for queueing; the
+   cheapest options are a stronger tuned policy (step 2) or a search over
+   the heuristics' own parameters on validation seeds.
 2. **A small PPO hyperparameter sweep on the headline** (gamma 0.95 / 0.99,
    learning rate, entropy coefficient), on validation seeds, before
    concluding that PPO cannot match congestion_aware there.
@@ -145,3 +198,8 @@ QA findings QR-1 and QR-2 (`docs/QA_RL_RESULTS_REPORT.md`): the SAC
 convergence wording is made consistent (2.3), and the unmeasured "worse order
 or longer paths" is replaced by a measurement (2.1, new 2.4,
 `qa/research/headline_paths.py` / `.log`).
+Section 2.6 (flow bound and the static-allocation check) added the same day,
+after `scripts/flow_bound.py` was written; not yet checked by Tester/QA.
+QA findings QB-1 and QB-2 (`docs/QA_BOUNDS_REPORT.md`) applied to 2.6: the
+free = shortest explanation is stated as likely, not as a result, and the
+knapsack source of the bound's looseness is added.
