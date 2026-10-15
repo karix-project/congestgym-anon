@@ -1,0 +1,46 @@
+PASS 1 selection used validation seeds 1000-1009 only
+PASS 1 test episodes use test seeds 2000-2009 only
+PASS 1 grid sizes as planned (24 and 4 settings per scenario)
+PASS 1 exactly one chosen setting per scenario and policy reached the test seeds
+PASS 1 the default setting is in the congestion_aware grid for every scenario
+PASS 2 default settings through E1's code path equal results/rl/*/qos.csv exactly (16 episodes, max diff 0.0e+00)
+PASS 3 grid_bottleneck_b08 congestion_aware: argmax of validation reward is the setting tested [floor=0.2 base=0.3 slope=0.7 signal=max]
+PASS 3 grid_bottleneck_b08 queue_proportional: argmax of validation reward is the setting tested [floor=0.2]
+PASS 3 grid_l125_b06 congestion_aware: argmax of validation reward is the setting tested [floor=0.0 base=0.0 slope=1.0 signal=max]
+PASS 3 grid_l125_b06 queue_proportional: argmax of validation reward is the setting tested [floor=0.0]
+PASS 3 pcap40_grid16_b05 congestion_aware: argmax of validation reward is the setting tested [floor=0.1 base=0.3 slope=0.7 signal=max]
+PASS 3 pcap40_grid16_b05 queue_proportional: argmax of validation reward is the setting tested [floor=0.2]
+PASS 3 random9_l15_b06 congestion_aware: argmax of validation reward is the setting tested [floor=0.1 base=0.3 slope=0.7 signal=max]
+PASS 3 random9_l15_b06 queue_proportional: argmax of validation reward is the setting tested [floor=0.1]
+PASS 3 grid_l125_b06: tuned minus untuned congestion_aware reward recomputed -0.006 +/- 0.011, doc -0.006 +/- 0.011
+PASS 3 grid_bottleneck_b08: tuned minus untuned congestion_aware reward recomputed +0.031 +/- 0.011, doc +0.031 +/- 0.011
+PASS 3 pcap40_grid16_b05: tuned minus untuned congestion_aware reward recomputed +0.109 +/- 0.011, doc +0.109 +/- 0.011
+PASS 3 random9_l15_b06: tuned minus untuned congestion_aware reward recomputed +0.057 +/- 0.014, doc +0.057 +/- 0.014
+PASS 3 grid_l125_b06: PPO minus strongest recomputed -0.062 / -0.6 pts; doc -0.062 / -0.6
+PASS 3 grid_bottleneck_b08: PPO minus strongest recomputed +0.172 / +9.7 pts; doc +0.172 / +9.7
+PASS 3 pcap40_grid16_b05: PPO minus strongest recomputed +0.044 / +2.3 pts; doc +0.044 / +2.3
+PASS 3 random9_l15_b06: PPO minus strongest recomputed +0.025 / +1.6 pts; doc +0.025 / +1.6
+PASS 4 grid_bottleneck_b08 max_bandwidth: no detours with uniform routing weights (2334 packets)
+PASS 4 grid_bottleneck_b08 queue_proportional: no detours with uniform routing weights (2558 packets)
+PASS 4 random9_l15_b06 max_bandwidth: no detours with uniform routing weights (3439 packets)
+PASS 4 random9_l15_b06 queue_proportional: no detours with uniform routing weights (4116 packets)
+PASS 4 every delivered path is a simple walk on the graph and never shorter than the shortest path
+PASS 5 E4 log contains 'load_aware_routing (over test seeds) hops 1.598'
+PASS 5 E4 log contains 'on a detour 6.29% +/- 1.03'
+PASS 5 E4 log contains 'congestion_aware (over test seeds) hops 1.676'
+PASS 5 E4 log contains 'on a detour 7.84% +/- 0.34'
+PASS 5 E4 log contains 'PPO full control (5 seeds)         hops 1.624'
+PASS 5 E4 log contains 'on a detour 0.43% +/- 0.25'
+PASS 5 E4 log contains 'on a detour 1.13% +/- 0.33'
+PASS 5 E4 log contains 'on a detour 0.61% +/- 0.20'
+PASS 5 E4 log contains 'on a detour 0.34% +/- 0.12'
+PASS 5 E4 log contains 'on a detour 0.76% +/- 0.31'
+PASS 5 doc quotes '6.29 +/- 1.03%' from the E4 log
+PASS 5 doc quotes '7.84 +/- 0.34%' from the E4 log
+PASS 5 doc quotes '0.43 +/- 0.25%' from the E4 log
+PASS 5 doc quotes '1.13 +/- 0.33%' from the E4 log
+PASS 5 doc quotes '0.61 +/- 0.20%' from the E4 log
+PASS 5 doc quotes '0.34 +/- 0.12%' from the E4 log
+PASS 5 doc quotes '0.76 +/- 0.31%' from the E4 log
+
+RESULT: ALL PASS

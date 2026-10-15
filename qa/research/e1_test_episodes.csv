@@ -1,0 +1,81 @@
+scenario,policy,params,seed,reward,delivered
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,2000,0.054799478786011324,0.7096732910244725
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,2001,0.09581801349014273,0.7442057977569493
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,2002,0.046709245901501155,0.716721154032994
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,2003,0.07689540368938645,0.7348626462275675
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,2004,0.07068781884756156,0.724732133368188
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,2005,0.07613188630697244,0.7303175731965381
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,2006,0.14995942546142263,0.7623106942629261
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,2007,0.11117873004039483,0.7471772095674202
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,2008,0.0935117959717105,0.7454128550061386
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,2009,0.1524574260664146,0.7773593057588792
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,2000,0.42081438329187476,0.858573056819282
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,2001,0.4124296017543644,0.8607830990059867
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,2002,0.38895725981320606,0.845534538194916
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,2003,0.40821444235984533,0.8464272148093523
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,2004,0.4063214845559167,0.8490598319642466
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,2005,0.42098588132523507,0.8493694852834106
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,2006,0.4097739923558022,0.8466516971484622
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,2007,0.33999511496190005,0.8204901139481605
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,2008,0.3794295010563758,0.850677983459956
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,2009,0.4012104071353154,0.8516230554381479
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2000,0.2580542575130554,0.7908624604897277
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2001,0.25934120361326196,0.7650440542682945
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2002,0.2279371891725943,0.7640953473321527
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2003,0.2398941397059182,0.7843061946459463
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2004,0.24994290121776241,0.7721186436345236
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2005,0.2196518133282054,0.7631806378342576
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2006,0.2680581319499103,0.7893480281247409
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2007,0.21321344589511307,0.7502231167923746
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2008,0.19246148793326365,0.7390844296302488
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2009,0.21230488731851946,0.7635110810195367
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2000,0.27843382718808446,0.7774253164181903
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2001,0.27229911948199104,0.7786491562894479
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2002,0.27220598925719436,0.7719369915314697
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2003,0.29954017287177975,0.786762972592349
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2004,0.29146832617128077,0.7839915456553339
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2005,0.2849507864346158,0.7841432062986159
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2006,0.2720508343773162,0.7741121268126155
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2007,0.30148956849677366,0.7925158917334041
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2008,0.22797340065240546,0.7547800103531922
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,2009,0.2769486547535625,0.7776861296446277
+grid_l125_b06,queue_proportional,floor=0.0,2000,0.02005682691193191,0.691759175424173
+grid_l125_b06,queue_proportional,floor=0.0,2001,0.04589415610915172,0.7184377777544932
+grid_l125_b06,queue_proportional,floor=0.0,2002,0.04854776568026724,0.7081766799355478
+grid_l125_b06,queue_proportional,floor=0.0,2003,0.08241868216123278,0.7357794729380677
+grid_l125_b06,queue_proportional,floor=0.0,2004,0.10032038258660078,0.7292983452940476
+grid_l125_b06,queue_proportional,floor=0.0,2005,0.09522657387505772,0.7342576344152839
+grid_l125_b06,queue_proportional,floor=0.0,2006,0.14758020991391202,0.7628349158158453
+grid_l125_b06,queue_proportional,floor=0.0,2007,0.1032283436814536,0.7360404452957279
+grid_l125_b06,queue_proportional,floor=0.0,2008,0.10313511943971747,0.7391555077628748
+grid_l125_b06,queue_proportional,floor=0.0,2009,0.13687251567582384,0.7562665748871182
+grid_bottleneck_b08,queue_proportional,floor=0.2,2000,0.157774178343462,0.7355263238053892
+grid_bottleneck_b08,queue_proportional,floor=0.2,2001,0.1817153768252585,0.7554197008848834
+grid_bottleneck_b08,queue_proportional,floor=0.2,2002,0.07551520989327694,0.7029249081160082
+grid_bottleneck_b08,queue_proportional,floor=0.2,2003,0.18592175720713244,0.7447794925321392
+grid_bottleneck_b08,queue_proportional,floor=0.2,2004,0.16493324740648915,0.7314087921064408
+grid_bottleneck_b08,queue_proportional,floor=0.2,2005,0.20600775921009248,0.7389121370237355
+grid_bottleneck_b08,queue_proportional,floor=0.2,2006,0.16947298668884161,0.7332710685551708
+grid_bottleneck_b08,queue_proportional,floor=0.2,2007,0.1495101790374197,0.7266554644685448
+grid_bottleneck_b08,queue_proportional,floor=0.2,2008,0.13636988758659405,0.7326694605502275
+grid_bottleneck_b08,queue_proportional,floor=0.2,2009,0.1352483705556321,0.7119327849208218
+pcap40_grid16_b05,queue_proportional,floor=0.2,2000,0.25518947839354794,0.7704520396792259
+pcap40_grid16_b05,queue_proportional,floor=0.2,2001,0.27312803846606426,0.7372390556327774
+pcap40_grid16_b05,queue_proportional,floor=0.2,2002,0.23142893487718566,0.7537761659205867
+pcap40_grid16_b05,queue_proportional,floor=0.2,2003,0.2721790182390994,0.7703636003072849
+pcap40_grid16_b05,queue_proportional,floor=0.2,2004,0.24923591237953216,0.742706525014403
+pcap40_grid16_b05,queue_proportional,floor=0.2,2005,0.23491826995519788,0.7498545101722803
+pcap40_grid16_b05,queue_proportional,floor=0.2,2006,0.27438437511584446,0.7520106052819923
+pcap40_grid16_b05,queue_proportional,floor=0.2,2007,0.24661658941900094,0.7298893651704933
+pcap40_grid16_b05,queue_proportional,floor=0.2,2008,0.20840907861383906,0.7221077470703523
+pcap40_grid16_b05,queue_proportional,floor=0.2,2009,0.2512699430250588,0.7574396571254106
+random9_l15_b06,queue_proportional,floor=0.1,2000,0.3084074562989411,0.7840195208709074
+random9_l15_b06,queue_proportional,floor=0.1,2001,0.34995890010578296,0.8042544504267555
+random9_l15_b06,queue_proportional,floor=0.1,2002,0.33669432749671074,0.80328786857451
+random9_l15_b06,queue_proportional,floor=0.1,2003,0.33621194712035685,0.8056560620489318
+random9_l15_b06,queue_proportional,floor=0.1,2004,0.3376265590857879,0.802573983652668
+random9_l15_b06,queue_proportional,floor=0.1,2005,0.3268402216821957,0.7961863876652414
+random9_l15_b06,queue_proportional,floor=0.1,2006,0.27421416742530713,0.7712444691313941
+random9_l15_b06,queue_proportional,floor=0.1,2007,0.31860366131759293,0.7910130795088856
+random9_l15_b06,queue_proportional,floor=0.1,2008,0.3155215265194385,0.7981952520099208
+random9_l15_b06,queue_proportional,floor=0.1,2009,0.32202636435950477,0.7966352848226248

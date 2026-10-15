@@ -1,0 +1,15 @@
+
+grid_bottleneck_b08 (--bottleneck 4:0.5)
+   max_bandwidth (over test seeds)    hops 1.811 +/- 0.013   stretch 1.0000 +/- 0.0000   on a detour 0.00% +/- 0.00
+   queue_proportional (over test seeds) hops 1.855 +/- 0.016   stretch 1.0000 +/- 0.0000   on a detour 0.00% +/- 0.00
+   load_aware_routing (over test seeds) hops 1.950 +/- 0.015   stretch 1.0056 +/- 0.0018   on a detour 0.61% +/- 0.20
+   congestion_aware (over test seeds) hops 1.929 +/- 0.015   stretch 1.0032 +/- 0.0012   on a detour 0.34% +/- 0.12
+   PPO full control (5 seeds)         hops 1.986 +/- 0.007   stretch 1.0075 +/- 0.0031   on a detour 0.76% +/- 0.31
+
+random9_l15_b06 (--topology random --topology-seed 0 --load-scale 1.5 --budget 0.6)
+   max_bandwidth (over test seeds)    hops 1.533 +/- 0.008   stretch 1.0000 +/- 0.0000   on a detour 0.00% +/- 0.00
+   queue_proportional (over test seeds) hops 1.609 +/- 0.010   stretch 1.0000 +/- 0.0000   on a detour 0.00% +/- 0.00
+   load_aware_routing (over test seeds) hops 1.598 +/- 0.013   stretch 1.0442 +/- 0.0076   on a detour 6.29% +/- 1.03
+   congestion_aware (over test seeds) hops 1.676 +/- 0.007   stretch 1.0531 +/- 0.0023   on a detour 7.84% +/- 0.34
+   PPO full control (5 seeds)         hops 1.624 +/- 0.004   stretch 1.0021 +/- 0.0011   on a detour 0.43% +/- 0.25
+   PPO routing_only (5 seeds)         hops 1.536 +/- 0.005   stretch 1.0064 +/- 0.0020   on a detour 1.13% +/- 0.33
