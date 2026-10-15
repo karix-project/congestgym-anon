@@ -1,5 +1,12 @@
 # Headline training scenario for 0.4.0
 
+> **Status, 15 Oct 2026: confirmed on 30 seeds.** The choice below was made
+> on 10 seeds before the RNG fix from QA finding Q1 (`docs/QA_PR5_REPORT.md`).
+> After that fix it failed criterion C5 on 10 seeds and the decision was
+> reopened; a 30-seed rerun with rules fixed in advance selects the same
+> scenario (last section). Tables in the earlier sections cite the pre-fix
+> logs, kept as `*_preQ1` files.
+
 Researcher role, 15 Oct 2026. Branch `fix/model-f1-f3` (0.4.0).
 
 ## Decision
@@ -27,7 +34,7 @@ the script before it ran:
 | C4 | Reward and delivered traffic rank the four heuristics the same way (Kendall tau >= 0.67) |
 | C5 | Stable: 95% CI half-width of the best heuristic's reward <= 0.03 |
 
-Five scenarios met all five (`qa/research/headline_sweep.log`):
+Five scenarios met all five (`qa/research/headline_sweep_preQ1.log`):
 
 | Scenario | Best heuristic delivers | Bandwidth effect | Routing effect | CI |
 |---|---|---|---|---|
@@ -48,7 +55,7 @@ both halves beats controlling either one alone. That is what the planned
 bandwidth-only and routing-only ablation tests, so the headline scenario
 must give it something to find. Paired effects over the validation seeds,
 delivered traffic in points, mean +/- 95% CI
-(`qa/research/headline_effects.log`):
+(`qa/research/headline_effects_preQ1.log`):
 
 | Effect | load 1.25, budget 0.6 | load 1.25, budget 0.7 |
 |---|---|---|
@@ -94,7 +101,7 @@ the 4x4 grid. Criteria fixed before it ran: C1-C5 as above plus
 Tie-breaks were set as non-grid first, then smallest action space. Star was
 excluded: it is a tree, so routing weights cannot change a path.
 
-**Result: no cell met all six** (`qa/research/second_topology_sweep.log`).
+**Result: no cell met all six** (`qa/research/second_topology_sweep_preQ1.log`).
 
 | Topology | Best cells | What fails |
 |---|---|---|
@@ -149,3 +156,86 @@ Paper wording this supports today: *on the 3x3 grid the two action halves
 are complementary; on the random graph tested, bandwidth allocation carries
 most of the benefit.* Not supported: any claim that joint control helps in
 general.
+
+## Rerun after the RNG fix (Developer, 15 Oct 2026): decision reopened
+
+QA finding Q1 made the network's random stream independent of the traffic
+stream. That changes every episode, so both sweeps were rerun unchanged on
+the same validation seeds (`qa/research/headline_sweep.log`,
+`headline_effects.log`, `second_topology_sweep.log`,
+`second_topology_effects.log`).
+
+**Headline sweep.** The chosen scenario no longer meets the criteria:
+
+| Scenario | Before the fix | After the fix |
+|---|---|---|
+| grid9, load 1.25, budget 0.6 (chosen) | all five met; CI 0.027 | **fails C5: CI 0.032** (limit 0.03) |
+| grid9, load 1.25, budget 0.7 | all five met | fails C4 (tau 2/3; see the C4 defect above) |
+| grid9, load 1, budget 0.5 | fails C5 (CI 0.034) | **all five met**: best heuristic delivers 77.4%, bandwidth 5.1 pts, routing 3.4 pts, CI 0.028 |
+
+After the fix, grid9 load 1 / budget 0.5 is the only plain-grid cell that
+meets all five, so the pre-set rules pick it without any tie-break. It also
+passes the complementarity test used to break the earlier tie: congestion_aware
+beats load_aware_routing by +2.46 +/- 0.55 points and queue_proportional by
++0.79 +/- 0.37. The three bottleneck cells that qualified before still
+qualify.
+
+**Second-topology sweep.** Conclusion unchanged: no cell meets all six.
+random9 load 1.5 / budget 0.6 still meets C1-C5 (fails C6). Two grid16
+cells now reach five of six (load 1.75 / budget 0.6 fails C3; load 1.75 /
+budget 0.7 fails C4).
+
+**What this shows.** Which plain-grid cell passes C5 flips with a change to
+the random stream alone. Their CIs sit within a few thousandths of the 0.03
+limit, and a CI estimated from 10 seeds is itself noisy. The headline choice
+is therefore not robust at this sample size, whichever cell is picked.
+
+**Not decided here.** Choosing the headline is the Researcher's call. The
+training queue on `feat/rl-scenarios` still names `grid_l125_b06` and must not
+be launched until this is settled. A suggested way to settle it: rerun the
+plain-grid cells on 30 validation seeds (1000-1029), so the stability
+criterion is not decided by noise, then apply the same rules.
+
+## Settled on 30 validation seeds (Researcher, 15 Oct 2026)
+
+`python qa/research/headline_settle30.py` reran the nine plain 3x3 grid
+cells on validation seeds 1000-1029 (test seeds unused), after the Q1 fix.
+Rules fixed in the script before it ran, with the two documented criteria
+defects corrected:
+
+* C1 best heuristic delivers 65-88%;
+* C2, C3 now **signed**: the bandwidth-aware (routing-aware) heuristic must
+  *beat* the blind one by at least 3 points;
+* C4 Kendall tau >= 2/3;
+* C5 CI half-width of the best heuristic's reward <= 0.03;
+* C6 congestion_aware beats each single-half heuristic (paired, CI lower
+  bound > 0);
+* tie-break: the largest weaker C6 lower bound, then the lower load.
+
+Three cells met all six (`qa/research/headline_settle30.log`):
+
+| Cell | Weaker C6 lower bound | Both halves vs routing only | Both halves vs bandwidth only | Best delivers | CI |
+|---|---|---|---|---|---|
+| **grid9, load 1.25, budget 0.6** | **0.90** | +1.90 +/- 0.35 | +1.26 +/- 0.37 | 73.7% | 0.014 |
+| grid9, load 1, budget 0.5 | 0.87 | +2.68 +/- 0.28 | +1.11 +/- 0.24 | 78.4% | 0.021 |
+| grid9, load 1.25, budget 0.7 | 0.50 | +0.92 +/- 0.37 | +0.92 +/- 0.41 | 83.6% | 0.010 |
+
+**Decision: the headline stays grid9, load x1.25, budget 0.6
+(`grid_l125_b06`).** The training queue needs no change.
+
+* Its C5 failure on 10 seeds (0.032) was sampling noise: on 30 seeds its CI
+  is 0.014, well inside the limit.
+* The margin over load 1 / budget 0.5 is small (0.90 against 0.87). Both
+  are sound headlines; the rule decides, and the paper should not present
+  the choice as sharper than that.
+* Its effects at 30 seeds: bandwidth 4.3 points, routing 3.7 points, and the
+  two halves complementary by +1.9 and +1.3 points.
+
+Not rerun on 30 seeds: the bottleneck and second-topology cells. Their
+conclusions rest on larger margins (bottleneck effects of 9 to 22 points;
+no second-topology cell meets C6 on either 10-seed run).
+
+*Note on the sweep logs.* All sweeps above ran before the fix for QA finding
+R2-2, which gave the `random` baseline its own random stream. Only the
+`random_delivered_%` column of the sweep logs is affected; no criterion uses
+the random policy, so no decision here depends on it.
