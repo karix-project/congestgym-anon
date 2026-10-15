@@ -13,10 +13,13 @@ import os
 import re
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
+HEADLINE = os.path.join("results", "rl", "grid_l125_b06")
 SOURCES = {
-    "training": os.path.join("results", "grid_b08", "summary.md"),
+    "rl_overview": os.path.join("results", "rl", "overview.md"),
+    "training": os.path.join(HEADLINE, "summary.md"),
+    "training_qos": os.path.join(HEADLINE, "qos.md"),
+    "bounds": os.path.join("results", "bounds", "training.md"),
     "benchmark": os.path.join("results", "benchmark", "summary.md"),
-    "training_qos": os.path.join("results", "grid_b08", "qos.md"),
     "benchmark_qos": os.path.join("results", "benchmark", "qos.md"),
 }
 
