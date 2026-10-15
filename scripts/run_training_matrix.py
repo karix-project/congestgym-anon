@@ -2,9 +2,19 @@
 scripts/run_training_matrix.py
 
 Queue the RL training runs behind the results under results/rl/: PPO and SAC
-on five scenarios, five training seeds each, plus bandwidth-only and
-routing-only PPO ablations. Runs N jobs at a time, skips finished ones, and
-can be re-started safely.
+on four scenarios, five training seeds each, plus three PPO ablations. Runs N
+jobs at a time, skips finished ones, and can be re-started safely.
+
+Scenarios (0.4.0 simulator; chosen on validation seeds, see
+docs/HEADLINE_SCENARIO.md):
+    grid_l125_b06        headline: 3x3 grid, load x1.25, budget 0.6
+    grid_bottleneck_b08  3x3 grid, centre node at half capacity, budget 0.8
+    pcap40_grid16_b05    4x4 grid, pcap trace at load 40, budget 0.5
+    random9_l15_b06      fixed random graph (topology_seed 0), load x1.5,
+                         budget 0.6; bandwidth-dominated, not a replication
+                         of the headline
+Ablations (PPO only): bandwidth-only and routing-only on the headline, and
+routing-only on random9_l15_b06.
 
     $env:PYTHONPATH = "."        (bash: export PYTHONPATH=.)
     python scripts/run_training_matrix.py --workers 10
@@ -26,17 +36,19 @@ from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
+HEADLINE = ["--load-scale", "1.25", "--budget", "0.6"]
+RANDOM9 = ["--topology", "random", "--topology-seed", "0", "--load-scale", "1.5", "--budget", "0.6"]
 SCENARIOS = {
     # name: extra train_agent.py arguments
-    "grid_b08": [],
-    "ring_b08": ["--topology", "ring"],
+    "grid_l125_b06": HEADLINE,
     "grid_bottleneck_b08": ["--bottleneck", "4:0.5"],
-    "grid_load2_b08": ["--load-scale", "2.0"],
     "pcap40_grid16_b05": ["--trace", "data/pcap_trace.csv", "--nodes", "16", "--load", "40", "--budget", "0.5"],
+    "random9_l15_b06": RANDOM9,
 }
 ABLATIONS = {
-    "grid_b08_bandwidth_only": ["--control", "bandwidth"],
-    "grid_b08_routing_only": ["--control", "routing"],
+    "grid_l125_b06_bandwidth_only": HEADLINE + ["--control", "bandwidth"],
+    "grid_l125_b06_routing_only": HEADLINE + ["--control", "routing"],
+    "random9_l15_b06_routing_only": RANDOM9 + ["--control", "routing"],
 }
 BUDGET = {"ppo": ("1000000", "50000"), "sac": ("200000", "20000")}   # (timesteps, eval-every)
 SEEDS = range(5)

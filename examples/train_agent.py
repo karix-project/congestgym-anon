@@ -58,6 +58,7 @@ def make_env(args, seed, rescale=True, monitor_file=None):
                           max_steps=args.steps, bandwidth_budget=args.budget,
                           load_scale=getattr(args, "load_scale", 1.0),
                           bottlenecks=parse_bottlenecks(getattr(args, "bottleneck", None)),
+                          topology_seed=getattr(args, "topology_seed", 0),
                           traffic=traffic, seed=seed)
         # Ablations: the agent controls one half of the action. Baselines are
         # evaluated on the native env (rescale=False) and keep full control.
@@ -145,6 +146,8 @@ def parse_args(argv=None, default_algo="ppo"):
     p.add_argument("--timesteps", type=int, default=300_000)
     p.add_argument("--steps", type=int, default=200, help="episode length")
     p.add_argument("--topology", default="grid")
+    p.add_argument("--topology-seed", type=int, default=0,
+                   help="graph seed for --topology random; fixed so every run sees one graph")
     p.add_argument("--nodes", type=int, default=9)
     p.add_argument("--budget", type=float, default=0.8)
     p.add_argument("--load-scale", type=float, default=1.0,

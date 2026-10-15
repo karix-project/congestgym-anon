@@ -4,6 +4,20 @@ Written by the Developer role, 11 Oct 2026, for the Developer role at a later
 date. The user postponed the publication work to focus on the university
 presentation. **Nothing is running. No training was launched.**
 
+> **Update, 15 Oct 2026 (Developer).** Sections 1 and 5 below are out of
+> date. The simulator is now 0.4.0 (`docs/CODE_REVIEW_FOR_PUBLICATION.md`,
+> fixes F1-F3), merged into `feat/rl-scenarios`. The training queue was
+> rebuilt for it from `docs/HEADLINE_SCENARIO.md`: scenarios
+> `grid_l125_b06` (headline), `grid_bottleneck_b08`, `pcap40_grid16_b05`,
+> `random9_l15_b06`; PPO ablations `grid_l125_b06_bandwidth_only`,
+> `grid_l125_b06_routing_only`, `random9_l15_b06_routing_only`. 55 runs at the
+> default budgets (`--list` shows them). `grid_b08`, `ring_b08` and
+> `grid_load2_b08` were dropped. All 11 configurations passed a 2,500-step
+> smoke test on 15 Oct. The run size still has to be agreed with the user
+> before launch, and `scripts/evaluate_saved.py` still does not know
+> `--bottleneck`, `--trace`, `--control` or `--topology` beyond its own flags
+> (section 6, item 2).
+
 Read this file, then `docs/PUBLICATION_READINESS.md` (what a venue would
 reject and why) and `docs/SLIDES_ABSTRACT_REVIEW.md` section 5 (the plan).
 
