@@ -1,0 +1,20 @@
+--- tests
+169 passed, 14 skipped, 1 warning in 40.00s
+--- regenerate
+README.md updated: rl_overview, training, training_qos, bounds, benchmark, benchmark_qos, tests
+--- git status after regeneration (must be empty):
+ M README.md
+--- end status
+FAIL 3 all 19 file paths named in the README exist ['data/raw']
+PASS 3 the training command lists the 55 runs reported
+PASS 3 evaluate_saved.py runs on the headline folder and passes its self-check (2 test seeds)
+PASS 4 'PPO delivers more than every rule-based policy in three of the four scenarios': wins ['grid_bottleneck_b08', 'pcap40_grid16_b05', 'random9_l15_b06']
+PASS 4 'most on the bottleneck' ({'grid_bottleneck_b08': 9.6, 'pcap40_grid16_b05': 3.9, 'random9_l15_b06': 1.6})
+PASS 4 headline: delivered about equal (73.5 vs 74.1), longer delay (5.82 vs 5.16), more misses (0.37 vs 0.33), lower reward (0.037 vs 0.099)
+PASS 4 'both halves do not help PPO vs bandwidth alone': -0.013 +/- 0.015 (mean not positive, interval includes 0)
+PASS 4 'bound the same with free and shortest-path routing in every scenario tested' (35 scenarios)
+PASS 4 test count 183 (183 passed in the worktree with raw data; 169 + 14 skipped in a clone)
+PASS 5 pyproject: `bounds` extra exists and is in `all`
+PASS 5 scipy in requirements.txt and pinned in constraints.txt
+
+RESULT: 1 FAIL
