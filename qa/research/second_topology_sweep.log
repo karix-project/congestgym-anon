@@ -1,0 +1,63 @@
+                    scenario     best_heuristic  best_reward  ci95  best_delivered_%  random_delivered_%  bandwidth_effect_pts  routing_effect_pts  kendall_tau criteria_met  n_met
+   ring9/load 0.5/budget 0.5 queue_proportional        0.312 0.046              95.7                78.0                   3.6                 0.4         1.00       .2.4..      2
+   ring9/load 0.5/budget 0.6 queue_proportional        0.491 0.016              99.1                82.5                   0.7                 0.3         0.33       ....5.      1
+   ring9/load 0.5/budget 0.7      max_bandwidth        0.583 0.013              99.7                83.7                   0.1                 0.3        -0.33       ....5.      1
+  ring9/load 0.75/budget 0.5   congestion_aware       -0.443 0.033              61.7                50.5                   1.7                 0.4         1.00       ...4..      1
+  ring9/load 0.75/budget 0.6 queue_proportional       -0.059 0.045              76.7                55.0                   2.4                 0.1         0.67       1.....      1
+  ring9/load 0.75/budget 0.7 queue_proportional        0.270 0.039              89.2                55.4                   2.8                 0.3         0.67       ......      0
+     ring9/load 1/budget 0.5 queue_proportional       -0.852 0.018              42.2                36.1                   0.8                 0.2         1.00       ...45.      2
+     ring9/load 1/budget 0.6 queue_proportional       -0.568 0.025              52.9                38.7                   1.2                 0.3         0.67       ....5.      1
+     ring9/load 1/budget 0.7 queue_proportional       -0.258 0.020              63.9                39.5                   1.2                 0.1         0.67       ....5.      1
+   random9/load 1/budget 0.5 queue_proportional        0.602 0.010              94.5                64.0                  17.1                 2.9         1.00       .2.45.      3
+   random9/load 1/budget 0.6 queue_proportional        0.655 0.008              96.1                66.8                   9.9                 2.3         1.00       .2.45.      3
+   random9/load 1/budget 0.7 queue_proportional        0.658 0.009              96.4                67.4                   4.0                 2.7         1.00       .2.45.      3
+random9/load 1.25/budget 0.5 queue_proportional        0.350 0.032              83.3                52.8                  19.1                 3.6         1.00       1234..      4
+random9/load 1.25/budget 0.6 queue_proportional        0.556 0.019              90.4                55.1                  15.2                 2.7         1.00       .2.45.      3
+random9/load 1.25/budget 0.7 queue_proportional        0.595 0.014              92.0                55.7                   8.9                 1.6         1.00       .2.45.      3
+ random9/load 1.5/budget 0.5 queue_proportional        0.049 0.025              70.3                44.1                  16.2                 1.8         1.00       12.45.      4
+ random9/load 1.5/budget 0.6 queue_proportional        0.353 0.024              81.0                46.2                  17.1                 3.3         1.00       12345.      5
+ random9/load 1.5/budget 0.7 queue_proportional        0.490 0.026              86.0                46.4                  13.3                 2.2         1.00       12.45.      4
+     mesh9/load 2/budget 0.2 queue_proportional        0.682 0.011              95.7                33.0                  12.1                 5.1         0.67       .23.5.      3
+     mesh9/load 2/budget 0.3 queue_proportional        0.811 0.004              99.8                45.5                   1.1                 4.0         1.00       ..345.      3
+     mesh9/load 3/budget 0.2 queue_proportional        0.098 0.011              67.8                21.3                   9.3                 0.2         0.67       12..5.      3
+     mesh9/load 3/budget 0.3 queue_proportional        0.678 0.009              91.9                29.3                  10.0                 6.8         1.00       .2345.      4
+     mesh9/load 4/budget 0.2   congestion_aware       -0.291 0.010              51.1                15.4                   7.0                 0.2         1.00       .2.45.      3
+     mesh9/load 4/budget 0.3 queue_proportional        0.311 0.011              73.2                21.2                   9.3                 1.6         1.00       12.45.      4
+  grid16/load 1.5/budget 0.6 queue_proportional        0.271 0.030              82.9                52.9                   9.5                 4.8         0.67       123.5.      4
+ grid16/load 1.75/budget 0.6   congestion_aware        0.047 0.015              72.3                44.8                   7.6                 1.5         1.00       12.456      5
+    grid16/load 2/budget 0.6 queue_proportional       -0.149 0.030              63.5                39.5                   6.9                 1.0         0.67       .2..56      3
+ grid16/load 1.75/budget 0.5   congestion_aware       -0.293 0.020              59.9                42.9                   7.2                 0.7         0.67       .2..56      3
+ grid16/load 1.75/budget 0.7 queue_proportional        0.259 0.015              80.3                44.9                   7.0                 3.6         0.67       123.56      5
+
+per-policy delivered % (validation seeds):
+policy                        random  max_bandwidth  queue_proportional  load_aware_routing  congestion_aware
+scenario                                                                                                     
+ring9/load 0.5/budget 0.5       78.0           92.1                95.7                92.0              95.3
+ring9/load 0.5/budget 0.6       82.5           98.4                99.1                98.7              99.0
+ring9/load 0.5/budget 0.7       83.7           99.5                99.5                99.7              99.6
+ring9/load 0.75/budget 0.5      50.5           59.9                61.6                60.3              61.7
+ring9/load 0.75/budget 0.6      55.0           74.3                76.7                74.5              76.6
+ring9/load 0.75/budget 0.7      55.4           86.4                89.2                86.7              89.0
+ring9/load 1/budget 0.5         36.1           41.4                42.2                41.4              42.0
+ring9/load 1/budget 0.6         38.7           51.7                52.9                51.8              52.6
+ring9/load 1/budget 0.7         39.5           62.6                63.7                62.7              63.9
+random9/load 1/budget 0.5       64.0           77.4                94.5                78.2              91.6
+random9/load 1/budget 0.6       66.8           86.2                96.1                88.4              94.9
+random9/load 1/budget 0.7       67.4           92.3                96.4                95.0              95.5
+random9/load 1.25/budget 0.5    52.8           64.2                83.3                66.0              79.7
+random9/load 1.25/budget 0.6    55.1           75.2                90.4                76.3              87.6
+random9/load 1.25/budget 0.7    55.7           83.2                92.0                84.2              90.5
+random9/load 1.5/budget 0.5     44.1           54.1                70.3                55.9              68.6
+random9/load 1.5/budget 0.6     46.2           63.9                81.0                65.5              77.7
+random9/load 1.5/budget 0.7     46.4           72.8                86.0                74.4              83.8
+mesh9/load 2/budget 0.2         33.0           83.6                95.7                83.6              90.6
+mesh9/load 2/budget 0.3         45.5           98.7                99.8                95.4              95.8
+mesh9/load 3/budget 0.2         21.3           58.4                67.8                58.4              67.6
+mesh9/load 3/budget 0.3         29.3           81.9                91.9                80.6              85.1
+mesh9/load 4/budget 0.2         15.4           44.1                51.1                44.4              51.1
+mesh9/load 4/budget 0.3         21.2           63.9                73.2                64.2              71.6
+grid16/load 1.5/budget 0.6      52.9           72.9                82.3                77.7              82.9
+grid16/load 1.75/budget 0.6     44.8           63.5                71.2                65.1              72.3
+grid16/load 2/budget 0.6        39.5           55.9                62.8                56.9              63.5
+grid16/load 1.75/budget 0.5     42.9           52.6                59.2                52.7              59.9
+grid16/load 1.75/budget 0.7     44.9           72.6                79.7                76.2              80.3

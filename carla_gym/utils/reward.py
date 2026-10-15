@@ -73,11 +73,11 @@ class RewardCalculator:
 
     def normalize(self, delivered_units: float, offered_units: float,
                   weighted_delay: float, dropped_units: float,
-                  deadline_misses: float, delivered_count: float) -> tuple[float, float, float, float]:
+                  deadline_misses: float, resolved_count: float) -> tuple[float, float, float, float]:
         tput = (delivered_units / offered_units) if offered_units > 0 else 0.0
         delay = min(weighted_delay / self.delay_reference, 1.0) if weighted_delay > 0 else 0.0
         loss = (dropped_units / offered_units) if offered_units > 0 else 0.0
-        miss = (deadline_misses / delivered_count) if delivered_count > 0 else 0.0
+        miss = (deadline_misses / resolved_count) if resolved_count > 0 else 0.0
         return min(tput, 1.0), delay, min(loss, 1.0), min(miss, 1.0)
 
     def compute(self, throughput: float, delay: float, packet_loss: float, deadline_miss: float) -> float:

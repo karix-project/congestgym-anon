@@ -19,6 +19,18 @@ from __future__ import annotations
 import numpy as np
 
 
+_POLICY_STREAM_TAG = 0x706F6C
+
+
+def policy_rng(seed: int | None) -> np.random.Generator:
+    """Generator for the random policy in an episode seeded with `seed`.
+
+    The env seeds its traffic with default_rng(seed); a policy generator seeded
+    the same way would replay the traffic's own random numbers as actions.
+    The tag gives an independent stream that is still a function of the seed."""
+    return np.random.default_rng(None if seed is None else [int(seed), _POLICY_STREAM_TAG])
+
+
 def _split_obs(env, obs):
     """(link utilization, link pending demand, node occupancy), each in [0, 1]."""
     e = env.num_edges

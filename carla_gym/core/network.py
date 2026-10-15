@@ -19,9 +19,23 @@ Model
 * Drops occur on admission overflow, downstream buffer overflow, or when
   no route exists.
 
-Head-of-line blocking is intentional: a node's FIFO stalls behind a packet
-whose next-hop link is exhausted (or still part-way through that packet). That is what creates the congestion
-dynamics an RL agent has something to learn about.
+* ROUTING is shortest path on the agent's link weights. Among equal-cost
+  next hops a packet picks one at random (per-packet ECMP), so symmetric
+  positions get symmetric service. `tie_break="first"` takes the lowest node
+  id instead.
+* QUEUEING is one FIFO per outgoing link by default, all sharing the node's
+  buffer: a packet waiting for an exhausted link blocks only traffic for
+  that link. `queueing="shared_fifo"` keeps one FIFO per node, where the head
+  packet blocks every link (head-of-line blocking across links).
+* Nodes are served in a fresh random order every step (`service_order="id"`
+  serves them in id order), so no node gets first use of a shared link by
+  virtue of its id.
+
+Randomness: the graph is drawn from `topology_seed` (only the "random"
+topology uses it), so it does not change with the episode seed; tie-breaks
+and service order are drawn from `seed`, reseeded by `reset(seed=...)`.
+That stream is derived from the seed with a fixed tag (`_STREAM_TAG`), so
+it is independent of a traffic generator given the same seed.
 """
 
 from __future__ import annotations
@@ -34,21 +48,36 @@ from carla_gym.core.traffic import Packet
 
 class NetworkModel:
     SUPPORTED_TOPOLOGIES = ("grid", "random", "star", "mesh", "ring")
+    QUEUEING = ("per_link", "shared_fifo")
+    TIE_BREAK = ("random", "first")
+    SERVICE_ORDER = ("random", "id")
 
     def __init__(self, topology: str = "grid", num_nodes: int = 9,
                  link_capacity: float = 30.0, node_buffer: float = 120.0,
                  edge_prob: float = 0.35, seed: int | None = None,
-                 bottlenecks: dict[int, float] | None = None):
+                 bottlenecks: dict[int, float] | None = None,
+                 topology_seed: int | None = 0, queueing: str = "per_link",
+                 tie_break: str = "random", service_order: str = "random"):
         """
         bottlenecks : optional {node id: scale in (0, 1]}. A bottleneck node
             keeps only `scale` of its buffer, and every link touching it keeps
             only `scale` of its capacity (the smaller scale wins on a link
             between two bottleneck nodes). Models a degraded or under-
             provisioned node that traffic should be steered around.
+        seed : seeds tie-breaks and service order (not the graph).
+        topology_seed : seeds the "random" topology. Fixed by default so the
+            graph, and with it the action space, is the same for every
+            episode seed. None draws a fresh graph.
+        queueing, tie_break, service_order : see the module docstring.
         """
         if topology not in self.SUPPORTED_TOPOLOGIES:
             raise ValueError(f"Unknown topology '{topology}'. "
                              f"Choose from {self.SUPPORTED_TOPOLOGIES}")
+        for name, value, allowed in (("queueing", queueing, self.QUEUEING),
+                                     ("tie_break", tie_break, self.TIE_BREAK),
+                                     ("service_order", service_order, self.SERVICE_ORDER)):
+            if value not in allowed:
+                raise ValueError(f"{name} must be one of {allowed}, got {value!r}")
         if num_nodes < 2:
             raise ValueError(f"num_nodes must be >= 2, got {num_nodes}")
         if link_capacity <= 0 or node_buffer <= 0:
@@ -61,12 +90,23 @@ class NetworkModel:
         self.link_capacity = link_capacity
         self.node_buffer = node_buffer
         self.edge_prob = edge_prob
-        self.rng = np.random.default_rng(seed)
+        self.topology_seed = topology_seed
+        self.queueing = queueing
+        self.tie_break = tie_break
+        self.service_order = service_order
+        self.rng = self._stream(seed)
 
         self.graph = self._build_topology()
         self.num_nodes = self.graph.number_of_nodes()
+        if sorted(self.graph.nodes()) != list(range(self.num_nodes)):  # pragma: no cover
+            raise RuntimeError("topology builders must label nodes 0..N-1")
+        self._nodes = list(self.graph.nodes())
         self._edges = list(self.graph.edges())
         self._edge_index = {self._key(u, v): i for i, (u, v) in enumerate(self._edges)}
+        self._edge_u = np.array([u for u, _ in self._edges], dtype=np.intp)
+        self._edge_v = np.array([v for _, v in self._edges], dtype=np.intp)
+        self._neighbors = {n: np.array(sorted(self.graph.neighbors(n)), dtype=np.intp)
+                           for n in self._nodes}
 
         self.bottlenecks = dict(bottlenecks or {})
         for n, scale in self.bottlenecks.items():
@@ -89,8 +129,9 @@ class NetworkModel:
             side = int(round(np.sqrt(self.num_nodes)))
             g = nx.convert_node_labels_to_integers(nx.grid_2d_graph(side, side))
         elif t == "random":
+            topo_rng = np.random.default_rng(self.topology_seed)
             g = nx.erdos_renyi_graph(self.num_nodes, self.edge_prob,
-                                     seed=int(self.rng.integers(1e9)))
+                                     seed=int(topo_rng.integers(1e9)))
             comps = list(nx.connected_components(g))
             for a, b in zip(comps, comps[1:]):
                 g.add_edge(next(iter(a)), next(iter(b)))
@@ -104,6 +145,16 @@ class NetworkModel:
             raise ValueError(t)
         return g
 
+    # Envs seed the traffic generator with default_rng(seed). Seeding this
+    # model the same way would give it the very same raw numbers, coupling
+    # tie-breaks and service order to packet arrivals. Mixing in a tag gives
+    # an independent stream that is still a pure function of the seed.
+    _STREAM_TAG = 0x6E6574
+
+    @classmethod
+    def _stream(cls, seed: int | None) -> np.random.Generator:
+        return np.random.default_rng(None if seed is None else [int(seed), cls._STREAM_TAG])
+
     @staticmethod
     def _key(u: int, v: int) -> tuple[int, int]:
         """Undirected links share one budget; normalize endpoint order."""
@@ -112,7 +163,11 @@ class NetworkModel:
     # ------------------------------------------------------------------ #
     # State
     # ------------------------------------------------------------------ #
-    def reset(self) -> None:
+    def reset(self, seed: int | None = None) -> None:
+        """Empty the network. An explicit `seed` reseeds tie-breaks and service
+        order; without one the existing stream continues (as for traffic)."""
+        if seed is not None:
+            self.rng = self._stream(seed)
         self.buffers: dict[int, list[Packet]] = {n: [] for n in self.graph.nodes()}
         self._served = np.zeros(len(self._edges), dtype=np.float64)
         for i, (u, v) in enumerate(self._edges):
@@ -125,31 +180,60 @@ class NetworkModel:
         # Initialize default uniform routing weights
         self.update_routing(np.ones(len(self._edges)))
 
+    # Link weights get this added so a zero weight cannot make a free cycle.
+    # Every hop therefore lowers the remaining distance by at least this much,
+    # which is what keeps tie tolerance (_TIE_RTOL) from ever admitting a loop.
+    _WEIGHT_FLOOR = 1e-4
+    _TIE_RTOL = 1e-9
+
     def update_routing(self, routing_weights: np.ndarray) -> None:
-        """Update edge routing weights and recompute shortest paths."""
+        """Set link weights and recompute all-pairs shortest distances."""
         routing_weights = np.asarray(routing_weights, dtype=np.float64)
         if routing_weights.shape != (len(self._edges),) or not np.all(np.isfinite(routing_weights)) \
                 or np.any(routing_weights < 0):
             raise ValueError("routing_weights must be one finite, non-negative weight per edge")
+        w = routing_weights + self._WEIGHT_FLOOR
         for i, (u, v) in enumerate(self._edges):
-            # A small epsilon prevents zero-weight cycles if action is 0
-            self.graph[u][v]["routing_weight"] = float(routing_weights[i]) + 1e-4
+            self.graph[u][v]["routing_weight"] = float(w[i])
 
-        # Precompute all pairs shortest path for the current step using the learned link weights
-        self._current_paths = dict(nx.all_pairs_dijkstra_path(self.graph, weight="routing_weight"))
+        # Floyd-Warshall on a dense matrix: O(N^3) but vectorised, and much
+        # faster than per-source Dijkstra in Python at the sizes used here.
+        n = self.num_nodes
+        weight = np.full((n, n), np.inf)
+        weight[self._edge_u, self._edge_v] = w
+        weight[self._edge_v, self._edge_u] = w
+        dist = weight.copy()
+        np.fill_diagonal(dist, 0.0)
+        for k in range(n):
+            np.minimum(dist, dist[:, k, None] + dist[None, k, :], out=dist)
+        self._weight = weight
+        self._dist = dist
+
+    def _next_hops(self, node: int, dst: int) -> np.ndarray:
+        """Neighbours of `node` that lie on a shortest path to `dst`."""
+        nbrs = self._neighbors[node]
+        via = self._weight[node, nbrs] + self._dist[nbrs, dst]
+        target = self._dist[node, dst]
+        return nbrs[via <= target + self._TIE_RTOL * max(target, 1.0)]
 
     def path(self, src: int, dst: int) -> list[int]:
-        """Dynamic shortest-path routing based on learned link weights."""
-        if not hasattr(self, '_current_paths'):
-            try:
-                return nx.shortest_path(self.graph, src, dst)
-            except nx.NetworkXNoPath:
-                return []
-
-        try:
-            return self._current_paths[src][dst]
-        except KeyError:
+        """A shortest path on the current link weights; [] if none exists.
+        Equal-cost next hops are chosen at random, or the lowest id first
+        under tie_break="first"."""
+        if src == dst or not np.isfinite(self._dist[src, dst]):
             return []
+        route = [src]
+        node = src
+        while node != dst:
+            hops = self._next_hops(node, dst)
+            if len(hops) == 0:  # pragma: no cover - excluded by _TIE_RTOL << _WEIGHT_FLOOR
+                raise RuntimeError(f"no shortest-path next hop from {node} to {dst}")
+            if len(hops) == 1 or self.tie_break == "first":
+                node = int(hops[0])
+            else:
+                node = int(hops[self.rng.integers(len(hops))])
+            route.append(node)
+        return route
 
     def _occupancy(self, node: int) -> float:
         return sum(p.size for p in self.buffers[node])
@@ -211,8 +295,13 @@ class NetworkModel:
         def occ(n: int) -> float:
             return start_occ[n] + arrived[n]
 
-        for node in self.graph.nodes():
-            blocked = False
+        order = (self.rng.permutation(self._nodes).tolist()
+                 if self.service_order == "random" else self._nodes)
+        shared_fifo = self.queueing == "shared_fifo"
+        for node in order:
+            # Outgoing links whose queue is stalled this step. Under a shared
+            # FIFO the first stall blocks the whole node (marked by None).
+            blocked: set = set()
             for pkt in self.buffers[node]:
                 nxt = pkt.next_hop
                 if nxt is None:                       # defensive: already home
@@ -220,7 +309,7 @@ class NetworkModel:
                 ei = self._edge_index[self._key(node, nxt)]
                 pending_units[ei] += pkt.size
 
-                if blocked:                            # head-of-line blocking
+                if None in blocked or nxt in blocked:  # head-of-line blocking
                     retained[node].append(pkt)
                     continue
 
@@ -232,7 +321,7 @@ class NetworkModel:
                     pkt.sent += budget[key]
                     self._served[ei] += budget[key]
                     budget[key] = 0.0
-                    blocked = True
+                    blocked.add(None if shared_fifo else nxt)
                     retained[node].append(pkt)
                     continue
 

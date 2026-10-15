@@ -38,7 +38,10 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
                  load_scale: float = 1.0, max_steps: int = 200,
                  k: float = 0.5, c: float = 1.0, m: float = 0.5, delay_reference: float = 10.0,
                  bandwidth_budget: float | None = 0.8,
-                 traffic=None, bottlenecks: dict[int, float] | None = None, seed: int | None = None):
+                 traffic=None, bottlenecks: dict[int, float] | None = None,
+                 topology_seed: int | None = 0, queueing: str = "per_link",
+                 tie_break: str = "random", service_order: str = "random",
+                 seed: int | None = None):
         if not _HAS_PETTINGZOO:
             raise ImportError(
                 "MultiAgentCarlaGymEnv needs PettingZoo. Install it with "
@@ -53,7 +56,9 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
         self.network = NetworkModel(topology=topology, num_nodes=num_nodes,
                                     link_capacity=link_capacity,
                                     node_buffer=node_buffer, seed=seed,
-                                    bottlenecks=bottlenecks)
+                                    bottlenecks=bottlenecks, topology_seed=topology_seed,
+                                    queueing=queueing, tie_break=tie_break,
+                                    service_order=service_order)
         self.traffic = traffic or TrafficGenerator(nodes=list(self.network.graph.nodes()),
                                                    load_scale=load_scale, seed=seed)
         self.reward_calc = RewardCalculator(k=k, c=c, m=m, delay_reference=delay_reference)
@@ -100,7 +105,7 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
 
     def reset(self, seed=None, options=None):
         self.agents = self.possible_agents[:]
-        self.network.reset()
+        self.network.reset(seed=seed)
         # Re-seed only on an explicit seed; see CarlaGymEnv.reset().
         self.traffic.reset(seed=seed)
         self._step_count = 0

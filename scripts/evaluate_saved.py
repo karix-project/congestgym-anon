@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 from stable_baselines3 import PPO, SAC, TD3
 
-from carla_gym.baselines import POLICIES
+from carla_gym.baselines import POLICIES, policy_rng
 from carla_gym.env import CarlaGymEnv
 from carla_gym.utils.qos import EpisodeQoS
 from carla_gym.utils.stats import ci95
@@ -80,7 +80,7 @@ def main():
                          **episode(a, fn, s, rescale=True)})
     for name, fn in POLICIES.items():
         for s in seeds:
-            rng = np.random.default_rng(s)
+            rng = policy_rng(s)
             rows.append({"policy": name, "kind": "baseline", "train_seed": -1, "test_seed": s,
                          **episode(a, lambda e, o, fn=fn, rng=rng: fn(e, o, rng), s, rescale=False)})
     df = pd.DataFrame(rows)

@@ -27,7 +27,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from carla_gym.baselines import POLICIES
+from carla_gym.baselines import POLICIES, policy_rng
 from carla_gym.core.trace_traffic import TraceTrafficGenerator
 from carla_gym.env import CarlaGymEnv
 from carla_gym.utils.qos import EpisodeQoS
@@ -83,7 +83,7 @@ def run_episode(sc: dict, policy, seed: int, steps: int, warmup: int) -> dict:
                       bottlenecks=sc.get("bottlenecks"), max_steps=steps,
                       traffic=traffic, seed=seed)
     obs, _ = env.reset(seed=seed)
-    rng = np.random.default_rng(seed)
+    rng = policy_rng(seed)
     rows = []
     qos = EpisodeQoS()
     for t in range(steps):
