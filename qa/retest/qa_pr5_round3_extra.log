@@ -1,0 +1,6 @@
+H edge cases
+   done (no FAIL lines above = all passed)
+
+RNG streams after env.reset(seed=7):
+   network and traffic generators in identical state: False
+   first 5 raw draws identical: False

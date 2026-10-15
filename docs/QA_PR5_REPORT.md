@@ -119,3 +119,21 @@ benchmark is regenerated for this PR, or record it as a known issue.
 ### Round 2 verdict
 Q1 is fixed and verified. Approval waits on: R2-1, Q3, a decision on R2-2,
 and check F against the pushed, regenerated results.
+
+## Round 3 (15 Oct 2026): approved
+
+Reviewed the pushed branch at `859ba4d` from a fresh clone. Same session,
+same independence caveat.
+
+| Item | Result |
+|---|---|
+| Tests | 149 passed, 14 skipped in the clone (raw data); 163 in total, as claimed |
+| A-E, G (`qa/retest/qa_pr5_round3.log`) | PASS. Legacy gap to 0.3.0 unchanged (legacy mode draws no random numbers) |
+| F: 180 committed benchmark episodes rerun | PASS, exact. Includes the `random` rows, so the regenerated benchmark was produced with the R2-2 fix |
+| Q1 (`qa_pr5_round3_extra.log`) | Fixed: network and traffic generators share no state and no draws |
+| R2-1, R2-2, Q3 | Fixed |
+| Figures in README, docs and PR description against their source files (`qa_pr5_round3_audit.py` / `.log`, 16 checks) | PASS: trace drop ranges, the "about 95%" claim, the code-review table and speeds, spreads, test count, and the 30-seed headline selection, which reproduces from its summary file |
+
+**Verdict: approved.** No open findings. Still not covered: Python 3.10 to
+3.13, Linux and macOS (no CI), and an independent review in a separate
+session.
