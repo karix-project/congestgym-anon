@@ -29,7 +29,7 @@ from carla_gym.env import CarlaGymEnv
 # existing imports from this module keep working.
 from carla_gym.baselines import (  # noqa: E402,F401
     POLICIES, policy_congestion_aware, policy_load_aware_routing, policy_max,
-    policy_min, policy_queue_proportional, policy_random,
+    policy_min, policy_queue_proportional, policy_random, policy_rng,
 )
 
 
@@ -39,7 +39,7 @@ def run_policy(name, fn, episodes, steps, topology, seed, budget=None, warmup=20
         env = CarlaGymEnv(topology=topology, max_steps=steps,
                           bandwidth_budget=budget, seed=seed + ep)
         obs, _ = env.reset(seed=seed + ep)
-        rng = np.random.default_rng(seed + ep)
+        rng = policy_rng(seed + ep)
         for t in range(steps):
             action = fn(env, obs, rng)
             obs, reward, terminated, truncated, info = env.step(action)

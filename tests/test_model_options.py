@@ -168,3 +168,34 @@ def test_shipped_defaults():
     net = CarlaGymEnv().network
     assert (net.queueing, net.tie_break, net.service_order, net.topology_seed) == \
         ("per_link", "random", "random", 0)
+
+
+# ---------------------------------------------------------------- RNG streams (QA Q1)
+def test_network_and_traffic_streams_are_independent():
+    """Regression guard: both generators were seeded with default_rng(seed)
+    and drew identical raw numbers (docs/QA_PR5_REPORT.md, Q1)."""
+    env = CarlaGymEnv(seed=7)
+    for _ in range(2):                                   # after construction, then after reset
+        a = env.network.rng.integers(0, 2**62, 5)
+        b = env.traffic.rng.integers(0, 2**62, 5)
+        assert not np.any(a == b)
+        env.reset(seed=7)
+
+
+def test_network_stream_is_reproducible_from_the_seed():
+    a, b = NetworkModel("grid", 9, seed=11), NetworkModel("grid", 9, seed=11)
+    assert a.rng.integers(0, 2**62, 5).tolist() == b.rng.integers(0, 2**62, 5).tolist()
+    a.reset(seed=11)
+    assert a.rng.integers(0, 2**62, 5).tolist() == NetworkModel("grid", 9, seed=11).rng.integers(0, 2**62, 5).tolist()
+
+
+def test_random_policy_stream_is_independent_of_traffic():
+    """Regression guard: the benchmark seeded the random policy with
+    default_rng(seed), replaying the traffic's draws (QA R2-2)."""
+    from carla_gym.baselines import policy_rng
+    env = CarlaGymEnv(seed=7)
+    env.reset(seed=7)
+    a = policy_rng(7).integers(0, 2**62, 5)
+    b = env.traffic.rng.integers(0, 2**62, 5)
+    assert not np.any(a == b)
+    assert policy_rng(7).integers(0, 2**62, 5).tolist() == a.tolist()
