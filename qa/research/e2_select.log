@@ -1,0 +1,13 @@
+Validation reward at 500k (seeds 1000-1004), mean over 3 training seeds, 95% CI over seeds
+              config  seeds  val_reward_500k   ci95  change_400k_500k             per_seed
+g0.99_lr3e-4_ent0.01      3           +0.045 +0.007            +0.008 +0.042 +0.048 +0.045
+g0.95_lr3e-4_ent0.01      3           +0.033 +0.015            +0.025 +0.030 +0.030 +0.041
+   g0.95_lr3e-4_ent0      3           +0.031 +0.051            +0.010 +0.014 +0.054 +0.025
+   g0.99_lr3e-4_ent0      3           +0.030 +0.007            +0.005 +0.033 +0.030 +0.028
+   g0.99_lr1e-4_ent0      3           +0.014 +0.023            +0.023 +0.004 +0.020 +0.020
+g0.95_lr1e-4_ent0.01      3           +0.008 +0.015            +0.016 +0.012 +0.012 +0.001
+g0.99_lr1e-4_ent0.01      3           +0.006 +0.024            +0.030 +0.017 +0.001 -0.000
+   g0.95_lr1e-4_ent0      3           +0.003 +0.021            +0.018 +0.012 -0.001 -0.003
+
+SELECTED: g0.99_lr3e-4_ent0.01
+default configuration (g0.95_lr3e-4_ent0) ranks 3 of 8; winner minus default +0.014

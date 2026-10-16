@@ -50,18 +50,50 @@ ABLATIONS = {
     "grid_l125_b06_routing_only": HEADLINE + ["--control", "routing"],
     "random9_l15_b06_routing_only": RANDOM9 + ["--control", "routing"],
 }
+BOTTLENECK = SCENARIOS["grid_bottleneck_b08"]
+# docs/NEXT_EXPERIMENTS.md, E3: the remaining one-half ablations (PPO only).
+ABLATIONS_E3 = {
+    "grid_bottleneck_b08_bandwidth_only": BOTTLENECK + ["--control", "bandwidth"],
+    "grid_bottleneck_b08_routing_only": BOTTLENECK + ["--control", "routing"],
+    "random9_l15_b06_bandwidth_only": RANDOM9 + ["--control", "bandwidth"],
+}
+# docs/NEXT_EXPERIMENTS.md, E2: PPO hyperparameter grid on the headline.
+HP_SWEEP = {
+    f"g{g}_lr{lr}_ent{ent}": HEADLINE + ["--gamma", g, "--lr", lr, "--ent-coef", ent]
+    for g in ("0.95", "0.99") for lr in ("3e-4", "1e-4") for ent in ("0", "0.01")
+}
+QUEUES = {
+    # name: (configurations, results folder, algorithms)
+    "matrix": ({**SCENARIOS, **ABLATIONS}, "rl", None),
+    "ablations-e3": (ABLATIONS_E3, "rl", ("ppo",)),
+    "hp-sweep": (HP_SWEEP, "rl_hp", ("ppo",)),
+}
+
+
+def known_configurations() -> dict:
+    """Every named configuration in any queue, for tools that rebuild a run's env."""
+    return {**SCENARIOS, **ABLATIONS, **ABLATIONS_E3, **HP_SWEEP}
 BUDGET = {"ppo": ("1000000", "50000"), "sac": ("200000", "20000")}   # (timesteps, eval-every)
 SEEDS = range(5)
 
 
-def jobs(seeds=SEEDS, budget=BUDGET, algos_all=("ppo", "sac")):
+def jobs(seeds=SEEDS, budget=BUDGET, algos_all=("ppo", "sac"), queue="matrix", only=None):
+    configs, folder, algos_fixed = QUEUES[queue]
+    if only:
+        unknown = set(only) - set(configs)
+        if unknown:
+            raise SystemExit(f"--only: not in queue {queue!r}: {sorted(unknown)}")
+        configs = {k: v for k, v in configs.items() if k in only}
     out = []
     for seed in seeds:                       # seed-major order: every scenario gets early results
-        for name, extra in list(SCENARIOS.items()) + list(ABLATIONS.items()):
-            algos = ["ppo"] if name in ABLATIONS else list(algos_all)
+        for name, extra in configs.items():
+            if algos_fixed is not None:
+                algos = list(algos_fixed)
+            else:
+                algos = ["ppo"] if name in ABLATIONS else list(algos_all)
             for algo in algos:
                 steps, every = budget[algo]
-                d = os.path.join("results", "rl", name, f"{algo}_seed{seed}")
+                d = os.path.join("results", folder, name, f"{algo}_seed{seed}")
                 out.append((d, ["--algo", algo, "--seed", str(seed), "--timesteps", steps,
                                 "--eval-every", every, "--out", d] + extra))
     return out
@@ -88,10 +120,13 @@ def main():
     p.add_argument("--ppo-steps", type=int, default=int(BUDGET["ppo"][0]))
     p.add_argument("--sac-steps", type=int, default=int(BUDGET["sac"][0]))
     p.add_argument("--no-sac", action="store_true", help="train PPO only")
+    p.add_argument("--queue", choices=sorted(QUEUES), default="matrix",
+                   help="matrix: the 0.4.0 matrix; ablations-e3 and hp-sweep: docs/NEXT_EXPERIMENTS.md")
+    p.add_argument("--only", nargs="+", default=None, help="run only these configurations of the queue")
     a = p.parse_args()
     budget = {"ppo": (str(a.ppo_steps), str(max(a.ppo_steps // 20, 1000))),
               "sac": (str(a.sac_steps), str(max(a.sac_steps // 10, 1000)))}
-    queue = jobs(range(a.seeds), budget, ("ppo",) if a.no_sac else ("ppo", "sac"))
+    queue = jobs(range(a.seeds), budget, ("ppo",) if a.no_sac else ("ppo", "sac"), a.queue, a.only)
     if a.list:
         for d, args in queue:
             print(d, " ".join(args))

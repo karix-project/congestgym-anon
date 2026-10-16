@@ -1,0 +1,1121 @@
+scenario,policy,params,seed,reward,delivered
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1000,0.08383240762822468,0.739258135432242
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1001,0.09005125463293169,0.7320548338176591
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1002,0.1035852096902508,0.7550320134975829
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1003,0.12234718921413698,0.7439636501020869
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1004,0.05928426464894917,0.7086988686891346
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1005,0.006276688250988981,0.6848390266664983
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1006,0.11708067433622196,0.7524343131403927
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1007,0.13209468909656888,0.7529222954911159
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1008,0.09682809448806494,0.7373423775973735
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1009,0.11282082527620742,0.7519536708341134
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1000,0.10172185823279871,0.7410969701312947
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1001,0.06717031621307144,0.7264968589515819
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1002,0.10902834037413768,0.7505763898649795
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1003,0.08296128419998276,0.7314427819847428
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1004,0.04933002980752078,0.7098409836727457
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1005,0.013275170298701575,0.7002843880023194
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1006,0.11712311068921268,0.7447307898647367
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1007,0.11673335229330449,0.7488540286205108
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1008,0.05967550540897338,0.7250394513032073
+grid_l125_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1009,0.11067118152067949,0.7527879632501848
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1000,0.06381179585779279,0.7332269570431214
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1001,0.09005125463293169,0.7320548338176591
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1002,0.09175858875221687,0.7587016486754573
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1003,0.10920712710707513,0.748212015497586
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1004,0.026349265177497392,0.6993830785864956
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1005,-0.00017538479592211096,0.6889447801750455
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1006,0.10902204767874368,0.7535050917450488
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1007,0.11998820847668058,0.7562117344043552
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1008,0.09682809448806494,0.7373423775973735
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1009,0.12583761674283747,0.7635199022976316
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1000,0.09162685894451977,0.7392390601050786
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1001,0.09193928652118623,0.739020877778803
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1002,0.13166775345003817,0.7614309757312825
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1003,0.11716540486097399,0.7483628072965092
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1004,0.04579259374871655,0.7123195255912557
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1005,0.0036719551820629435,0.6971423618111953
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1006,0.09996393005042753,0.7402472323265051
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1007,0.1288009143121109,0.7492032687170009
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1008,0.048099121377024864,0.7188021190041262
+grid_l125_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1009,0.1156869035953819,0.7576831613993891
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1000,0.08357244928395266,0.7351139193688572
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1001,0.08920051256504673,0.7355833970156486
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1002,0.11978247124009231,0.7606305893927183
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1003,0.1019478751635597,0.7420881784296303
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1004,0.0320441430324349,0.7040155275505868
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1005,0.006317511813512095,0.6982156933927358
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1006,0.10033779896151702,0.7493839476516988
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1007,0.11998820847668058,0.7562117344043552
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1008,0.09682809448806494,0.7373423775973735
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1009,0.08668775766882608,0.7469407910378152
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1000,0.10239547860012074,0.7380316698823426
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1001,0.07905775729819038,0.7370683149932019
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1002,0.09893872757744908,0.7488460839924823
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1003,0.09277925934029266,0.7442873713488987
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1004,0.04514057690185371,0.711283588305816
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1005,0.012282620014371136,0.6958293525248834
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1006,0.12620619123626142,0.7618505189641612
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1007,0.10529234688219663,0.7489115217658827
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1008,0.048099121377024864,0.7188021190041262
+grid_l125_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1009,0.12331357927777087,0.7518351044756205
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1000,0.10139882516531387,0.7388204779532955
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1001,0.07038827537315032,0.7312218577327483
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1002,0.10560672887384695,0.754374181947949
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1003,0.10805491157988507,0.7488908816164324
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1004,0.05033777203085482,0.7084922923126654
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1005,-0.008945767059844872,0.6931725252263825
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1006,0.12572703064833132,0.7578432092993904
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1007,0.13189023392635588,0.7522781887201027
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1008,0.07969995984972032,0.7335082377016897
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1009,0.10325114741575156,0.7448128701297245
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1000,0.07860540262250448,0.7384055149773702
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1001,0.06884850834346196,0.7385709380811192
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1002,0.12486205484287974,0.7636064178616825
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1003,0.11103791451964101,0.7400552695389757
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1004,0.045790765596409294,0.7086848990154808
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1005,0.005889455716526606,0.6934965475020917
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1006,0.11395716128696745,0.755194783937678
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1007,0.12770057940723278,0.7547515097201107
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1008,0.10808557922118735,0.7400979386775809
+grid_l125_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1009,0.11249665597721542,0.7459631790125638
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1000,0.10513559675554893,0.7348659555133075
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1001,0.05865723655612042,0.7244994059064839
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1002,0.09949675578135542,0.751124259112656
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1003,0.11376297792390105,0.7439109011272371
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1004,0.038872491996405883,0.7079412730647219
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1005,-0.008945767059844872,0.6931725252263825
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1006,0.11142194742054544,0.7541256963796739
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1007,0.14052216521653044,0.7580358715122455
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1008,0.07969995984972032,0.7335082377016897
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1009,0.12187703617671382,0.7641182597102417
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1000,0.10679103024106974,0.7493652687969784
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1001,0.05459505879441462,0.7171866894640067
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1002,0.13180171938089616,0.7624585262405352
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1003,0.08629935755335115,0.7384495777832845
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1004,0.017382151561234727,0.7012434546672476
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1005,0.004866344203820738,0.695017526875915
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1006,0.12677547270143416,0.7547865306153045
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1007,0.12722974602978793,0.7578930167593343
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1008,0.08182424120614262,0.7313498802712898
+grid_l125_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1009,0.11249665597721542,0.7459631790125638
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1000,0.0931377374834327,0.7357693226433981
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1001,0.07850866389224442,0.7267585510601339
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1002,0.10669514207410852,0.7567176056773027
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1003,0.10799219102910974,0.7476788872548956
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1004,0.04792947032207891,0.7107966282786601
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1005,0.003035824097000165,0.6901006200582264
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1006,0.09918652629927927,0.7473923539231805
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1007,0.12992241852414174,0.7535815106510184
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1008,0.07969995984972032,0.7335082377016897
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1009,0.1101678420076318,0.7513929415371158
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1000,0.0907986987255588,0.7339071357899454
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1001,0.09949110734973451,0.7424972473776006
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1002,0.10878058579726946,0.7507479460913141
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1003,0.10670701739074323,0.7421106615752413
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1004,0.03239614554844106,0.7032303723197255
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1005,0.011158020421684952,0.6975849823823839
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1006,0.11530294459307341,0.7540160728813443
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1007,0.11409496032776532,0.7436447740221184
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1008,0.08182424120614262,0.7313498802712898
+grid_l125_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1009,0.08730402589623644,0.7470706352341456
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1000,0.08644789150643477,0.734914905848801
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1001,0.08382188409546845,0.7281087721103457
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1002,0.11968811604161157,0.7582017625998774
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1003,0.11817414750223966,0.7435883893943518
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1004,0.05668791364958806,0.7108809446534607
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1005,0.015081338844606471,0.696970288691389
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1006,0.13163660851236642,0.7565753083517884
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1007,0.12485121851126099,0.7529782497071047
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1008,0.06545191492950284,0.7242146272264794
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1009,0.10056028450664528,0.7562071624125974
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1000,0.07519489971062791,0.7391088898362924
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1001,0.08614477401435762,0.736035968108786
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1002,0.12956554935417275,0.7581919308494875
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1003,0.08911489480280306,0.7402619119292737
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1004,0.03983965381358896,0.7072588925171718
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1005,0.018026402700458202,0.7036211990860217
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1006,0.11780494103730696,0.7491481964904267
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1007,0.12029937084309472,0.7560135694902681
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1008,0.12373445375669016,0.7338255126016573
+grid_l125_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1009,0.09683003991292685,0.7454480704248521
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1000,0.06696615543779341,0.7340483699423848
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1001,0.08382188409546845,0.7281087721103457
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1002,0.12637224899994037,0.7580956177681059
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1003,0.13536841572479683,0.7497093795030104
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1004,0.054949624222201954,0.7101157804050227
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1005,0.015081338844606471,0.696970288691389
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1006,0.10262179640109283,0.7542756045857023
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1007,0.11735616145861028,0.7545352014953025
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1008,0.06933255263787014,0.7285492821163566
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1009,0.11859883490334082,0.7544315235223961
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1000,0.09218545709010388,0.737240947552887
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1001,0.06557693726917338,0.7221753092395726
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1002,0.10755004391285425,0.7524528735617796
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1003,0.09773345938014953,0.7423579068301234
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1004,0.06778814989135887,0.7155102880666507
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1005,0.029247945073740338,0.6992167587428917
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1006,0.10927430161388342,0.7541451743018815
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1007,0.11795952441993293,0.7458735833769466
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1008,0.088910245150575,0.7313985944292017
+grid_l125_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1009,0.09725031362035637,0.745573586869546
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1000,0.10549663151906694,0.730479025365327
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1001,0.08812106295772075,0.7395326631074938
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1002,0.0990337019894415,0.757448641140092
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1003,0.13132457070943238,0.7572860184713396
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1004,0.07245803765951424,0.71064112500363
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1005,-0.003617289386810771,0.6916278203710204
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1006,0.12251425124539309,0.7575828046388284
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1007,0.11735616145861028,0.7545352014953025
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1008,0.06933255263787014,0.7285492821163566
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1009,0.11510598459169451,0.757873105588834
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1000,0.08696804730513541,0.7351273952099151
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1001,0.08465389026410082,0.727671667071798
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1002,0.11330438467321811,0.7580655653876522
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1003,0.07346406079791425,0.7315888580469582
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1004,0.025510806239198748,0.7078509929395309
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1005,0.0016090758331572931,0.6903786585263055
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1006,0.11163589080929466,0.7543689055129756
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1007,0.11795952441993293,0.7458735833769466
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1008,0.088910245150575,0.7313985944292017
+grid_l125_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1009,0.08078806899649546,0.743267791779033
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1000,0.08760634362324475,0.7473192260707415
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1001,0.08245212692412107,0.7391347331261644
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1002,0.11026975304247424,0.7508123216770708
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1003,0.08358385850551975,0.7474923197920756
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1004,0.0530989627111792,0.705587601507194
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1005,0.0016732738927231915,0.690598280181545
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1006,0.12307106283666037,0.7565309974658169
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1007,0.14970415245348256,0.7592993820976368
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1008,0.07031457650093405,0.722254536021448
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1009,0.11017436044881139,0.7549991883070277
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1000,0.06678210029634564,0.7329144476994143
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1001,0.07865118065914395,0.7389548818191892
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1002,0.11876791950251532,0.7567675999054558
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1003,0.09135927765604686,0.7437656234022543
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1004,0.045659306877841685,0.7071824088092472
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1005,0.022565887697765123,0.6983857686509415
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1006,0.13789032776345808,0.7613299981404521
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1007,0.11024322303089838,0.7436359333783145
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1008,0.10473684444885188,0.7382541992251358
+grid_l125_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1009,0.11074791870828406,0.7535330212692818
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1000,0.11292597114682795,0.7427990626859249
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1001,0.08245212692412107,0.7391347331261644
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1002,0.13622319432873087,0.7651973174482545
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1003,0.08125875197843772,0.7300689917621561
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1004,0.05473390029221737,0.7155956371656212
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1005,0.0016732738927231915,0.690598280181545
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1006,0.1112739271920676,0.7491193648280149
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1007,0.13036545406363917,0.7488838870116005
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1008,0.07031457650093405,0.722254536021448
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1009,0.11874305373758591,0.7514319443303912
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1000,0.0794247579381825,0.733627369538554
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1001,0.10214499025359153,0.73947198865903
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1002,0.11628236303734651,0.7570842575735588
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1003,0.12011689987089014,0.7497474606720932
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1004,0.05631932129375197,0.7151062714734908
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1005,0.009650327473062006,0.6981464676535358
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1006,0.12819277537574017,0.7570938632574887
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1007,0.09305626822239493,0.7426390817144207
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1008,0.08281182351041783,0.7308054854764459
+grid_l125_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1009,0.10854870790831915,0.7515615473730893
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1000,0.08417427616181884,0.7407012487076765
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1001,0.10142338163935495,0.7374423044729029
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1002,0.13622319432873087,0.7651973174482545
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1003,0.09762570387556563,0.7469475381089731
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1004,0.04490635760965118,0.7014781362526978
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1005,0.016849494071384127,0.6979035467025405
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1006,0.12767732809578425,0.7573535302518971
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1007,0.13036545406363917,0.7488838870116005
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1008,0.07031457650093405,0.722254536021448
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1009,0.10118098874614333,0.7509439352286046
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1000,0.08455452872463784,0.73322415667701
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1001,0.06928045889576094,0.7341409690076043
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1002,0.12981826538080285,0.764892670929909
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1003,0.12459126130453858,0.7534565795811435
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1004,0.0375417795169508,0.7056957260423667
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1005,0.004619397440536218,0.6952887134345342
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1006,0.12624696878337371,0.7593271769189921
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1007,0.1142106564496418,0.7483478705940043
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1008,0.077138327229651,0.7263198306334239
+grid_l125_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1009,0.09728110354982443,0.7542170089226093
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1000,0.36240294061474077,0.8288693411320568
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1001,0.3716399010391604,0.8380633273479874
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1002,0.36896492353488525,0.8366688765921955
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1003,0.3721716160416567,0.8476299654302282
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1004,0.3896265089900862,0.8503509966860767
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1005,0.38472147303805687,0.8417963334848335
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1006,0.3655573260376397,0.8386344955501817
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1007,0.34813773920250535,0.8320148581218789
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1008,0.388408844984464,0.8393071331933043
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1009,0.39521051780760436,0.8598915447880363
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1000,0.3349327153882142,0.8197876056676023
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1001,0.36938486821892946,0.8423874501909866
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1002,0.35261867591547824,0.8303111773523069
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1003,0.3312834192238998,0.8229129224753289
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1004,0.36397892589059366,0.83756157926269
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1005,0.3370174124433026,0.8216506625973932
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1006,0.3657401311085714,0.8394549391794589
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1007,0.30338052660795195,0.8143814936942056
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1008,0.3787923861659974,0.8476460629568566
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1009,0.36551349307296266,0.8458100388574175
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1000,0.35291285298180697,0.8227968915812116
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1001,0.3884333216474608,0.8476172887734654
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1002,0.4032302485327308,0.8483471631196375
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1003,0.37475559925408036,0.8400254773476777
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1004,0.38244400322493355,0.8447944555201924
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1005,0.3889234499115449,0.8388380666436851
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1006,0.3599730432605206,0.8386332480297104
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1007,0.3527805219598466,0.8375851669031904
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1008,0.4088152174331819,0.8528809920020146
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1009,0.3951483038687971,0.8587755304006613
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1000,0.3071143304402562,0.804360713398279
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1001,0.3805240044037728,0.8478515546628543
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1002,0.37473534112212553,0.8403418766354318
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1003,0.32255493357138143,0.8288509621206609
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1004,0.3036204120864634,0.8117322447111588
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1005,0.3326332705167152,0.8233035081945167
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1006,0.38210319678561305,0.8511437202781932
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1007,0.33092231524987736,0.833055712552256
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1008,0.3716984219506842,0.8400912739306704
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1009,0.374378914294371,0.8465099999047928
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1000,0.3378324133670433,0.8221120104268503
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1001,0.3714931862181866,0.8373602810684206
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1002,0.366128911062992,0.8471690375167319
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1003,0.35675914065174685,0.839696512593907
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1004,0.34620349446012777,0.8331571828914187
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1005,0.38762850444741287,0.8442226341170526
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1006,0.3929824948650321,0.8594471323200271
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1007,0.34523966079445517,0.834654931918387
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1008,0.38739822520655864,0.8494565153450845
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1009,0.41602850540347036,0.8609597621427018
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1000,0.34192837618844957,0.8350602830014235
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1001,0.3607033283026278,0.8369241766429778
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1002,0.3982792307911343,0.8493402648789008
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1003,0.3388122208303046,0.8356174902620472
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1004,0.3457007789142542,0.8248332217977138
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1005,0.3882733025528726,0.8457514267210233
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1006,0.3897094167909768,0.8594247311887667
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1007,0.3745776999789663,0.8477357766312141
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1008,0.37750728906242736,0.8359044162072318
+grid_bottleneck_b08,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1009,0.3518638921916835,0.8325455787730589
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1000,0.3157643671593961,0.8105927703668289
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1001,0.3761089927309458,0.8414476301285955
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1002,0.3863011707483137,0.8527727701014785
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1003,0.35785743949569626,0.8343307734600085
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1004,0.38301665506353955,0.8397623477406527
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1005,0.3397918259496008,0.8240330438007294
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1006,0.35497810789870354,0.8374582686906463
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1007,0.35320182761328717,0.8365283617212933
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1008,0.3946309640394394,0.8522096454476047
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1009,0.36568591746820195,0.8414488774044151
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1000,0.3164032904277116,0.8128761987029658
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1001,0.384961248363083,0.8525837463705055
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1002,0.3798888802025319,0.8481317722671253
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1003,0.339187388833154,0.8290937357419503
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1004,0.3383225394585013,0.8250369083074719
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1005,0.37707110190462056,0.8463680918967263
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1006,0.37847549848076595,0.8506838262039625
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1007,0.3136603311637078,0.8307577931803631
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1008,0.33933572736431655,0.8341998679004118
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1009,0.35990726925152366,0.8401393800109608
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1000,0.3288533181637936,0.8152194758180323
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1001,0.34992851549077364,0.8300568079513736
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1002,0.36634280655671475,0.8328691058468634
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1003,0.35163581336279337,0.8374270705496899
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1004,0.38133744195588026,0.8383789571806202
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1005,0.37738777757564795,0.8422638538804794
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1006,0.3742541333603824,0.8473308866682988
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1007,0.33402441762154317,0.8245031286924074
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1008,0.4102894823056173,0.8566908082996088
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1009,0.39326279265947317,0.8560929541409544
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1000,0.31787523595062045,0.8158002056967668
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1001,0.37286396002092204,0.8410084891846511
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1002,0.3594300048371566,0.8396589280650508
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1003,0.37058852686870936,0.8445121549714195
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1004,0.31866977791518514,0.807239535916612
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1005,0.3915811213169478,0.8443733613075042
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1006,0.33095361437455867,0.8221305682882833
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1007,0.360099458078795,0.8362271976865242
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1008,0.40640638200573276,0.8497343753372583
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1009,0.32209272260813027,0.8307698719368996
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1000,0.3523080072850475,0.8245639819863475
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1001,0.37737059842774273,0.8426286225677557
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1002,0.3763266602864751,0.8422989876427572
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1003,0.3388552371444013,0.8265496924833039
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1004,0.3362928915468447,0.818434266072702
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1005,0.3782566776766378,0.8403112485314963
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1006,0.3877466850316728,0.8561964576083881
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1007,0.3452708721709889,0.838040693569344
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1008,0.38727830261882557,0.8503589922998468
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1009,0.37741111332210264,0.850681050622715
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1000,0.319623319580666,0.8155032793567886
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1001,0.3700345925014832,0.8418442120961782
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1002,0.3804023174880851,0.8436721554604882
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1003,0.3743703781320527,0.8455740810308261
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1004,0.32821635896124035,0.8150937972567329
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1005,0.36286085385003336,0.8294823504514197
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1006,0.3459059976528478,0.8416416930605644
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1007,0.32772701109368396,0.8297288785995296
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1008,0.39581222036810937,0.8498635491361017
+grid_bottleneck_b08,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1009,0.37171712505959165,0.8474937886575447
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1000,0.33037460329547824,0.8161786094193687
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1001,0.3830175628523111,0.8370265111464268
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1002,0.3802571657255931,0.840983013504063
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1003,0.34329325599144633,0.825356864002861
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1004,0.3790445270823695,0.837889775543376
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1005,0.3766674929175203,0.8431485541961964
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1006,0.4061081678023558,0.8592976353219496
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1007,0.3618680711943171,0.8419803837876241
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1008,0.39788386441103807,0.8475118827842699
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1009,0.38869394563775844,0.8497073874886568
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1000,0.31439565443535084,0.8105277556758476
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1001,0.37959390638588986,0.8416922335582608
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1002,0.36265275073384673,0.8446013932704225
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1003,0.3480976372930261,0.8322804238444699
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1004,0.3766499667094541,0.8267574057402204
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1005,0.3415967092287421,0.831120152260735
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1006,0.34457812362645884,0.8436106587434485
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1007,0.36612840848641165,0.8483459491126735
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1008,0.3603170481874542,0.833275647534091
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1009,0.3767562727767463,0.8491443711302809
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1000,0.3243672578409982,0.8142456865924985
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1001,0.37510980799909793,0.8488106831476371
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1002,0.39075490950517777,0.8534814207376729
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1003,0.3605068250618997,0.8391981804140137
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1004,0.38491382296336946,0.8450562403732745
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1005,0.36231949965682986,0.8320616876784218
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1006,0.37297403257997275,0.8437285280708255
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1007,0.3553870293677838,0.840742998363273
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1008,0.44640108087001357,0.8686186655539302
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1009,0.36069492925522345,0.8333041698742183
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1000,0.32768073929379715,0.8111824767892821
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1001,0.3480732521785979,0.8290662908319874
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1002,0.39592054192952447,0.8491105138260366
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1003,0.35374704815689156,0.8307298936836406
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1004,0.36856414054945674,0.8341568764797979
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1005,0.35800378524987675,0.833950037949605
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1006,0.3597410621457579,0.8399304762126788
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1007,0.3277197033538805,0.8290964007441489
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1008,0.3699383231553137,0.8381709109492483
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1009,0.35871892442145054,0.836842106445815
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1000,0.3198484018524829,0.8077880148415696
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1001,0.3877839289831166,0.8462133198554749
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1002,0.3852873149732177,0.8466742923999931
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1003,0.3708754139184078,0.8453620024952644
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1004,0.36051313575377814,0.8228826949745243
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1005,0.37002434941090695,0.8303014433213758
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1006,0.3859498459561216,0.8556992597892429
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1007,0.3580217033568354,0.8421176552881029
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1008,0.4252899503123416,0.8588407354368246
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1009,0.38366949184024307,0.8497316415400362
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1000,0.359066354504607,0.8230021407227772
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1001,0.3778572905055636,0.8412950103768622
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1002,0.3516527251117927,0.8333974824338078
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1003,0.333835735439688,0.8233575489876893
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1004,0.3421449344845962,0.8277637637771318
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1005,0.37595694571781224,0.835827050910653
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1006,0.40589936785437636,0.8608678496554263
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1007,0.3038593338397304,0.8098400650795218
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1008,0.39472130034885156,0.8480185541182705
+grid_bottleneck_b08,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1009,0.38297826254658,0.8542484032676928
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1000,0.34765012813940444,0.8163352383629967
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1001,0.34249654299867255,0.828419018335654
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1002,0.39390302714300734,0.851135245497237
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1003,0.3625813152917757,0.8485614996898758
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1004,0.42691761789287785,0.8573114787463058
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1005,0.3992136472807383,0.8470799418609486
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1006,0.36966819238292914,0.8430149665880393
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1007,0.345840436878474,0.8376048596637022
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1008,0.4069966949908061,0.8514592580424251
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1009,0.36808214887493,0.8415848361796442
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1000,0.32325112275861206,0.8119878095918979
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1001,0.3778814814646296,0.8451106157130843
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1002,0.38420365835308984,0.8480360938760096
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1003,0.3540969120733379,0.8309424505783457
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1004,0.34015529043851833,0.8223640846814692
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1005,0.3709973908403475,0.8355061288701927
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1006,0.3297707587793436,0.8337419232776773
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1007,0.36706020969804193,0.8447290466090565
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1008,0.37668793529472566,0.842594472946322
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1009,0.3756246568955134,0.8487365967932535
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1000,0.3650359431393682,0.836658120348009
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1001,0.37425713622365814,0.8411327173600393
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1002,0.39117695066684915,0.8531130053220785
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1003,0.38662106308849187,0.8529029881709626
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1004,0.4144538484693014,0.8573972299797057
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1005,0.37537251920041004,0.8384824362827462
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1006,0.37683952311461216,0.8525736813770427
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1007,0.3554908946617856,0.8463759975975033
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1008,0.41146052388374516,0.8487285296394315
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1009,0.3941174722881142,0.8602222117748067
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1000,0.3354232848408155,0.808354464680314
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1001,0.40107133895337754,0.8481399178779222
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1002,0.37892983356590115,0.8370451254153093
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1003,0.36136124334131997,0.8390501828636322
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1004,0.36212475597575255,0.8313899093735385
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1005,0.3781038536871143,0.8378399580706305
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1006,0.3531459052212499,0.8405814207480646
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1007,0.3169492724790331,0.8253816685271981
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1008,0.3899686573129851,0.8414011857350514
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1009,0.3567545221321909,0.8355240102148344
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1000,0.3564691020685667,0.8259974671394477
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1001,0.3718055420956064,0.8385466385543827
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1002,0.3907405103385513,0.8438079405098351
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1003,0.3939651213845636,0.8392958582039053
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1004,0.3538609885481285,0.8277126935892966
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1005,0.388557603376399,0.8457041860335488
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1006,0.4220366360971607,0.8630935567785558
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1007,0.36359147040589895,0.834200368911536
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1008,0.4317413521186414,0.8649896607031284
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1009,0.37927281585735684,0.8484297144848542
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1000,0.30015897478268727,0.7995810458834237
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1001,0.3680998476770867,0.8338119124610971
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1002,0.3898949243330461,0.8451918973470302
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1003,0.3642089930886071,0.8368063417528878
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1004,0.3411414043889516,0.8222735914103926
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1005,0.3579445012586585,0.8349210964248156
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1006,0.3848293641762377,0.8505943269852305
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1007,0.35602615906667756,0.8278020876299259
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1008,0.39700517774958843,0.8531867904901238
+grid_bottleneck_b08,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1009,0.3939112794539551,0.845488136511533
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1000,-0.009662185904858515,0.7016678238817603
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1001,0.03308531833927781,0.757723552109961
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1002,0.03834862245104562,0.7293134502911935
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1003,0.059609354282146046,0.73931075565001
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1004,-0.01163492617575459,0.7415798804534051
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1005,-0.0005941179272500769,0.7063937969415491
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1006,-0.0016795207306857227,0.7371099920616034
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1007,0.040829968249725984,0.7639009023569906
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1008,0.04036627176391057,0.7601916764815614
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1009,0.02270230260650443,0.7425377953904957
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1000,-0.006471763064232245,0.7197323051946225
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1001,0.010940270951796208,0.7292677748940026
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1002,0.006598673684970322,0.7142459728092758
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1003,0.019138073132562262,0.7109952147324404
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1004,-0.05914685006022719,0.7353012716066791
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1005,-0.03916241652991162,0.6612508543561755
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1006,0.0006967729799873071,0.7235620153618063
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1007,0.02418465987497371,0.7250148605989294
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1008,-0.08289354116026515,0.6945972083878883
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1009,-0.017994395755453644,0.6921817859414201
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1000,0.13468982259575185,0.7685747523426809
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1001,0.08534009241590837,0.7770629905484467
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1002,0.09758676291787687,0.7350149837099573
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1003,0.13661366906946246,0.7379620785741682
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1004,0.08625427478563842,0.75182779897659
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1005,0.06557214716362,0.7132211461207724
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1006,0.10338092370978426,0.7643332760359814
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1007,0.13413800264534925,0.783798451933013
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1008,0.08658529042809425,0.7434398843381815
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1009,0.08419385580025776,0.7700435958401269
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1000,0.11020591524682004,0.7475163854854856
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1001,0.10797170975617527,0.7676023746831084
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1002,0.09691114567769796,0.7305254234604658
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1003,0.08108482289495604,0.712682401469936
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1004,0.07613619413522449,0.7473699015823315
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1005,0.0025342985147335513,0.6933943211671308
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1006,0.07185045405727321,0.7616804029192568
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1007,0.12052168604222234,0.7830778548230338
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1008,0.06931267366817664,0.7407786922133949
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1009,0.06023905235058832,0.74311692610732
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1000,0.23295085778359656,0.7636486934671227
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1001,0.21642298511741204,0.8024530483668503
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1002,0.18757839230195947,0.7445385595244904
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1003,0.1723097491738075,0.7457428935163356
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1004,0.20561472564651748,0.7749987262825122
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1005,0.1884067733880423,0.7318362126026507
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1006,0.22925480127951556,0.759695170349406
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1007,0.23917933387077853,0.7898336538743785
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1008,0.14596360515516588,0.751385764778019
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1009,0.216344041598635,0.7633043657864783
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1000,0.22108909293366585,0.7817285093686643
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1001,0.20551678740921642,0.7949859541680878
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1002,0.21301520781229472,0.7620146834632501
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1003,0.18960712199322205,0.752350388515519
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1004,0.18964027906207265,0.7694643517339901
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1005,0.16522544286181853,0.7357201736684532
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1006,0.23896007879099443,0.7908808699807514
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1007,0.217282837620384,0.7939116161520853
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1008,0.16670850499272907,0.7467982882228414
+pcap40_grid16_b05,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1009,0.18864729746371028,0.7668951684474721
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1000,0.08796481588249809,0.7443984427680816
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1001,0.06458058760626352,0.7807200535497216
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1002,0.05886284280933722,0.7288281169678709
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1003,0.07897444646588964,0.7289908559477662
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1004,0.022908746402053867,0.7657815355536307
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1005,0.05311658720177434,0.714733631143262
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1006,0.043217611209946466,0.7540387358377744
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1007,0.016560835846934168,0.761722993428573
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1008,0.078248053251552,0.7546788331987133
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1009,0.07998604212102121,0.7698671085627123
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1000,-0.011074961006889875,0.7061452158064773
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1001,0.024838947035127523,0.7322821623784261
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1002,0.04229005863476059,0.7282012388430229
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1003,0.04768463389135253,0.7312854392779974
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1004,0.010503571922288474,0.7278471665752709
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1005,0.006833384252646531,0.6825934021219742
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1006,-0.020290005216794273,0.7076504977876743
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1007,0.02092860787453814,0.7342321160614663
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1008,-0.016521024746164452,0.695833282958103
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1009,-0.015271084857694878,0.685327937830019
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1000,0.15028566073840793,0.7835145953773224
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1001,0.14243304291337264,0.7973554131060444
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1002,0.16407590462837068,0.774682390922066
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1003,0.11446067906103945,0.7274066759616978
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1004,0.09084108291169678,0.7494787985151334
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1005,0.09386864220665511,0.7167180196917886
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1006,0.12180339788319952,0.7605481585379269
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1007,0.14679913399750674,0.8006760089688011
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1008,0.13320803444896714,0.7810607634811196
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1009,0.13168250487905064,0.7644582519230043
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1000,0.12313887360585686,0.7437508290415675
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1001,0.06747595375514367,0.7592401927892712
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1002,0.09117309692254785,0.7407142240116799
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1003,0.0921243577227382,0.7433754795105568
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1004,0.10058953880286883,0.7658490987614675
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1005,0.08301746784443,0.7050464597937283
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1006,0.05349981384913425,0.7252369193511307
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1007,0.10433649302232474,0.7712489426650292
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1008,0.08414690235828692,0.7400886414611818
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1009,0.09475673610997923,0.7429804546385178
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1000,0.2431546203793083,0.7714886157962583
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1001,0.21065166635643737,0.7964112262307772
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1002,0.21572079573006342,0.7700316846697378
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1003,0.2053337695757113,0.7372577003068379
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1004,0.2153345566368569,0.7845366267251705
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1005,0.18052666208464246,0.732605080262012
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1006,0.2418096944087738,0.7617665252836447
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1007,0.25333633546838574,0.8037689081902863
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1008,0.17556002095960857,0.7623723609028817
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1009,0.22769818414184534,0.7727902364188477
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1000,0.2479326499940153,0.7951759034456368
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1001,0.20686261612708584,0.7894305939617491
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1002,0.2330131719038001,0.7919952713711607
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1003,0.2084389473894273,0.7628999412215074
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1004,0.22522614900572008,0.7844302639796221
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1005,0.17636949141053174,0.7397728057537309
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1006,0.2424628036217894,0.7842085896864969
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1007,0.2352953133633222,0.8097956440728152
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1008,0.1800645718546929,0.7756573864205265
+pcap40_grid16_b05,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1009,0.21694293656776825,0.7908745865398844
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1000,0.06151484105129386,0.7375664025991234
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1001,0.07047104701464904,0.7719270822043878
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1002,0.07799608007037562,0.7359696055128219
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1003,0.09623997273345994,0.739407241909108
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1004,0.02963118193553504,0.7531105897077852
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1005,0.04428458001944866,0.6643981651287209
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1006,0.021290454144516305,0.7204858781276372
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1007,0.07446767281982423,0.7512048772179212
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1008,0.041038399070807724,0.729687082523909
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1009,0.05649915072289602,0.754141406925271
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1000,0.10463929247018326,0.7652264725907774
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1001,0.013927782523341837,0.7278876373713057
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1002,0.07887683496251664,0.7124038594179641
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1003,0.02947141481460668,0.7105500756663486
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1004,0.00897309576112028,0.7333857084040744
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1005,-0.049105445924918556,0.6648917530652849
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1006,-0.010127310455904344,0.727948170147998
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1007,0.08423637158757573,0.7478706751667992
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1008,0.010157786271920023,0.7077894052813872
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1009,0.028680191542618052,0.7314680477832624
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1000,0.1568541716032448,0.7718772518533822
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1001,0.13072531051757982,0.7901060647803346
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1002,0.17726864444213694,0.7705387875889724
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1003,0.15318854839685173,0.763140131973114
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1004,0.1163639680349691,0.7664428071701264
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1005,0.08954867808615331,0.7176351103802443
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1006,0.12379706400746411,0.7640443774460475
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1007,0.15246749918629665,0.7710534056855854
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1008,0.11340780343279198,0.7455764972413838
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1009,0.14487368123940164,0.7666916971558243
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1000,0.10068199926660326,0.7271900948911468
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1001,0.11937423972372879,0.7728375582252686
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1002,0.09828640918649233,0.7313382958980162
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1003,0.08833973051765351,0.6935995049311208
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1004,0.10297074196790224,0.7561202503621625
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1005,0.06884567032141507,0.7112574055472364
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1006,0.0989429976777971,0.7591093631987659
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1007,0.1553550064782103,0.796314484731836
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1008,0.08089926416778745,0.7533430374266407
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1009,0.13913048363641548,0.7552565989911921
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1000,0.23169176845122733,0.772983130556952
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1001,0.23437429854435446,0.8009682605604701
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1002,0.235272538279573,0.7651670857512579
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1003,0.20715778727056536,0.7384548095711624
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1004,0.21440587711634695,0.7745606479226491
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1005,0.18704734343291038,0.7359080379562835
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1006,0.25317395714509716,0.7628197630362955
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1007,0.27957481408043566,0.806663389928416
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1008,0.20524318833866784,0.7621501165354956
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1009,0.2348962189620384,0.7777663764282566
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1000,0.23816271087622687,0.7902455114471566
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1001,0.21739405349679536,0.805911786224432
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1002,0.2497790912772713,0.7918081420322189
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1003,0.23056064823421288,0.7518858024370344
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1004,0.2218834233111903,0.7854841154408605
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1005,0.2165504930947065,0.7400184738486506
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1006,0.25300022057985927,0.7819001414031629
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1007,0.21177719820046578,0.7881090582725387
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1008,0.18138035851655043,0.780589967666397
+pcap40_grid16_b05,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1009,0.22628132697118394,0.7799740224279382
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1000,0.09862176651991345,0.7501929418106972
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1001,0.07985349185968336,0.7738208914804279
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1002,0.08894738181738811,0.7507439840530433
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1003,0.1163902579335491,0.7309492390764954
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1004,0.0622235296246998,0.76437074459077
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1005,0.002815486347232553,0.7011148495282886
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1006,0.05152317311124334,0.7446630980990274
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1007,0.04020923385446775,0.7694644627310486
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1008,0.053839173058123434,0.7323536323427206
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1009,0.030263497645561296,0.7631837255855971
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1000,0.06427167835082075,0.7482499161836585
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1001,0.04355380841001663,0.7549633219351397
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1002,0.037047472831083034,0.7106223711279553
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1003,0.04938426668651246,0.7255712249034642
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1004,0.03324101232121188,0.7540450096538598
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1005,-0.024695263117428427,0.6745799656714601
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1006,0.002680192115735849,0.7168608575802672
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1007,0.017632099943491495,0.7180745692210139
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1008,-0.004420305971748078,0.7049745776112564
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1009,0.06372298232625195,0.7319630142495903
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1000,0.16020981725271247,0.7735644996930461
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1001,0.16305291909975922,0.8026754764043273
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1002,0.15894136174592471,0.7495742602044704
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1003,0.16682804693631223,0.7480690955055431
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1004,0.09684004235242129,0.7659013985266042
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1005,0.08856307639474996,0.720513479258806
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1006,0.11839818894658502,0.7676774698354729
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1007,0.12652010399075747,0.803347487158367
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1008,0.12033882576360014,0.7702326495176028
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1009,0.1383735503232306,0.7652892347717517
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1000,0.10861302570372783,0.734971878215811
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1001,0.1324833472909551,0.7780260902938946
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1002,0.13098095587449216,0.7302086250038214
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1003,0.10967982202211218,0.7342786006637697
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1004,0.10447820069385103,0.7748528320701478
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1005,0.04805499479136258,0.6877655543382273
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1006,0.1015619211989083,0.75412340934098
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1007,0.14789380442754818,0.7981668799948725
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1008,0.0806392281835082,0.7409914597168155
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1009,0.11228819397157444,0.7514269146554002
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1000,0.23641609318157733,0.7769207165883277
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1001,0.21268394458068202,0.7884710911808891
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1002,0.23698976785432757,0.7632668227195472
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1003,0.2239327575959976,0.7524825580274259
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1004,0.20978278761311817,0.7733251940153546
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1005,0.2028746762599121,0.737453403117547
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1006,0.23056652905671662,0.7608260221362203
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1007,0.24686037802859484,0.794391538928703
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1008,0.21221246761016882,0.7643386107587706
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1009,0.24541389435454797,0.7779405619852701
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1000,0.2260345009255792,0.7925258439586229
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1001,0.21104599911128313,0.7874537091937768
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1002,0.23959996251045657,0.7828916379317253
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1003,0.2255365533387788,0.758058350623242
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1004,0.2178476136443699,0.7826982792316461
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1005,0.1988857487871255,0.7390715654094764
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1006,0.2330874129153736,0.7619558174485401
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1007,0.22744023065183605,0.7922975407618755
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1008,0.18969168795715324,0.7758148642993938
+pcap40_grid16_b05,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1009,0.21857053859090117,0.7804135205855162
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1000,0.17598292422934542,0.7449811228007466
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1001,0.19983661015542908,0.7543240805173865
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1002,0.25297622906624095,0.7796112832702968
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1003,0.26474188303342694,0.7862408805178615
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1004,0.24515125783631825,0.778447988479002
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1005,0.20227943310889396,0.754453790646696
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1006,0.20296795505872703,0.7585783091994968
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1007,0.24784137803942063,0.7740119091545594
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1008,0.2056920159491881,0.7586976059699717
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=max,1009,0.20233302467221867,0.7507776096056816
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1000,0.13485164236389127,0.730908786394448
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1001,0.10088655804391225,0.7092340515219966
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1002,0.2021938328119224,0.7712971801857907
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1003,0.19173398512032724,0.7601119979037332
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1004,0.17451083686522886,0.7479194166005455
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1005,0.12319697315315159,0.7202352206530135
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1006,0.09845236179245405,0.718682390548547
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1007,0.1656223651641723,0.7390018146678657
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1008,0.16997301734031356,0.7481177269597814
+random9_l15_b06,congestion_aware,floor=0.0 base=0.0 slope=1.0 signal=pending,1009,0.1625074293400773,0.7396388833593639
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1000,0.24216838638497135,0.7671925001499852
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1001,0.21854344058808772,0.7583036807876875
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1002,0.2895485571119277,0.8008512260668328
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1003,0.29609852360789457,0.7969048755160726
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1004,0.27503428071476343,0.7903029928331137
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1005,0.22677175944502623,0.7673739927052841
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1006,0.21107205625733358,0.7633582839693674
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1007,0.29235605000958315,0.7830173297325749
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1008,0.22928205568306181,0.7723910143041114
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=max,1009,0.2689059142305675,0.7773488943624743
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1000,0.1482402390194236,0.7360737206912857
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1001,0.16985981762443486,0.741315417204321
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1002,0.25833549553661167,0.7840721407472956
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1003,0.22631671629648079,0.7712810348179204
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1004,0.2103880726266329,0.7593097905632018
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1005,0.1430804021130967,0.7338134830801616
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1006,0.1409311927478256,0.733687160611565
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1007,0.20969706694917264,0.7571748608075466
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1008,0.16945723266211385,0.7484190668876004
+random9_l15_b06,congestion_aware,floor=0.0 base=0.1 slope=0.9 signal=pending,1009,0.21468269826985287,0.7548396905820297
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1000,0.30682209334743993,0.7873434876006131
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1001,0.2929986369146201,0.7825098608145044
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1002,0.3572472254745333,0.8235188183384027
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1003,0.34192477843366426,0.8147009592873269
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1004,0.33059601626065116,0.8041922977071279
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1005,0.28236144151533554,0.7890480853265673
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1006,0.27019160420612626,0.7779851764132945
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1007,0.3493791578334648,0.8031677285860019
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1008,0.30678999545031294,0.8028148263914242
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=max,1009,0.3215957856445098,0.7975872998037895
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1000,0.25329176071788406,0.7719051750550757
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1001,0.24637701104252632,0.7676613032090536
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1002,0.3173790323443089,0.8078812457417681
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1003,0.31675460402684125,0.8072306559073557
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1004,0.28132719391465,0.7898725071186962
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1005,0.22350225212661426,0.7653817400419864
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1006,0.2477848383665237,0.7707157445048376
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1007,0.29029709937826986,0.7865048050609104
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1008,0.23592283105238868,0.7753059440150902
+random9_l15_b06,congestion_aware,floor=0.0 base=0.3 slope=0.7 signal=pending,1009,0.24948785018774453,0.770971039758488
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1000,0.19816418666152533,0.7576736451043483
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1001,0.23080794494513776,0.770527709797466
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1002,0.26886941447267027,0.7884149996653396
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1003,0.27642285559372615,0.7943983278455965
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1004,0.23580374078080352,0.7696233102450948
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1005,0.21315060179729656,0.7635340674631608
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1006,0.1779148096612274,0.7466525136920648
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1007,0.22677026563321204,0.7673754908033205
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1008,0.1814942439277812,0.7561424282002815
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=max,1009,0.2382496765328922,0.767891881492542
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1000,0.12326441174582005,0.7251595703221227
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1001,0.10591726839869667,0.7188943318189531
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1002,0.20689704059904268,0.7651152441475826
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1003,0.19314739290429095,0.7585624273230647
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1004,0.20880378898491164,0.7620504544168759
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1005,0.13353207528534417,0.7338960934193125
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1006,0.10092455025140974,0.713755824446212
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1007,0.1572421884752291,0.7375791328438871
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1008,0.13668015995184613,0.7343124889939857
+random9_l15_b06,congestion_aware,floor=0.05 base=0.0 slope=1.0 signal=pending,1009,0.12547881904733893,0.7229462342095214
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1000,0.2438280746595463,0.76737889304543
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1001,0.22355902643207481,0.7623265447635464
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1002,0.30039226866209445,0.8035682465222062
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1003,0.3150757057778595,0.8097177671743432
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1004,0.29199084442008033,0.7907953949170777
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1005,0.22341570395451954,0.7590374381749591
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1006,0.23164250885933743,0.7661579312709029
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1007,0.2718389601805112,0.7761526885557131
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1008,0.23044702816291113,0.7744134895246283
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=max,1009,0.2230995931018371,0.7587425622632512
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1000,0.16622933253455802,0.7393499695470975
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1001,0.1777009741813849,0.7488347406514109
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1002,0.25650472274505315,0.7843289746283142
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1003,0.21790915741923192,0.7618907787002689
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1004,0.24265129623239107,0.7821016842535992
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1005,0.16108051698271647,0.7342451728167194
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1006,0.13733235384882064,0.7330046453985505
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1007,0.19679092997375372,0.7552963258012636
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1008,0.17753393683578686,0.7481720886980944
+random9_l15_b06,congestion_aware,floor=0.05 base=0.1 slope=0.9 signal=pending,1009,0.18593878887802626,0.7404283349022018
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1000,0.27425999239410587,0.7732382300754976
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1001,0.2981248867902605,0.7934965783218499
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1002,0.3423857104869096,0.8160831531619424
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1003,0.3688954035188676,0.8228986224631666
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1004,0.33040266268303425,0.8077612012372759
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1005,0.29941440219749027,0.7934730522867879
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1006,0.27570653856230387,0.778944553450148
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1007,0.36158597792058517,0.8092996180109772
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1008,0.2992997040652026,0.798956036690903
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=max,1009,0.29440071613697455,0.7895004923131153
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1000,0.23094345303083183,0.7602709801188828
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1001,0.2516347118376993,0.7698988732631116
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1002,0.31656425770450625,0.8051828412597642
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1003,0.3232419942088537,0.8081737793697544
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1004,0.29833402413111804,0.7918669821328782
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1005,0.2191113600564842,0.7648047171475806
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1006,0.2270496319485648,0.7615070505944542
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1007,0.30977822198463895,0.7912746084353107
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1008,0.3066423980575242,0.7984778247184464
+random9_l15_b06,congestion_aware,floor=0.05 base=0.3 slope=0.7 signal=pending,1009,0.26940599945147287,0.7710460564489813
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1000,0.2401939396479893,0.7649827356350726
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1001,0.2068546503507368,0.7572188777258785
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1002,0.27102401803195986,0.7911506805205961
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1003,0.2552669750982258,0.7840226888228444
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1004,0.23985680623642716,0.7746283173609849
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1005,0.20948230213339972,0.759128552149181
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1006,0.1891995868592726,0.7557257439335269
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1007,0.24973477550593906,0.7777568746297309
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1008,0.21703989787078687,0.7679030306631975
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=max,1009,0.22304652735245828,0.7612517530698223
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1000,0.12731447271130344,0.7221498677741084
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1001,0.13930698426147725,0.7288633499886943
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1002,0.20072121805493942,0.760673628793272
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1003,0.1776003681490616,0.7561165644800371
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1004,0.17222405959500595,0.7459762873934913
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1005,0.13042948231749346,0.728671421455282
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1006,0.12345732751446986,0.7260479209670373
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1007,0.15169339492687955,0.7353952402287179
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1008,0.15991750173705205,0.7431749679818481
+random9_l15_b06,congestion_aware,floor=0.1 base=0.0 slope=1.0 signal=pending,1009,0.13960588379459082,0.7311699508015913
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1000,0.25927337356530344,0.7767256749440643
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1001,0.2371098531841546,0.7686982826449102
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1002,0.3102043501952847,0.8041682975913952
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1003,0.2950427260530844,0.7987515749263306
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1004,0.2824521397868854,0.7899215271649183
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1005,0.22946581609136038,0.7680442987296141
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1006,0.2229250577325718,0.7589696644137042
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1007,0.29458745414973786,0.7848469737456759
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1008,0.2418698324928543,0.7752574405957438
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=max,1009,0.2621927977755142,0.7739373977700706
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1000,0.17706566941753246,0.7388770186458011
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1001,0.17766078267632146,0.742428110571111
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1002,0.23809663402122846,0.7753578665427142
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1003,0.22474447143912832,0.7698650868942333
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1004,0.2425974643069137,0.768330506649552
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1005,0.16969387980223252,0.7412158007470774
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1006,0.12198529748296963,0.7218100506341024
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1007,0.18397793957889724,0.7523404985882763
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1008,0.17268460103885394,0.7477937194987097
+random9_l15_b06,congestion_aware,floor=0.1 base=0.1 slope=0.9 signal=pending,1009,0.17985386368325473,0.7448608710348699
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1000,0.29500493852755955,0.7835392587107086
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1001,0.2999072985978551,0.7919037526355412
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1002,0.3523840306025687,0.8188999437770343
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1003,0.37678869312552843,0.8242068292660109
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1004,0.3402401724010557,0.8088701766453873
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1005,0.29587444199487206,0.7953749133594139
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1006,0.28698518436020704,0.7841805981774865
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1007,0.3541448283672045,0.8075437444400126
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1008,0.32898439582565775,0.8111241620567003
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=max,1009,0.3145435376367952,0.7971504123208342
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1000,0.25871798263675905,0.7721754540755105
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1001,0.24562161320529655,0.7707659650432602
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1002,0.32785291831117686,0.8162383457809254
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1003,0.3299842641154034,0.8096317590255817
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1004,0.3027451210552971,0.793935247524167
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1005,0.2518846911866545,0.7737757590797324
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1006,0.21911160448817762,0.7660497639179091
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1007,0.3087051361997908,0.794269175445178
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1008,0.24980772810263435,0.7749147092205276
+random9_l15_b06,congestion_aware,floor=0.1 base=0.3 slope=0.7 signal=pending,1009,0.28991908373546393,0.7853872434791054
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1000,0.19247260043815978,0.7491123062576739
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1001,0.1988969391830758,0.7600053220997265
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1002,0.263143940570049,0.7773738242837487
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1003,0.27857760467226833,0.7931800868184765
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1004,0.23925642220851653,0.7674157394418668
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1005,0.18409201431524025,0.7445854363390828
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1006,0.17776428487317128,0.7436074721048619
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1007,0.23684815099483592,0.7685543998477257
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1008,0.19305873968690124,0.7536204825626731
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=max,1009,0.22747720289490922,0.7641081587779399
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1000,0.13261480277705098,0.7239719957879087
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1001,0.10926967097882026,0.714922268231292
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1002,0.19486838093977224,0.7572157117784676
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1003,0.19777395835847641,0.7565020170157214
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1004,0.1460649509035678,0.7348619776556169
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1005,0.11360319678317972,0.7209838890955476
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1006,0.08013846135912181,0.7092187582616359
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1007,0.18519920245897603,0.7473155668582062
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1008,0.12337729749994074,0.7264798201745639
+random9_l15_b06,congestion_aware,floor=0.2 base=0.0 slope=1.0 signal=pending,1009,0.1321584780267132,0.7254243753855633
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1000,0.21679126516864003,0.7593362191109572
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1001,0.2128110378339495,0.7665430395851441
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1002,0.2867942284807931,0.79366653094202
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1003,0.2810476177707106,0.7863594398264765
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1004,0.2794170602010026,0.7916825489696169
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1005,0.2221054095665118,0.764098132868752
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1006,0.20856226386193025,0.7512775116648372
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1007,0.27664078304437767,0.7822425528513168
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1008,0.22792280190934058,0.7725545114404717
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=max,1009,0.24137401074999662,0.7690337027941038
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1000,0.13960088322944134,0.7276336729873343
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1001,0.21056076660518266,0.7612604172901936
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1002,0.23870166437327073,0.7725440262028467
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1003,0.2185356176251682,0.7620820109731736
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1004,0.21518470405601428,0.7648894925603545
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1005,0.16535570737067545,0.7413374077452267
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1006,0.15469589375183443,0.73730241835564
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1007,0.18910267458760896,0.7537046071042981
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1008,0.15663216800867533,0.7431946161337457
+random9_l15_b06,congestion_aware,floor=0.2 base=0.1 slope=0.9 signal=pending,1009,0.2088260614889174,0.7529654625161085
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1000,0.30309346801029385,0.7833446783237243
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1001,0.29905298862884816,0.7931697398371409
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1002,0.34165666163629915,0.8122120933927022
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1003,0.3641256976619244,0.821222378753849
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1004,0.3138342345912643,0.7948272727319117
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1005,0.26923356339931165,0.7793797961905273
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1006,0.2725438721251218,0.7841853084292153
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1007,0.3214666464869805,0.7978292481565042
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1008,0.3072957903380518,0.798362128509221
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=max,1009,0.29272190779282126,0.7857960406285581
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1000,0.24461172310454696,0.7640139230888469
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1001,0.250259092031191,0.7757464046008319
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1002,0.3033869230615476,0.8062288749779445
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1003,0.3100683351924861,0.8063784776598233
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1004,0.28233242649309304,0.7895950392736876
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1005,0.21451478352551945,0.76600114494645
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1006,0.21675757385887506,0.7627992777066377
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1007,0.27888426175931935,0.7770753164328169
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1008,0.25744539649658993,0.7818949917963595
+random9_l15_b06,congestion_aware,floor=0.2 base=0.3 slope=0.7 signal=pending,1009,0.25015004518761724,0.7695803554196076
+grid_l125_b06,queue_proportional,floor=0.0,1000,0.07820323921160216,0.7227408140186541
+grid_l125_b06,queue_proportional,floor=0.0,1001,0.05941070634541149,0.7262394582849927
+grid_l125_b06,queue_proportional,floor=0.0,1002,0.10735990641653535,0.7474175380713816
+grid_l125_b06,queue_proportional,floor=0.0,1003,0.0903987978983069,0.7403883883431365
+grid_l125_b06,queue_proportional,floor=0.0,1004,0.03278623491339373,0.7077995030692968
+grid_l125_b06,queue_proportional,floor=0.0,1005,0.009987787700749182,0.6924894244234701
+grid_l125_b06,queue_proportional,floor=0.0,1006,0.13407915080492774,0.7531253136964754
+grid_l125_b06,queue_proportional,floor=0.0,1007,0.08791744926588342,0.7300008571588323
+grid_l125_b06,queue_proportional,floor=0.0,1008,0.08851952754263252,0.7155398543243037
+grid_l125_b06,queue_proportional,floor=0.0,1009,0.11052709847452792,0.744150949729458
+grid_l125_b06,queue_proportional,floor=0.05,1000,0.07581760715068527,0.7206765434889135
+grid_l125_b06,queue_proportional,floor=0.05,1001,0.06295509788926983,0.7240899130705942
+grid_l125_b06,queue_proportional,floor=0.05,1002,0.0900285487790425,0.7398930169456712
+grid_l125_b06,queue_proportional,floor=0.05,1003,0.09295297369864654,0.7430423802243857
+grid_l125_b06,queue_proportional,floor=0.05,1004,0.021652774243659703,0.7003320444098079
+grid_l125_b06,queue_proportional,floor=0.05,1005,0.020396435642580497,0.6937428091751597
+grid_l125_b06,queue_proportional,floor=0.05,1006,0.12671159673298932,0.7461193118405188
+grid_l125_b06,queue_proportional,floor=0.05,1007,0.09641371561927986,0.7361381656628678
+grid_l125_b06,queue_proportional,floor=0.05,1008,0.08498837059864693,0.7154029417485005
+grid_l125_b06,queue_proportional,floor=0.05,1009,0.09737982829904597,0.7390256605601475
+grid_l125_b06,queue_proportional,floor=0.1,1000,0.08171070331628467,0.7217511331286248
+grid_l125_b06,queue_proportional,floor=0.1,1001,0.04093480639132752,0.718642199277624
+grid_l125_b06,queue_proportional,floor=0.1,1002,0.09627318383288744,0.7454303845650264
+grid_l125_b06,queue_proportional,floor=0.1,1003,0.10591543928623176,0.7405694460297029
+grid_l125_b06,queue_proportional,floor=0.1,1004,0.03035682721646774,0.7062025352265259
+grid_l125_b06,queue_proportional,floor=0.1,1005,0.0056641346663506365,0.6848267447867923
+grid_l125_b06,queue_proportional,floor=0.1,1006,0.10873078532996772,0.7406773662743001
+grid_l125_b06,queue_proportional,floor=0.1,1007,0.10332180070280729,0.7323395937394898
+grid_l125_b06,queue_proportional,floor=0.1,1008,0.07132629429450742,0.712276685289881
+grid_l125_b06,queue_proportional,floor=0.1,1009,0.10355464342548672,0.7432983563050363
+grid_l125_b06,queue_proportional,floor=0.2,1000,0.06802468418089094,0.7191285572082134
+grid_l125_b06,queue_proportional,floor=0.2,1001,0.057678202948492616,0.726572931710802
+grid_l125_b06,queue_proportional,floor=0.2,1002,0.0876982749618644,0.7420472176599909
+grid_l125_b06,queue_proportional,floor=0.2,1003,0.09524202387656534,0.7398979533921995
+grid_l125_b06,queue_proportional,floor=0.2,1004,0.02631096016892487,0.6967024048761197
+grid_l125_b06,queue_proportional,floor=0.2,1005,0.015752340368231192,0.6952253416784766
+grid_l125_b06,queue_proportional,floor=0.2,1006,0.11653183937485359,0.7433148680654299
+grid_l125_b06,queue_proportional,floor=0.2,1007,0.08529568010090267,0.7315376930762677
+grid_l125_b06,queue_proportional,floor=0.2,1008,0.09128647880023083,0.7163386859371831
+grid_l125_b06,queue_proportional,floor=0.2,1009,0.09828414996199017,0.7461962438654832
+grid_bottleneck_b08,queue_proportional,floor=0.0,1000,0.06974891595348419,0.6977763813179788
+grid_bottleneck_b08,queue_proportional,floor=0.0,1001,0.18495329924997622,0.7369431206744584
+grid_bottleneck_b08,queue_proportional,floor=0.0,1002,0.14941897150307887,0.7303844313501152
+grid_bottleneck_b08,queue_proportional,floor=0.0,1003,0.05750038826177659,0.6996064523534613
+grid_bottleneck_b08,queue_proportional,floor=0.0,1004,0.10605449613067211,0.7091633008892857
+grid_bottleneck_b08,queue_proportional,floor=0.0,1005,0.1797424382360634,0.7485191163118327
+grid_bottleneck_b08,queue_proportional,floor=0.0,1006,0.15226291454883661,0.7431357344533438
+grid_bottleneck_b08,queue_proportional,floor=0.0,1007,0.057252640700763746,0.7005088464255146
+grid_bottleneck_b08,queue_proportional,floor=0.0,1008,0.12956896095765202,0.7180436761843584
+grid_bottleneck_b08,queue_proportional,floor=0.0,1009,0.15418344474295012,0.7313488445264866
+grid_bottleneck_b08,queue_proportional,floor=0.05,1000,0.05143437689409759,0.6929325916281707
+grid_bottleneck_b08,queue_proportional,floor=0.05,1001,0.19777817209448179,0.7439168462971324
+grid_bottleneck_b08,queue_proportional,floor=0.05,1002,0.1365193338620309,0.7210965807951455
+grid_bottleneck_b08,queue_proportional,floor=0.05,1003,0.05695836142073942,0.6982544362938355
+grid_bottleneck_b08,queue_proportional,floor=0.05,1004,0.10082761460097767,0.7092098741547053
+grid_bottleneck_b08,queue_proportional,floor=0.05,1005,0.19020922633983256,0.747259974158683
+grid_bottleneck_b08,queue_proportional,floor=0.05,1006,0.18689520417269534,0.743643934548677
+grid_bottleneck_b08,queue_proportional,floor=0.05,1007,0.07718758833258363,0.7002838009888982
+grid_bottleneck_b08,queue_proportional,floor=0.05,1008,0.07633978125590775,0.7058375553958457
+grid_bottleneck_b08,queue_proportional,floor=0.05,1009,0.16452863246212313,0.7407824180205188
+grid_bottleneck_b08,queue_proportional,floor=0.1,1000,0.0875048993793217,0.6991619556087225
+grid_bottleneck_b08,queue_proportional,floor=0.1,1001,0.18171501764089876,0.740093898142018
+grid_bottleneck_b08,queue_proportional,floor=0.1,1002,0.14403339585215635,0.7173814908056931
+grid_bottleneck_b08,queue_proportional,floor=0.1,1003,0.09003853643867367,0.7059031770009428
+grid_bottleneck_b08,queue_proportional,floor=0.1,1004,0.10723903382167267,0.7143536249479288
+grid_bottleneck_b08,queue_proportional,floor=0.1,1005,0.21182753852997543,0.7582920553805123
+grid_bottleneck_b08,queue_proportional,floor=0.1,1006,0.17304169916222686,0.7410489131434164
+grid_bottleneck_b08,queue_proportional,floor=0.1,1007,0.07670936194626089,0.7123346675235422
+grid_bottleneck_b08,queue_proportional,floor=0.1,1008,0.12066854223824848,0.7157459377399997
+grid_bottleneck_b08,queue_proportional,floor=0.1,1009,0.14152763003585123,0.7304631819517776
+grid_bottleneck_b08,queue_proportional,floor=0.2,1000,0.0770146977694316,0.7027818431685151
+grid_bottleneck_b08,queue_proportional,floor=0.2,1001,0.1900797824031341,0.7403437354516915
+grid_bottleneck_b08,queue_proportional,floor=0.2,1002,0.1733169684547874,0.7369222862530765
+grid_bottleneck_b08,queue_proportional,floor=0.2,1003,0.07344056378796918,0.6994767142621912
+grid_bottleneck_b08,queue_proportional,floor=0.2,1004,0.10274276255887575,0.7096382185990562
+grid_bottleneck_b08,queue_proportional,floor=0.2,1005,0.20844298033317657,0.754285339751221
+grid_bottleneck_b08,queue_proportional,floor=0.2,1006,0.17014838537004442,0.7412465901808399
+grid_bottleneck_b08,queue_proportional,floor=0.2,1007,0.08386192685495254,0.7094762656755892
+grid_bottleneck_b08,queue_proportional,floor=0.2,1008,0.13950687108275645,0.7227785808527306
+grid_bottleneck_b08,queue_proportional,floor=0.2,1009,0.16737148792350648,0.7382253194044817
+pcap40_grid16_b05,queue_proportional,floor=0.0,1000,0.2563107006170556,0.7611619181562259
+pcap40_grid16_b05,queue_proportional,floor=0.0,1001,0.26667284723627105,0.7825366381798401
+pcap40_grid16_b05,queue_proportional,floor=0.0,1002,0.21084367495451772,0.7501690363266081
+pcap40_grid16_b05,queue_proportional,floor=0.0,1003,0.22772346184876177,0.7324362733701613
+pcap40_grid16_b05,queue_proportional,floor=0.0,1004,0.24016253233992507,0.7650734786362536
+pcap40_grid16_b05,queue_proportional,floor=0.0,1005,0.2031543663165828,0.7137672240768888
+pcap40_grid16_b05,queue_proportional,floor=0.0,1006,0.23329588562571418,0.7430905348832977
+pcap40_grid16_b05,queue_proportional,floor=0.0,1007,0.2642218400734323,0.7881371693279033
+pcap40_grid16_b05,queue_proportional,floor=0.0,1008,0.1662599717180533,0.7388085014595142
+pcap40_grid16_b05,queue_proportional,floor=0.0,1009,0.2286598846953399,0.7565416669880862
+pcap40_grid16_b05,queue_proportional,floor=0.05,1000,0.26843796925794416,0.7548409741402483
+pcap40_grid16_b05,queue_proportional,floor=0.05,1001,0.2774527882767012,0.7834887865764143
+pcap40_grid16_b05,queue_proportional,floor=0.05,1002,0.2079053286818653,0.7466130931853214
+pcap40_grid16_b05,queue_proportional,floor=0.05,1003,0.25060931196354885,0.7359114111558311
+pcap40_grid16_b05,queue_proportional,floor=0.05,1004,0.2494795544853533,0.765114904223976
+pcap40_grid16_b05,queue_proportional,floor=0.05,1005,0.20573154711869562,0.7137594547086085
+pcap40_grid16_b05,queue_proportional,floor=0.05,1006,0.23989323074963334,0.7422851422443462
+pcap40_grid16_b05,queue_proportional,floor=0.05,1007,0.2719671773647451,0.785559065453777
+pcap40_grid16_b05,queue_proportional,floor=0.05,1008,0.1875350213076931,0.7402020708192528
+pcap40_grid16_b05,queue_proportional,floor=0.05,1009,0.24482027096402598,0.7533374318931175
+pcap40_grid16_b05,queue_proportional,floor=0.1,1000,0.27697994271635273,0.7569735361807887
+pcap40_grid16_b05,queue_proportional,floor=0.1,1001,0.2925224585030349,0.78373856643514
+pcap40_grid16_b05,queue_proportional,floor=0.1,1002,0.219595242791266,0.7471678727314668
+pcap40_grid16_b05,queue_proportional,floor=0.1,1003,0.2592371868305025,0.7340422014876601
+pcap40_grid16_b05,queue_proportional,floor=0.1,1004,0.2584717330257832,0.7601229964515909
+pcap40_grid16_b05,queue_proportional,floor=0.1,1005,0.20601753095560393,0.7087612128873696
+pcap40_grid16_b05,queue_proportional,floor=0.1,1006,0.25121094915801717,0.7423885157767396
+pcap40_grid16_b05,queue_proportional,floor=0.1,1007,0.2756057921308317,0.7864292287269351
+pcap40_grid16_b05,queue_proportional,floor=0.1,1008,0.212886970168397,0.7399224669911062
+pcap40_grid16_b05,queue_proportional,floor=0.1,1009,0.2554605956697863,0.7582100978131324
+pcap40_grid16_b05,queue_proportional,floor=0.2,1000,0.27592594130378156,0.7570642834382931
+pcap40_grid16_b05,queue_proportional,floor=0.2,1001,0.29993680251201776,0.7856087654151456
+pcap40_grid16_b05,queue_proportional,floor=0.2,1002,0.21645224130857643,0.747295248703336
+pcap40_grid16_b05,queue_proportional,floor=0.2,1003,0.26260706046867155,0.7350020404213886
+pcap40_grid16_b05,queue_proportional,floor=0.2,1004,0.2576889017873873,0.760363876913375
+pcap40_grid16_b05,queue_proportional,floor=0.2,1005,0.21255178728539148,0.713069320466344
+pcap40_grid16_b05,queue_proportional,floor=0.2,1006,0.248040443179416,0.7452927036463406
+pcap40_grid16_b05,queue_proportional,floor=0.2,1007,0.28761319775999794,0.7927893627579327
+pcap40_grid16_b05,queue_proportional,floor=0.2,1008,0.2197179487009022,0.739358838897921
+pcap40_grid16_b05,queue_proportional,floor=0.2,1009,0.25852061179961594,0.7575249671683689
+random9_l15_b06,queue_proportional,floor=0.0,1000,0.33211428310396385,0.79691167364559
+random9_l15_b06,queue_proportional,floor=0.0,1001,0.34690865567140644,0.8058562009153167
+random9_l15_b06,queue_proportional,floor=0.0,1002,0.40585254105499435,0.8331806702065312
+random9_l15_b06,queue_proportional,floor=0.0,1003,0.37031003469384305,0.8210550903821904
+random9_l15_b06,queue_proportional,floor=0.0,1004,0.36202546935285435,0.8136532619139192
+random9_l15_b06,queue_proportional,floor=0.0,1005,0.31826034192565666,0.7947906157737683
+random9_l15_b06,queue_proportional,floor=0.0,1006,0.27824898448175184,0.7771294946942308
+random9_l15_b06,queue_proportional,floor=0.0,1007,0.3831749836560957,0.8187121465417277
+random9_l15_b06,queue_proportional,floor=0.0,1008,0.3799094329008409,0.8244965217022688
+random9_l15_b06,queue_proportional,floor=0.0,1009,0.35420189425247045,0.8119700086490165
+random9_l15_b06,queue_proportional,floor=0.05,1000,0.32977976408706994,0.7958308136599169
+random9_l15_b06,queue_proportional,floor=0.05,1001,0.34480496892456064,0.8048759914472454
+random9_l15_b06,queue_proportional,floor=0.05,1002,0.3805837390760712,0.8220843348697481
+random9_l15_b06,queue_proportional,floor=0.05,1003,0.38960882507590766,0.8253814317286204
+random9_l15_b06,queue_proportional,floor=0.05,1004,0.3691747376483873,0.8201429310703029
+random9_l15_b06,queue_proportional,floor=0.05,1005,0.3168609637352796,0.792950465964333
+random9_l15_b06,queue_proportional,floor=0.05,1006,0.2931298573245356,0.7851949287134495
+random9_l15_b06,queue_proportional,floor=0.05,1007,0.3873757322592931,0.8190676344271483
+random9_l15_b06,queue_proportional,floor=0.05,1008,0.37836697922977397,0.8256336314171482
+random9_l15_b06,queue_proportional,floor=0.05,1009,0.3390701531555179,0.806450888275188
+random9_l15_b06,queue_proportional,floor=0.1,1000,0.321182748813255,0.7936459652261181
+random9_l15_b06,queue_proportional,floor=0.1,1001,0.33886970048028187,0.8049849118025173
+random9_l15_b06,queue_proportional,floor=0.1,1002,0.4010383624466466,0.8289197518245697
+random9_l15_b06,queue_proportional,floor=0.1,1003,0.4001908957152848,0.8292679556108241
+random9_l15_b06,queue_proportional,floor=0.1,1004,0.3757477249982302,0.8222985021898219
+random9_l15_b06,queue_proportional,floor=0.1,1005,0.33165955469759245,0.7960016397173159
+random9_l15_b06,queue_proportional,floor=0.1,1006,0.2910947334723462,0.7838075928220368
+random9_l15_b06,queue_proportional,floor=0.1,1007,0.39533888306812115,0.8181883453954454
+random9_l15_b06,queue_proportional,floor=0.1,1008,0.37136557605794446,0.8268533660154935
+random9_l15_b06,queue_proportional,floor=0.1,1009,0.3545287491793757,0.8116366283306901
+random9_l15_b06,queue_proportional,floor=0.2,1000,0.31084723110691326,0.7905864115471685
+random9_l15_b06,queue_proportional,floor=0.2,1001,0.3507242417906507,0.8067811951682288
+random9_l15_b06,queue_proportional,floor=0.2,1002,0.4054246525522945,0.8290769803612713
+random9_l15_b06,queue_proportional,floor=0.2,1003,0.3679432656997379,0.8203757328431578
+random9_l15_b06,queue_proportional,floor=0.2,1004,0.3758335561503134,0.8205930078128334
+random9_l15_b06,queue_proportional,floor=0.2,1005,0.30144314650783754,0.7885985381134228
+random9_l15_b06,queue_proportional,floor=0.2,1006,0.27295783659022693,0.7772586259728193
+random9_l15_b06,queue_proportional,floor=0.2,1007,0.3720708784881881,0.8103046119458982
+random9_l15_b06,queue_proportional,floor=0.2,1008,0.36374655348346907,0.8222373597852152
+random9_l15_b06,queue_proportional,floor=0.2,1009,0.332679313811683,0.8070232220767816

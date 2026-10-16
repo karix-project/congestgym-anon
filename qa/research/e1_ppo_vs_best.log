@@ -1,0 +1,9 @@
+PPO minus the strongest rule-based policy (untuned or tuned), per metric; CI over 5 training seeds
+   grid_l125_b06          reward             vs congestion_aware               (0.099) PPO -0.062 +/- 0.016  (wins 0/50)
+   grid_l125_b06          delivered_fraction vs congestion_aware               (74.077pts) PPO -0.625 pts +/- 0.558  (wins 16/50)
+   grid_bottleneck_b08    reward             vs tuned congestion_aware         (0.399) PPO +0.172 +/- 0.016  (wins 50/50)
+   grid_bottleneck_b08    delivered_fraction vs load_aware_routing             (84.955pts) PPO +9.651 pts +/- 0.318  (wins 50/50)
+   pcap40_grid16_b05      reward             vs tuned queue_proportional       (0.250) PPO +0.044 +/- 0.006  (wins 50/50)
+   pcap40_grid16_b05      delivered_fraction vs tuned congestion_aware         (76.818pts) PPO +2.284 pts +/- 0.685  (wins 49/50)
+   random9_l15_b06        reward             vs queue_proportional             (0.329) PPO +0.025 +/- 0.008  (wins 44/50)
+   random9_l15_b06        delivered_fraction vs queue_proportional             (79.659pts) PPO +1.612 pts +/- 0.372  (wins 47/50)

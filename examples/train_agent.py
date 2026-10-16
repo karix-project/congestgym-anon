@@ -126,11 +126,11 @@ class HeldOutEval(BaseCallback):
 
 def build_model(algo, venv, args):
     if algo == "ppo":
-        return PPO("MlpPolicy", venv, n_steps=512, batch_size=256, gamma=0.95,
-                   learning_rate=3e-4, ent_coef=0.0, seed=args.seed, verbose=0,
+        return PPO("MlpPolicy", venv, n_steps=512, batch_size=256, gamma=args.gamma,
+                   learning_rate=args.lr, ent_coef=args.ent_coef, seed=args.seed, verbose=0,
                    policy_kwargs=dict(log_std_init=args.log_std_init))
     # Off-policy: one gradient step per env step, squashed (tanh) actions.
-    common = dict(gamma=0.95, learning_rate=3e-4, batch_size=256,
+    common = dict(gamma=args.gamma, learning_rate=args.lr, batch_size=256,
                   buffer_size=200_000, learning_starts=2_000,
                   seed=args.seed, verbose=0)
     if algo == "sac":
@@ -165,6 +165,9 @@ def parse_args(argv=None, default_algo="ppo"):
     p.add_argument("--eval-episodes", type=int, default=5)
     p.add_argument("--test-episodes", type=int, default=10)
     p.add_argument("--out", default=None, help="output directory")
+    p.add_argument("--gamma", type=float, default=0.95, help="discount factor")
+    p.add_argument("--lr", type=float, default=3e-4, help="learning rate")
+    p.add_argument("--ent-coef", type=float, default=0.0, help="PPO entropy coefficient")
     p.add_argument("--log-std-init", type=float, default=-1.0,
                    help="PPO: initial log std of the Gaussian policy (SB3 default 0.0)")
     a = p.parse_args(argv)

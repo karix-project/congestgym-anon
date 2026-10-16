@@ -22,7 +22,7 @@ import os
 import pandas as pd
 
 from carla_gym.utils.stats import ci95
-from scripts.run_training_matrix import ABLATIONS, SCENARIOS
+from scripts.run_training_matrix import ABLATIONS, ABLATIONS_E3, SCENARIOS
 
 R = os.path.join("results", "rl")
 HEUR = ["max_bandwidth", "queue_proportional", "load_aware_routing", "congestion_aware"]
@@ -40,7 +40,9 @@ def main():
     bounds = pd.read_csv(os.path.join("results", "bounds", "training.csv")).set_index("scenario")
     lines = ["| Training folder | Flags | PPO | SAC | Best rule-based policy | Flow bound |",
              "|---|---|---:|---:|---|---:|"]
-    for name, flags in list(SCENARIOS.items()) + list(ABLATIONS.items()):
+    for name, flags in list(SCENARIOS.items()) + list(ABLATIONS.items()) + list(ABLATIONS_E3.items()):
+        if not os.path.exists(os.path.join(R, name, "qos.csv")):
+            continue                                  # E3 ablations appear once trained
         q = pd.read_csv(os.path.join(R, name, "qos.csv"))
         h = q[q.policy.isin(HEUR)].groupby("policy").delivered_fraction
         best = h.mean().idxmax()

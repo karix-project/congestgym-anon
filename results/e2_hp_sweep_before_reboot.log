@@ -1,0 +1,13 @@
+24 runs, 6 at a time
+[23:50:57] 1/24 results\rl_hp\g0.95_lr3e-4_ent0\ppo_seed0: done in 41.8 min
+[23:51:11] 2/24 results\rl_hp\g0.95_lr3e-4_ent0.01\ppo_seed0: done in 42.1 min
+[23:51:11] 3/24 results\rl_hp\g0.95_lr1e-4_ent0\ppo_seed0: done in 41.9 min
+[23:51:11] 4/24 results\rl_hp\g0.95_lr1e-4_ent0.01\ppo_seed0: done in 42.0 min
+[23:51:35] 5/24 results\rl_hp\g0.99_lr3e-4_ent0\ppo_seed0: done in 42.5 min
+[23:51:35] 6/24 results\rl_hp\g0.99_lr3e-4_ent0.01\ppo_seed0: done in 41.9 min
+[00:29:23] 7/24 results\rl_hp\g0.99_lr1e-4_ent0\ppo_seed0: FAILED (exit 1073807364) in 38.4 min
+[00:29:23] 8/24 results\rl_hp\g0.99_lr1e-4_ent0.01\ppo_seed0: FAILED (exit 1073807364) in 38.4 min
+[00:29:23] 9/24 results\rl_hp\g0.95_lr3e-4_ent0\ppo_seed1: FAILED (exit 1073807364) in 38.3 min
+[00:29:23] 10/24 results\rl_hp\g0.95_lr3e-4_ent0.01\ppo_seed1: FAILED (exit 1073807364) in 38.3 min
+[00:29:23] 11/24 results\rl_hp\g0.95_lr1e-4_ent0\ppo_seed1: FAILED (exit 1073807364) in 38.2 min
+[00:29:23] 12/24 results\rl_hp\g0.95_lr1e-4_ent0.01\ppo_seed1: FAILED (exit 1073807364) in 37.8 min

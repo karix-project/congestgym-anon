@@ -1,0 +1,7 @@
+5 runs, 2 at a time
+[11:44:07] 1/5 results\rl_hp\g0.99_lr3e-4_ent0.01\ppo_seed0: skipped (already finished)
+[11:44:07] 2/5 results\rl_hp\g0.99_lr3e-4_ent0.01\ppo_seed1: skipped (already finished)
+[11:44:07] 3/5 results\rl_hp\g0.99_lr3e-4_ent0.01\ppo_seed2: skipped (already finished)
+[12:14:54] 4/5 results\rl_hp\g0.99_lr3e-4_ent0.01\ppo_seed3: done in 30.8 min
+[12:14:57] 5/5 results\rl_hp\g0.99_lr3e-4_ent0.01\ppo_seed4: done in 30.8 min
+ALL DONE

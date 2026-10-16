@@ -1,0 +1,11 @@
+scenario: g0.99_lr3e-4_ent0.01  flags: --load-scale 1.25 --budget 0.6 --gamma 0.99 --lr 3e-4 --ent-coef 0.01
+self-check against final_eval.csv: 300 rewards compared, max abs difference 2.22e-16
+| Policy | Reward | Delivered % | Dropped % | Delay of delivered packets (steps) | Deadline misses per delivered packet |
+|---|---:|---:|---:|---:|---:|
+| congestion_aware | +0.099 | 74.1 ± 1.4 | 25.8 ± 1.2 | 5.16 ± 0.09 | 0.330 ± 0.010 |
+| queue_proportional | +0.093 | 73.2 ± 1.5 | 26.9 ± 1.4 | 5.03 ± 0.09 | 0.319 ± 0.007 |
+| PPO | +0.056 | 73.5 ± 0.7 | 26.4 ± 0.7 | 5.58 ± 0.05 | 0.357 ± 0.004 |
+| load_aware_routing | +0.045 | 72.5 ± 1.5 | 27.5 ± 1.2 | 5.42 ± 0.06 | 0.349 ± 0.005 |
+| max_bandwidth | -0.034 | 68.5 ± 1.5 | 31.4 ± 1.3 | 5.38 ± 0.09 | 0.358 ± 0.010 |
+| random | -0.581 | 49.4 ± 1.0 | 50.4 ± 0.8 | 7.96 ± 0.22 | 0.602 ± 0.010 |
+| min_bandwidth | -1.729 | 5.5 ± 0.3 | 94.5 ± 0.3 | 52.02 ± 2.35 | 2.545 ± 0.050 |

@@ -14,10 +14,14 @@ import re
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 HEADLINE = os.path.join("results", "rl", "grid_l125_b06")
+# The tuned PPO configuration chosen in experiment E2 (docs/NEXT_EXPERIMENTS.md).
+with open(os.path.join(ROOT, "results", "rl_hp", "SELECTED.txt"), encoding="utf-8") as _f:
+    TUNED = os.path.join("results", "rl_hp", _f.readline().strip())
 SOURCES = {
     "rl_overview": os.path.join("results", "rl", "overview.md"),
     "training": os.path.join(HEADLINE, "summary.md"),
     "training_qos": os.path.join(HEADLINE, "qos.md"),
+    "rl_tuned": os.path.join(TUNED, "qos.md"),
     "bounds": os.path.join("results", "bounds", "training.md"),
     "benchmark": os.path.join("results", "benchmark", "summary.md"),
     "benchmark_qos": os.path.join("results", "benchmark", "qos.md"),
