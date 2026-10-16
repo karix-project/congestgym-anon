@@ -522,53 +522,47 @@ so a quiet step counts as much as a heavy one (see Limitations).
 
 ## Datasets
 
-Two dataset-derived traces ship in `data/`. Each is a `step,src,dst,volume`
-CSV holding simulator node ids only:
+One trace of real traffic ships in `data/`:
 
-| Trace | Derived from | Rows | Steps |
-|---|---|---:|---:|
-| `data/cs448b_trace.csv` | Daily flow counts per (local host, remote ASN) over 92 days, from a Stanford CS448B course dataset (`cs448b_ipasn.csv`). One simulation step = one day; the values are flow counts, not volumes. | 4,644 | 92 |
-| `data/pcap_trace.csv` | A packet capture of about 21 minutes (exported from Wireshark), binned into 5-second steps; volume = bytes. | 4,163 | 252 (246 with traffic) |
+| Trace | Source | Steps | Topology |
+|---|---|---:|---|
+| `data/abilene_trace_20040301_7d.csv.gz` | One week (1-7 March 2004) of the Abilene research backbone's measured traffic, as 5-minute traffic matrices in Mbit/s, from [SNDlib](https://sndlib.put.poznan.pl)'s dynamic traffic matrices (measurements by Yin Zhang) | 2,016 | `topology="abilene"`: SNDlib's Abilene network, 12 routers, 15 links with their relative capacities |
 
-**The raw files are not distributed.** The capture contains real IP
-addresses and the flow-count file has no stated licence. The traces above
-were produced from them by `dataset_adapters.py`, which maps addresses and
-ASNs to 16 node ids through a hash, so no address appears in this repository's
-current files. After rescaling to a target load only the *shape* of the load
-over time and across node pairs survives: treat the traces as load shapes
-derived from real measurements, not as a replay of real traffic.
+Provenance, the citations SNDlib asks for, and terms are in
+`data/ABILENE_TRACE.md`. SNDlib states no licence; confirm with its
+maintainer before redistributing derived data.
 
 ```
-python examples/train_agent.py --algo ppo --trace data/pcap_trace.csv --nodes 16 --load 40 --budget 0.5
+python examples/train_agent.py --algo ppo --topology abilene --nodes 12 --trace data/abilene_trace_20040301_7d.csv.gz --load 120 --budget 0.8 --trace-random-start
 ```
 
-To build a trace from your own data, put a CSV in one of the two supported
-formats anywhere outside version control (`data/raw/` is git-ignored) and run:
+* `TraceTrafficGenerator` rescales the volumes so that the mean offered load
+  per step, over all time bins including empty ones, equals `target_load`,
+  and turns each demand into a Poisson number of packets with a QoS class
+  drawn from `qos_mix`.
+* `random_start=True` (`--trace-random-start`) starts each episode at a
+  random time bin, drawn from the episode's seed, so a week-long trace is
+  covered across episodes. Real traffic follows a daily cycle (the total
+  roughly doubles from night to afternoon), so rewards vary with the time an
+  episode samples; compare policies on the same seeds.
+* `scripts/prepare_sndlib_trace.py` rebuilds the trace from SNDlib's archive
+  (another week: change `--start`).
+
+**Two earlier traces were removed** (a packet capture and a course
+flow-count dataset): their origin and licence could not be established. The
+adapters that built them are still in `carla_gym/core/dataset_adapters.py`
+for converting your own data:
 
 ```
-python scripts/prepare_trace.py --in data/raw/my_capture.csv --out data/my_trace.csv --bin-seconds 5
+python scripts/prepare_trace.py --in data/raw/my_capture.csv --out data/raw/my_trace.csv --bin-seconds 5
 ```
 
 Supported inputs: a flow-count table with columns `date, l_ipn, r_asn, f`; or
 a packet-capture export with `Timestamp, Source IP, Destination IP, Length`
 (numeric) or `Time, Source, Destination, Length` (Wireshark text export).
-
-Design points:
-
-* IP addresses and ASNs are bucketed into node ids with a stable MD5-based
-  hash, so conversion is reproducible across processes and machines.
-* Placement is topology-aware: the busiest buckets go to the best-connected
-  nodes, so a traffic hub does not land on a two-link grid corner. For
-  `--topology random`, pass `--topology-seed` equal to the env's seed.
-* Trace volume is rescaled so the mean offered load per step, over all time
-  bins including empty ones, equals `target_load`.
-* Choose `target_load` well below the synthetic default. Trace load is
-  concentrated on few node pairs and few time bins: on the 4x4 grid the pcap
-  trace is a sensible scenario at a mean load of about 40 and is deep in
-  overload at 110.
-* The cs448b trace is a stress case, not a benchmark. Its busiest 10% of time
-  bins carry 64% of the volume, so about half its traffic is lost at any mean
-  load.
+Addresses and ASNs are bucketed into node ids with a stable MD5-based hash,
+and the busiest buckets are placed on the best-connected nodes. Keep raw and
+private captures outside version control (`data/raw/` is git-ignored).
 
 ## Notebooks
 
@@ -582,9 +576,9 @@ python -m jupyter nbconvert --to notebook --execute --inplace 01_simulation_walk
 | Notebook | What it shows |
 |---|---|
 | `01_simulation_walkthrough.ipynb` | The five topologies and their nodes, one episode step by step (backlog, utilization, the four reward terms), network renders, `rgb_array` output, a zero-bandwidth stress test and a node bottleneck. |
-| `02_policy_comparison.ipynb` | All six baselines on synthetic traffic and on the pcap trace, with 95% intervals. |
-| `03_dataset_exploration.ipynb` | The two dataset-derived traces: load over time, which node pairs carry it, the topology-aware placement, and both traces run through the simulator. |
-| `04_ppo_training_curves.ipynb` | Learning curves of the saved multi-seed PPO and SAC runs, plus a short PPO run trained live on the pcap trace. |
+| `02_policy_comparison.ipynb` | All six baselines on synthetic traffic and on the Abilene trace, with 95% intervals. |
+| `03_dataset_exploration.ipynb` | The Abilene trace: load over the week, which router pairs carry it, the topology, and the trace through the simulator. |
+| `04_ppo_training_curves.ipynb` | Learning curves of the saved multi-seed PPO and SAC runs on the headline scenario, plus a short PPO run trained live on the Abilene trace. |
 
 ## Tests
 
@@ -627,9 +621,10 @@ datasets in `data/raw/` and are skipped otherwise.
   throughput credit.
 * **The reward averages per-step ratios, so on strongly bursty load it is not
   a measure of delivered traffic.** A quiet step counts as much as a spike
-  step. On the cs448b trace the reward of equal split rises from +0.21 to
-  +0.40 as the mean load goes from 20 to 60 while the delivered fraction
-  falls from 52% to 45% (`qa/research/trace_load_sweep.log`). Even on
+  step. On an earlier, very bursty trace (since removed) the reward of equal
+  split rose from +0.21 to +0.40 as the mean load went from 20 to 60 while
+  the delivered fraction fell from 52% to 45%
+  (`qa/research/trace_load_sweep.log`). Even on
   stationary synthetic traffic the two can rank policies differently,
   because the reward also weighs delay and deadlines: on the headline
   scenario PPO is second on delivered traffic and fourth on reward

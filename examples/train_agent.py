@@ -5,7 +5,7 @@ against the rule-based baselines on held-out seeds.
     $env:PYTHONPATH = "."        (bash: export PYTHONPATH=.)
     python examples/train_agent.py --algo ppo --timesteps 300000 --seed 0
     python examples/train_agent.py --algo sac --timesteps 100000 --seed 0
-    python examples/train_agent.py --algo ppo --trace data/pcap_trace.csv --nodes 16 --load 40 --budget 0.5
+    python examples/train_agent.py --algo ppo --topology abilene --nodes 12 --trace data/abilene_trace_20040301_7d.csv.gz --load 120 --budget 0.8 --trace-random-start
 
 Writes to --out (default results/<algo>_seed<seed>/):
     train_monitor.csv   per-episode training return (stable-baselines3 Monitor)

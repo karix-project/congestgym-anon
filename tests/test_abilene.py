@@ -74,3 +74,27 @@ def test_env_runs_on_abilene_with_the_trace():
         offered += info["offered_units"]
         assert np.isfinite(r)
     assert offered / 50 == pytest.approx(40, rel=0.5)    # mean load near the target (bursty, short window)
+
+
+def test_random_start_stamps_packets_with_the_simulator_step():
+    """Regression guard: the shifted trace step was stamped on packets as their
+    birth step, so delays came out negative (about minus the offset) and the
+    reward's delay and deadline terms vanished on random-start traces."""
+    g = TraceTrafficGenerator(list(range(12)), TRACE, target_load=120, seed=0, random_start=True)
+    g.reset(seed=2000)
+    assert g.offset > 0
+    pkts = g.generate(7)
+    assert pkts and all(p.birth_step == 7 for p in pkts)
+
+
+def test_delays_are_positive_on_a_random_start_trace():
+    traffic = TraceTrafficGenerator(list(range(12)), TRACE, target_load=120, seed=0, random_start=True)
+    env = CarlaGymEnv(topology="abilene", num_nodes=12, traffic=traffic, bandwidth_budget=0.7, max_steps=60, seed=0)
+    env.reset(seed=2000)
+    lat = []
+    for _ in range(60):
+        _, _, _, _, info = env.step(np.ones(env.action_space.shape, dtype=np.float32))
+        if info["delivered_count"]:
+            lat.append(info["mean_latency_steps"])
+        assert info["mean_queue_age_steps"] >= 0
+    assert lat and min(lat) >= 1.0                       # at least one step per hop

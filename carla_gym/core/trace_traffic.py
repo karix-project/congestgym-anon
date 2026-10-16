@@ -66,8 +66,11 @@ class TraceTrafficGenerator:
             self.offset = int(self.rng.integers(self.n_steps))
 
     def generate(self, step):
-        step = step + self.offset
-        t = step % self.n_steps if self.loop else step
+        # The offset only chooses which time bin of the trace to read. Packets
+        # are stamped with the simulator's own step: their delay is measured
+        # against it, so stamping the shifted step would make delays negative.
+        shifted = step + self.offset
+        t = shifted % self.n_steps if self.loop else shifted
         packets = []
         for src, dst, vol in self.by_step.get(t, []):
             n = self.rng.poisson(vol / self.mean_size)   # conserves volume on average
