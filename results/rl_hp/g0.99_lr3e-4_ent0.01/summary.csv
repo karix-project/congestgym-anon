@@ -1,0 +1,8 @@
+policy,kind,reward_mean,reward_ci95,n,ci_over,per_seed
+congestion_aware,baseline,0.09896248078912524,0.025498898064465488,10,test episodes,
+queue_proportional,baseline,0.09258791949965314,0.025285909603203236,10,test episodes,
+PPO,RL agent,0.05615179000534197,0.015410815477643247,5,training seeds,+0.053 +0.068 +0.069 +0.040 +0.050
+load_aware_routing,baseline,0.045296566040989354,0.019720127995586118,10,test episodes,
+max_bandwidth,baseline,-0.03438985515881976,0.03318245152708898,10,test episodes,
+random,baseline,-0.5812853029400726,0.018546796383735995,10,test episodes,
+min_bandwidth,baseline,-1.7288779762188806,0.0070193225628738184,10,test episodes,

@@ -1,0 +1,31 @@
+====================================================================================================
+E2  headline grid_l125_b06; tuned PPO = g0.99_lr3e-4_ent0.01, 5 training seeds; test seeds 2000-2009
+====================================================================================================
+strongest rule-based policy by mean test reward: congestion_aware (+0.099)
+PRE-REGISTERED  tuned PPO minus congestion_aware, reward: -0.043 +/- 0.015 (wins 1/50)  ->  tuning does not close the gap
+   context: minus congestion_aware         reward -0.043 +/- 0.015 (wins 1/50)
+   context: minus tuned congestion_aware   reward -0.037 +/- 0.015 (wins 4/50)
+   context: delivered, minus congestion_aware: -0.61 +/- 0.73 pts (wins 16/50)
+   context: tuned PPO minus original PPO, reward             +0.019 (tuned 0.056, original 0.037; per-seed spread +/- 0.012)
+   context: tuned PPO minus original PPO, delivered_fraction +0.011 pts (tuned 73.463, original 73.452; per-seed spread +/- 0.474)
+   delay of delivered packets: tuned PPO 5.58, original PPO 5.82, congestion_aware 5.16 steps
+   deadline misses per delivered: tuned PPO 0.357, original PPO 0.370, congestion_aware 0.330
+
+====================================================================================================
+E3  full-control PPO minus one-half PPO, paired over (training seed, test seed)
+====================================================================================================
+
+grid_bottleneck_b08  (full-control PPO: reward +0.571, delivered 94.6%)
+   minus bandwidth_only  PPO (reward +0.147, delivered 72.8%):  reward +0.424 +/- 0.042 (wins 50/50)   delivered_fraction +21.855 pts +/- 1.213 (wins 50/50)
+   minus routing_only    PPO (reward +0.533, delivered 93.8%):  reward +0.037 +/- 0.013 (wins 49/50)   delivered_fraction +0.798 pts +/- 0.447 (wins 41/50)
+   -> joint control helps the learner here (reward, both lower bounds > 0): True
+
+random9_l15_b06  (full-control PPO: reward +0.353, delivered 81.3%)
+   minus bandwidth_only  PPO (reward +0.354, delivered 80.8%):  reward -0.000 +/- 0.006 (wins 26/50)   delivered_fraction +0.458 pts +/- 0.286 (wins 35/50)
+   minus routing_only    PPO (reward -0.060, delivered 66.3%):  reward +0.413 +/- 0.011 (wins 50/50)   delivered_fraction +14.991 pts +/- 0.411 (wins 50/50)
+   -> joint control helps the learner here (reward, both lower bounds > 0): False
+
+grid_l125_b06  (full-control PPO: reward +0.037, delivered 73.5%)
+   minus bandwidth_only  PPO (reward +0.051, delivered 72.9%):  reward -0.013 +/- 0.015 (wins 19/50)   delivered_fraction +0.521 pts +/- 0.624 (wins 31/50)
+   minus routing_only    PPO (reward -0.001, delivered 72.2%):  reward +0.038 +/- 0.020 (wins 46/50)   delivered_fraction +1.250 pts +/- 0.648 (wins 44/50)
+   -> joint control helps the learner here (reward, both lower bounds > 0): False

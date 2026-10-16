@@ -1,0 +1,33 @@
+[eval] timesteps=   25000  held-out reward=-0.762 +/- 0.044
+[eval] timesteps=   50000  held-out reward=-0.622 +/- 0.061
+[eval] timesteps=   75000  held-out reward=-0.479 +/- 0.061
+[eval] timesteps=  100000  held-out reward=-0.400 +/- 0.060
+[eval] timesteps=  125000  held-out reward=-0.313 +/- 0.063
+[eval] timesteps=  150000  held-out reward=-0.243 +/- 0.065
+[eval] timesteps=  175000  held-out reward=-0.185 +/- 0.063
+[eval] timesteps=  200000  held-out reward=-0.154 +/- 0.063
+[eval] timesteps=  225000  held-out reward=-0.100 +/- 0.044
+[eval] timesteps=  250000  held-out reward=-0.068 +/- 0.041
+[eval] timesteps=  275000  held-out reward=-0.018 +/- 0.046
+[eval] timesteps=  300000  held-out reward=+0.015 +/- 0.060
+[eval] timesteps=  325000  held-out reward=+0.041 +/- 0.052
+[eval] timesteps=  350000  held-out reward=+0.071 +/- 0.049
+[eval] timesteps=  375000  held-out reward=+0.077 +/- 0.052
+[eval] timesteps=  400000  held-out reward=+0.096 +/- 0.055
+[eval] timesteps=  425000  held-out reward=+0.097 +/- 0.043
+[eval] timesteps=  450000  held-out reward=+0.102 +/- 0.045
+[eval] timesteps=  475000  held-out reward=+0.104 +/- 0.046
+[eval] timesteps=  500000  held-out reward=+0.115 +/- 0.049
+
+=== Held-out evaluation (test seeds) ===
+                    reward_mean  reward_std
+policy                                     
+load_aware_routing        0.397       0.029
+congestion_aware          0.368       0.019
+queue_proportional        0.153       0.031
+PPO                       0.152       0.029
+max_bandwidth            -0.104       0.050
+random                   -0.880       0.044
+min_bandwidth            -1.729       0.010
+
+Saved to results\rl\grid_bottleneck_b08_bandwidth_only\ppo_seed2

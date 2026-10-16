@@ -1,0 +1,12 @@
+15 runs, 4 at a time
+[23:47:06] 1/15 results\rl\grid_bottleneck_b08_bandwidth_only\ppo_seed0: done in 38.0 min
+[23:47:06] 2/15 results\rl\grid_bottleneck_b08_routing_only\ppo_seed0: done in 36.4 min
+[23:53:56] 3/15 results\rl\random9_l15_b06_bandwidth_only\ppo_seed0: done in 44.8 min
+[23:53:56] 4/15 results\rl\grid_bottleneck_b08_bandwidth_only\ppo_seed1: done in 38.2 min
+[00:19:23] 5/15 results\rl\grid_bottleneck_b08_routing_only\ppo_seed1: done in 33.9 min
+[00:29:23] 6/15 results\rl\random9_l15_b06_bandwidth_only\ppo_seed1: FAILED (exit 1073807364) in 42.3 min
+[00:29:23] 7/15 results\rl\grid_bottleneck_b08_bandwidth_only\ppo_seed2: done in 35.8 min
+[00:29:23] 8/15 results\rl\grid_bottleneck_b08_routing_only\ppo_seed2: done in 34.5 min
+[00:29:23] 9/15 results\rl\random9_l15_b06_bandwidth_only\ppo_seed2: FAILED (exit 1073807364) in 10.0 min
+[00:29:23] 10/15 results\rl\grid_bottleneck_b08_bandwidth_only\ppo_seed3: FAILED (exit 1073807364) in 6.3 min
+[00:29:23] 11/15 results\rl\grid_bottleneck_b08_routing_only\ppo_seed3: FAILED (exit 1073807364) in 0.9 min

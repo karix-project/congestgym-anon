@@ -292,6 +292,9 @@ Delivered % of offered traffic, test seeds 2000-2009, steps 20..199, mean ± 95%
 | `grid_l125_b06_bandwidth_only` | `--load-scale 1.25 --budget 0.6 --control bandwidth` | 72.9 ± 0.3 | n/a | congestion_aware 74.1 ± 1.4 | 90.3 |
 | `grid_l125_b06_routing_only` | `--load-scale 1.25 --budget 0.6 --control routing` | 72.2 ± 0.2 | n/a | congestion_aware 74.1 ± 1.4 | 90.3 |
 | `random9_l15_b06_routing_only` | `--topology random --topology-seed 0 --load-scale 1.5 --budget 0.6 --control routing` | 66.3 ± 0.2 | n/a | queue_proportional 79.7 ± 0.7 | 99.4 |
+| `grid_bottleneck_b08_bandwidth_only` | `--bottleneck 4:0.5 --control bandwidth` | 72.8 ± 1.1 | n/a | load_aware_routing 85.0 ± 0.8 | 100.0 |
+| `grid_bottleneck_b08_routing_only` | `--bottleneck 4:0.5 --control routing` | 93.8 ± 0.2 | n/a | load_aware_routing 85.0 ± 0.8 | 100.0 |
+| `random9_l15_b06_bandwidth_only` | `--topology random --topology-seed 0 --load-scale 1.5 --budget 0.6 --control bandwidth` | 80.8 ± 0.2 | n/a | queue_proportional 79.7 ± 0.7 | 99.4 |
 <!-- RESULTS:rl_overview:end -->
 
 PPO delivers more than every rule-based policy in three of the four scenarios,
@@ -363,6 +366,46 @@ Fluid flow upper bound on the delivered fraction (%), from carla_gym/bounds.py: 
 The bound is the same with free multipath routing and with shortest-path
 routing in every scenario tested, so the routing action's gains here are
 dynamic (spreading load as queues change), not extra capacity.
+
+### Follow-up experiments (E1 to E4)
+
+Planned in `docs/NEXT_EXPERIMENTS.md` with every decision rule fixed before
+the runs; results in `docs/E1_E4_RESULTS.md` and `docs/E2_E3_RESULTS.md`,
+QA in `docs/QA_E1_E4_REPORT.md` and `docs/QA_E2_E3_REPORT.md`.
+
+* **E1, tuned rule-based policies.** The heuristics' constants were tuned on
+  validation seeds. PPO's wins on the bottleneck, the pcap trace and the
+  random graph hold against the strongest rule-based policy, tuned or not.
+  On the headline the published `congestion_aware` was already as good as
+  its tuned versions.
+* **E2, tuned PPO on the headline.** Eight PPO configurations were compared
+  on validation seeds; the winner (gamma 0.99, entropy coefficient 0.01) was
+  recorded before any test result was read, then evaluated once. The
+  pre-registered outcome: **tuning does not close the gap.** Tuned PPO is
+  better than the original on delay and deadline misses but still below
+  `congestion_aware` on reward. Its table, headline scenario:
+
+<!-- RESULTS:rl_tuned:start -->
+Scenario `g0.99_lr3e-4_ent0.01` (--load-scale 1.25 --budget 0.6 --gamma 0.99 --lr 3e-4 --ent-coef 0.01). Episode aggregates over steps 20..199 of test seeds 2000..2009, mean ± 95% CI (agents: over training seeds; baselines: over test episodes). Delivered % and Dropped % are of traffic offered in the same window; the remainder is backlog growth. The `random` row draws its own actions here, so its reward differs slightly from the reward table. Agent and deterministic-baseline rewards match final_eval.csv (300 compared, max difference 2.2e-16).
+
+| Policy | Reward | Delivered % | Dropped % | Delay of delivered packets (steps) | Deadline misses per delivered packet |
+|---|---:|---:|---:|---:|---:|
+| congestion_aware | +0.099 | 74.1 ± 1.4 | 25.8 ± 1.2 | 5.16 ± 0.09 | 0.330 ± 0.010 |
+| queue_proportional | +0.093 | 73.2 ± 1.5 | 26.9 ± 1.4 | 5.03 ± 0.09 | 0.319 ± 0.007 |
+| PPO | +0.056 | 73.5 ± 0.7 | 26.4 ± 0.7 | 5.58 ± 0.05 | 0.357 ± 0.004 |
+| load_aware_routing | +0.045 | 72.5 ± 1.5 | 27.5 ± 1.2 | 5.42 ± 0.06 | 0.349 ± 0.005 |
+| max_bandwidth | -0.034 | 68.5 ± 1.5 | 31.4 ± 1.3 | 5.38 ± 0.09 | 0.358 ± 0.010 |
+| random | -0.581 | 49.4 ± 1.0 | 50.4 ± 0.8 | 7.96 ± 0.22 | 0.602 ± 0.010 |
+| min_bandwidth | -1.729 | 5.5 ± 0.3 | 94.5 ± 0.3 | 52.02 ± 2.35 | 2.545 ± 0.050 |
+<!-- RESULTS:rl_tuned:end -->
+
+* **E3, ablations on the bottleneck and the random graph** (rows `*_only` in
+  the overview table above). Controlling both halves of the action helps
+  the learner only on the bottleneck; on the random graph bandwidth alone is
+  as good, and on the headline neither half adds to the other.
+* **E4, detours.** On the bottleneck no policy detours more than about 1% of
+  packets; on the random graph the routing heuristics detour far more often
+  than PPO, which almost never does.
 
 The 0.3.0 runs (`results/grid_b08/`) are kept as a record. They were trained
 on the 0.3.0 simulator and are not comparable with anything above.
@@ -550,7 +593,7 @@ python -m pytest -q
 ```
 
 <!-- RESULTS:tests:start -->
-Last run: **183 passed**.
+Last run: **206 passed**.
 <!-- RESULTS:tests:end -->
 
 The suite covers Gymnasium API conformance (`check_env`, including rendering),
@@ -595,10 +638,11 @@ datasets in `data/raw/` and are skipped otherwise.
 * The per-step throughput term is clipped at 1, so a draining backlog and
   steady state look the same to that term (the delay term separates them).
 * The multi-agent environment gives every agent the global observation.
-* RL results cover four scenarios and three ablations, at medium budgets
-  (PPO 500k steps, SAC 100k) with one untuned hyperparameter set. On the
-  headline scenario PPO does not beat the best rule-based policy. The flow
-  bound is too loose to say how far any policy is from the optimum.
+* RL results cover four scenarios and six ablations, at medium budgets
+  (PPO 500k steps, SAC 100k). PPO was tuned only on the headline, over a
+  small grid (discount, learning rate, entropy; not network or batch size),
+  and still does not beat the best rule-based policy there. The flow bound
+  is too loose to say how far any policy is from the optimum.
 * Tested on Python 3.14 (Windows 11). The code parses under the Python 3.10
   grammar but has not been run on 3.10 to 3.13.
 
