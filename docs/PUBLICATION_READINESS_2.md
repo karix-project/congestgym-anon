@@ -161,3 +161,47 @@ whether the repository's issue tracker is enabled.
 QA findings QW-3 and QW-4 (`docs/QA_RELATED_WORK_REPORT.md`): the AI-policy
 requirements are now quoted from JOSS's AI policy page, with its sentence on
 intentional misrepresentation; the commit counts are updated after PR #7.
+
+## 7. Verification: is it research-ready? (16 Oct 2026, after PR #7 and CI)
+
+Checked from what is public, the way a reviewer would.
+
+| Requirement for a workshop-level research paper | Status | Evidence |
+|---|---|---|
+| Results reproduce from the public repository | **Yes** | Fresh clone of `main` (`b6f32af`): 192 tests pass, 14 skip for want of raw data; every README table regenerates from committed files with no content change; all 55 matrix runs, 15 E3 ablations and the 5 tuned-PPO seeds have their saved models |
+| Runs on more than one platform | **Yes, on PR #8** | GitHub Actions, Python 3.10 to 3.14 on Linux and Windows: 10 of 10 jobs pass (after a tolerance fix for a 2e-17 rounding difference on older NumPy). Reaches `main` when PR #8 is merged |
+| Choices made without looking at test results | **Yes** | Scenario, tie-breaks, heuristic constants and PPO hyperparameters chosen on validation seeds with rules fixed in advance; the E2 choice was committed before its test tables existed |
+| Fair baselines | **Yes** | Rule-based policies tuned on validation seeds (E1); PPO tuned on the headline (E2) |
+| Statistics | **Adequate** | 5 training seeds, 10 test seeds, paired intervals; bootstrap and t-intervals agree; effects claimed are large relative to their intervals |
+| Negative results reported | **Yes** | Headline loss, no joint-control benefit outside the bottleneck, loose bound |
+| Related work | **Yes** | Eight projects compared from their own texts (`docs/RELATED_WORK.md`); only NetSimGym's paper itself could not be read |
+| Every step checked | **Yes, but not independently** | A QA report for each step; all of them ran in the same AI session that produced the work |
+| A manuscript | **No** | Not started |
+| Citable data for every reported scenario | **No** | The two traces still have no established origin or licence; the pcap result cannot be published as it stands |
+| A name that does not collide | **No** | "CarlaGym" clashes with the CARLA driving simulator |
+| AI-use disclosure the authors can sign | **Not yet** | Must be written, and the authors must be able to state truthfully which decisions were theirs (section 4.3) |
+
+### Verdict
+
+**The research is ready; the submission is not.** The evidence supports
+the claims in section 3 for a workshop, student track or indexed
+conference: the experiments are complete for the questions asked,
+reproducible from the public repository, run on Linux and Windows across
+Python versions, and were designed and reported without peeking at test
+results.
+
+What stands between this and a submission is not more experiments:
+1. **Decide the traces:** replace them with citable public data, or report
+   only the three synthetic scenarios and drop the pcap result.
+2. **Rename** the project.
+3. **Write the manuscript,** with the limitations stated as in section 3
+   (abstract simulator, 9 to 16 nodes, stationary synthetic traffic, no ns-3
+   validation) and the AI-use disclosure of section 4.3.
+4. **Get an independent check:** one person who did not take part (or a
+   fresh session given only the repository) reproducing two or three headline
+   numbers from the README commands. Every QA step so far was done in the
+   same session that did the work.
+5. Merge PR #8 so CI and the citation file are on `main`.
+
+Not ready for: JOSS before early 2027 (section 4.2), research journals
+(ns-3 validation and scale), or any claim of real-network fidelity.

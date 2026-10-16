@@ -14,10 +14,10 @@ it is cited; in particular, nothing here was run or installed.
 | PRISMA (Alliche et al., IFIP Networking 2022) | ns-3, packet level, ZeroMQ to Python | Routing only: per-packet next hop, one agent per node (multi-agent) | Abilene (11 nodes), GEANT (23 nodes) | ns-3 build, ZeroMQ | Code at github.com/rapariciopardo/PRISMA; licence not checked |
 | ns3-gym (Gawlowicz and Zubow, 2018/19) | ns-3, full stack | A bridge, not a task: examples control 802.11 contention windows and channel selection; no routing or bandwidth environment shipped | n/a | ns-3 build, ZeroMQ, Protocol Buffers | GPL |
 | NetworkGym (Haider et al., NeurIPS 2024 D&B) | ns-3, full stack, environment hosted in the cloud and reached through a client | Per-user Wi-Fi/LTE traffic-splitting ratio (33 levels), 0.1 s steps | 4 users in the experiments | Client package; environment runs remotely | Code at github.com/IntelLabs/networkgym; licence not checked |
-| mobile-env (Schneider et al., NOMS 2022) | Own simulator of a wireless mobile network | Which base stations each user connects to (multi-cell selection) | Not checked | `pip install`; Gymnasium | MIT |
+| mobile-env (Schneider et al., NOMS 2022) | Own lightweight simulator of users and base stations | Which cells each user connects to (multi-cell selection with coordinated multipoint); designed for cell selection, power control or scheduling | Not checked | `pip install mobile-env` (25 kB), Gym interface, single- and multi-agent | MIT |
 | Park (Mao et al., NeurIPS 2019) | 12 systems environments, 7 on real systems and 5 simulated | Networking ones: video bitrate, congestion control, active queue management, load balancing, switch scheduling, CDN caching. None controls routing or per-link bandwidth | n/a | Per environment | Not checked |
-| NetSimGym (Cha et al., EuCNC/6G Summit 2025) | NetSim (a commercial simulator), Protocol Buffers bridge | A bridge, not a task | n/a | Requires NetSim | Wrapper MIT; NetSim itself is not open source |
-| MAGNNETO (Bernardez et al., IEEE TCCN 2023) | An RL method, not an environment; trained in a fluid model (per PackeRL) | OSPF link weights, one agent per link, objective maximum link utilisation | Up to 153 nodes and 354 links | n/a | Not checked |
+| NetSimGym (Cha et al., EuCNC/6G Summit 2025) | NetSim (a commercial simulator), Protocol Buffers bridge | A bridge; its two examples are cellular: downlink power control and base-station load balancing | n/a | NetSim 14.1 and a NetSim licence file; Python 3.12+ | Wrapper: licence file in the repository, not read; NetSim is not open source |
+| MAGNNETO (Bernardez et al., IEEE TCCN 2023) | An RL method, not an environment; its training environment computes link utilisation analytically from one traffic matrix per episode and Dijkstra over the link weights (no packet simulation) | Raises OSPF link weights, one agent per link; objective: minimise maximum link utilisation; capacities fixed | 82 topologies, largest 153 nodes and 354 links | n/a | Code and data released (github.com/BNN-UPC/Papers/wiki/MAGNNETO-TE); licence not checked |
 
 ## 2. Where CarlaGym sits
 
@@ -80,18 +80,30 @@ baselines, an upper bound and a reproducible evaluation protocol."
 | ns3-gym | Full PDF, keyword passages (design, examples, licence) |
 | NetworkGym | Abstract and full text (arXiv HTML), architecture and action sections |
 | Park | Full PDF, environment table (Table 2) and related passages |
-| mobile-env | Repository and PyPI descriptions and the NOMS listing; **not the paper** |
-| NetSimGym | Abstract and publication listing; **not the paper** |
-| MAGNNETO | Search results and PackeRL's description; **not the paper** |
+| mobile-env | Full PDF (3 pages), keyword passages; PyPI page |
+| NetSimGym | Abstract, publication listing and the repository README (github.com/etri/NetSimGym); the paper itself is behind IEEE Xplore and was not read |
+| MAGNNETO | Full text (ar5iv HTML): environment, actions, traffic, capacities, release |
 
-Before citing, read mobile-env, NetSimGym and MAGNNETO in full, check every
-licence marked "not checked", and look for any work published after this
-search (routing-and-bandwidth RL environments appear regularly).
+Before citing: read the NetSimGym paper itself if accessible, check every
+licence marked "not checked", and search again for work published after
+16 Oct 2026 (routing-and-bandwidth RL environments appear regularly).
 
 ## Changes after QA (16 Oct 2026)
 QA findings QW-1 and QW-2 (`docs/QA_RELATED_WORK_REPORT.md`): Park's list
 now includes active queue management; mobile-env's licence (MIT) and task
 (multi-cell selection) are filled in from its PyPI page.
+
+### Second pass (16 Oct 2026)
+mobile-env, NetSimGym and MAGNNETO were read from their own texts (MAGNNETO
+in full, mobile-env's paper, NetSimGym's repository). Changes: MAGNNETO's
+training environment is an analytical utilisation model with one traffic
+matrix per episode and fixed capacities, confirmed from the paper rather than
+from PackeRL's description; NetSimGym's shipped examples are cellular power
+control and load balancing, and it needs a NetSim licence; mobile-env is the
+closest project in design philosophy (lightweight, pip-installable, Gym
+interface; CarlaGym's architecture follows it), in a different domain
+(wireless access). The conclusion is unchanged: none controls per-link
+bandwidth or routing together with it.
 
 ## Sources
 * PackeRL: https://arxiv.org/abs/2410.10377 and https://arxiv.org/html/2410.10377
@@ -101,4 +113,6 @@ now includes active queue management; mobile-env's licence (MIT) and task
 * mobile-env: https://ris.uni-paderborn.de/record/30236, https://pypi.org/p/mobile-env
 * Park: https://proceedings.neurips.cc/paper/2019/hash/f69e505b08403ad2298b9f262659929a-Abstract.html
 * NetSimGym: https://pure.korea.ac.kr/en/publications/netsimgym-the-gymnasium-for-reinforcement-learning-in-networking-/
-* MAGNNETO: https://arxiv.org/pdf/2303.18157
+* MAGNNETO: https://arxiv.org/pdf/2303.18157, https://ar5iv.labs.arxiv.org/html/2303.18157
+* mobile-env paper: https://ris.uni-paderborn.de/download/30236/30237
+* NetSimGym repository: https://github.com/etri/NetSimGym
