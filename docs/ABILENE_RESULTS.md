@@ -16,7 +16,8 @@ seeds each; test seeds 2000-2009. Numbers from
 | PPO | 75.4% | **-0.133 +/- 0.097 (wins 3/50)** | **-5.3 +/- 3.3 pts (wins 3/50)** |
 
 **On real Abilene topology and traffic, no learned policy beats the
-congestion-aware rule.** SAC matches it within noise; PPO is clearly below it.
+congestion-aware rule.** SAC matches it within noise, though the delivered
+interval only just includes zero (-2.3 +/- 2.3 points); PPO is clearly below it.
 The rule's lead over the next rule-based policy (load_aware_routing) is
 +0.138 +/- 0.039 reward, +5.9 +/- 1.6 points.
 
@@ -34,7 +35,10 @@ Validation reward over the last fifth of training (400k to 500k steps):
 synthetic scenarios the same change was at most +0.032). SAC's change was
 +0.013 +/- 0.073 (noisy, no clear trend). So PPO's loss on this scenario
 may partly be a matter of training budget; a longer PPO run is the obvious
-next experiment here. SAC, at a fifth of PPO's steps, does better.
+next experiment here. SAC, at a fifth of PPO's steps, is ahead of PPO, though
+not significantly: SAC minus PPO is +3.1 +/- 3.4 points delivered and
++0.096 +/- 0.096 reward (unpaired across training seeds,
+`qa/retest/qa_pr9_sac_vs_ppo.log`).
 
 ### 2.2 Detours: the earlier pattern does not carry over
 Share of delivered packets on a longer-than-shortest path, test seeds:
@@ -69,6 +73,7 @@ Supported:
 * Learned policies beat tuned rule-based baselines on a degraded-node
   scenario and on an irregular graph, not on a symmetric grid and not on the
   real Abilene network with measured traffic, where SAC matches the best rule
+  within noise (only just)
   and PPO falls short (while still improving at the end of training).
 * Routing matters on Abilene (12.9 points of delivered traffic between
   routing-aware and hop-count rules at the chosen cell, up to 19 across the
@@ -89,3 +94,9 @@ Not supported:
    joint control helps a learner.
 3. Other weeks of the Abilene data as held-out traffic (train on one week,
    test on another), which the trace format already supports.
+
+## Changes after QA (18 Oct 2026)
+QA findings Q9-2 and Q9-3 (`docs/QA_PR9_REPORT.md`): "SAC does better than
+PPO" is replaced by the tested statement (ahead, not significantly), and
+"SAC matches the rule" now says the delivered interval only just includes
+zero. No numbers changed.
