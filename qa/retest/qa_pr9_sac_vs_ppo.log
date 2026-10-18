@@ -1,0 +1,2 @@
+SAC minus PPO, reward             +0.096 +/- 0.096  (Welch, dof 5.9)
+SAC minus PPO, delivered_fraction +3.062 +/- 3.427  (Welch, dof 7.1)
