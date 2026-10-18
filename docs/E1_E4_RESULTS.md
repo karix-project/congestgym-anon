@@ -4,6 +4,14 @@ Researcher role, 15 Oct 2026. Plan and rules: `docs/NEXT_EXPERIMENTS.md`.
 No training; existing PPO models from `results/rl/`. Not yet checked by
 Tester/QA.
 
+> **Update, 18 Oct 2026.** The pcap trace scenario (`pcap40_grid16_b05`) in
+> this document was withdrawn together with its data, whose origin and
+> licence could not be established. It is replaced by the Abilene scenario
+> (`docs/ABILENE_SCENARIO.md`, results in `docs/ABILENE_RESULTS.md`), where no
+> learned policy beats the best rule-based policy. Claims below that count
+> the pcap scenario ("3 of 4 scenarios") now read "2 of 4". The rest of this
+> document is kept as written.
+
 ## E1. Tuned rule-based policies
 
 `qa/research/e1_tune_heuristics.py` (`.log`). Grid search on validation seeds
