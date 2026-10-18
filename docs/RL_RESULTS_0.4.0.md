@@ -8,6 +8,14 @@ rewards were re-evaluated by `scripts/evaluate_saved.py` and match each
 run's `final_eval.csv` exactly. Every number below is from
 `qa/research/rl_results_analysis.log` or a `results/rl/*/qos.md` table.
 
+> **Update, 18 Oct 2026.** The pcap trace scenario (`pcap40_grid16_b05`) in
+> this document was withdrawn together with its data, whose origin and
+> licence could not be established. It is replaced by the Abilene scenario
+> (`docs/ABILENE_SCENARIO.md`, results in `docs/ABILENE_RESULTS.md`), where no
+> learned policy beats the best rule-based policy. Claims below that count
+> the pcap scenario ("3 of 4 scenarios") now read "2 of 4". The rest of this
+> document is kept as written.
+
 ## 1. Short answer
 
 | Scenario | PPO vs best heuristic, delivered traffic | PPO vs best heuristic, reward | Verdict |

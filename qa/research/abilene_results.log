@@ -1,0 +1,19 @@
+1. Agent minus best rule-based policy, paired on test seeds 2000-2009; CI over 5 training seeds
+   PPO minus congestion_aware   reward             -0.133 +/- 0.097   (wins 3/50)
+   SAC minus congestion_aware   reward             -0.037 +/- 0.049   (wins 16/50)
+   (best minus second-best rule-based, congestion_aware - load_aware_routing: +0.138 +/- 0.039)
+   PPO minus congestion_aware   delivered_fraction -5.331 pts +/- 3.318   (wins 3/50)
+   SAC minus congestion_aware   delivered_fraction -2.269 pts +/- 2.300   (wins 11/50)
+   (best minus second-best rule-based, congestion_aware - load_aware_routing: +5.934 pts +/- 1.564)
+
+2. Convergence: validation reward (seeds 1000-1004), mean over training seeds
+   PPO: last 3 checkpoints +0.047 +0.068 +0.081; change 400k->500k +0.117 +/- 0.078
+   SAC: last 3 checkpoints +0.190 +0.103 +0.203; change 80k->100k +0.013 +/- 0.073
+
+3. Detours (delivered packets born at step >= 20, test seeds 2000-2009)
+   max_bandwidth        stretch 1.0000   on a detour 0.00% +/- 0.00
+   queue_proportional   stretch 1.0000   on a detour 0.00% +/- 0.00
+   load_aware_routing   stretch 1.0412   on a detour 9.22% +/- 1.65
+   congestion_aware     stretch 1.0308   on a detour 7.57% +/- 1.52
+   PPO                  stretch 1.0113   on a detour 2.89% +/- 1.40  (5 seeds)
+   SAC                  stretch 1.0843   on a detour 15.15% +/- 3.42  (5 seeds)
