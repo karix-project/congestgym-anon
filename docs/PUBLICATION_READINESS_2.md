@@ -46,6 +46,9 @@ from files by script.
 
 ## 3. What a paper can now claim
 
+> Superseded in part by section 8 (18 Oct): the trace scenario was replaced
+> by Abilene, and claim 1 now reads "2 of 4 scenarios".
+
 From `docs/RL_RESULTS_0.4.0.md`, `docs/E1_E4_RESULTS.md`,
 `docs/E2_E3_RESULTS.md`, all QA-checked:
 
@@ -162,7 +165,9 @@ QA findings QW-3 and QW-4 (`docs/QA_RELATED_WORK_REPORT.md`): the AI-policy
 requirements are now quoted from JOSS's AI policy page, with its sentence on
 intentional misrepresentation; the commit counts are updated after PR #7.
 
-## 7. Verification: is it research-ready? (16 Oct 2026, after PR #7 and CI)
+## 7. Verification: is it research-ready?
+
+> Updated by section 8 (18 Oct): data and name rows changed. (16 Oct 2026, after PR #7 and CI)
 
 Checked from what is public, the way a reviewer would.
 
@@ -205,3 +210,55 @@ What stands between this and a submission is not more experiments:
 
 Not ready for: JOSS before early 2027 (section 4.2), research journals
 (ns-3 validation and scale), or any claim of real-network fidelity.
+
+## 8. Update after the data replacement (18 Oct 2026)
+
+**Decisions taken by the user (16 Oct):** replace the traces with citable
+public data; keep the name CarlaGym; keep the email in `LICENSE`.
+
+**Data: done** (PR #9). The two traces of unknown origin are removed and
+replaced by one week of SNDlib's Abilene traffic matrices on SNDlib's Abilene
+topology, with provenance and the citations SNDlib asks for
+(`data/ABILENE_TRACE.md`). One open point: SNDlib states no licence, so the
+maintainer should be asked (by the authors) whether redistributing the
+derived trace is acceptable.
+
+**Name: kept.** "CarlaGym" still collides with the CARLA driving simulator.
+This is an accepted risk, not a blocker: say in the paper's first mention
+that the software is unrelated to CARLA, and use the full title so searches
+and reviewers are not misled.
+
+**Claims, revised** (`docs/ABILENE_RESULTS.md`):
+1. A learned policy (PPO) beats every rule-based baseline, tuned on
+   validation seeds, in **2 of 4** scenarios: +9.7 points of delivered
+   traffic on the degraded-node scenario and +1.6 on the irregular graph.
+2. It does not on the symmetric grid (even after tuning) nor on the real
+   Abilene network with measured traffic, where SAC matches the
+   congestion-aware rule within noise and PPO falls 5.3 +/- 3.3 points short
+   while still improving at the end of its training budget.
+3. Which action half matters depends on the network (unchanged).
+4. Detours add no capacity in the fluid model anywhere tested; whether they
+   help in the simulator depends on the network (on Abilene the best rule
+   and SAC detour often). "Detours never help" is withdrawn.
+5. Reproducibility and protocol (unchanged), with one recorded bug and one
+   recorded rule deviation in the Abilene scenario choice
+   (`docs/ABILENE_SCENARIO.md`), both to be reported in the paper.
+
+The paper's message is now more modest and, with real traffic in it, more
+credible: *learned control helps in some network structures and not in
+others, including not on a real backbone with measured traffic, and the
+benchmark lets the reasons be measured.*
+
+**Verdict, updated.** Still: the research is ready; the submission is not.
+Remaining before submission:
+1. **Write the manuscript,** with the limitations (abstract simulator, 9 to
+   16 nodes, no ns-3 validation, medium training budgets), the two recorded
+   deviations, the name disclaimer and the AI-use disclosure (4.3).
+2. **Ask SNDlib's maintainer** about redistributing the derived trace.
+3. **Get an independent check** of two or three headline numbers by someone
+   who did not take part.
+4. **Merge PR #8 and PR #9.**
+
+Optional before submission, and cheap: a longer PPO run on Abilene (its
+curve was still rising), since that is the one place where more training
+could change a verdict.
