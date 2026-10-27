@@ -112,7 +112,7 @@ See the README's Limitations section.
 * Why each scenario was chosen: `docs/HEADLINE_SCENARIO.md`,
   `docs/ABILENE_SCENARIO.md`.
 * Release history: `CHANGELOG.md`. Earlier process documents (QA reports,
-  handoffs, reviews) were removed in 0.4.1 and remain in git history at tag
+  handoffs, reviews) were removed in 0.5.0 and remain in git history at tag
   `v0.4.0`.
 
 ## Releasing

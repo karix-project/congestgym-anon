@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased (0.4.1)
+## 0.5.0
 
 * Repository cleanup: removed the 0.3.0 training runs (`results/grid_b08/`),
   the withdrawn pcap scenario (`results/rl/pcap40_grid16_b05/`), the raw-dataset
