@@ -1,7 +1,8 @@
 # Contributing
 
 Thank you for considering a contribution. Bug reports, questions and pull
-requests are all welcome.
+requests are all welcome. `AGENTS.md` describes the project's layout, commands
+and working rules in more detail; read it before a larger change.
 
 ## Reporting a problem or asking a question
 
@@ -24,8 +25,9 @@ export PYTHONPATH=.                  # PowerShell: $env:PYTHONPATH = "."
 python -m pytest -q
 ```
 
-Tests that need the raw datasets in `data/raw/` (not distributed) are skipped
-when the files are absent; everything else must pass.
+One test rebuilds the Abilene trace from SNDlib's archive and is skipped
+unless the archive is in `data/raw/` (it is not distributed); everything else
+must pass.
 
 ## Pull requests
 
@@ -34,8 +36,8 @@ when the files are absent; everything else must pass.
   buffers and links within limits, determinism under a seed) are tested in
   `tests/`; keep them passing.
 * **Keep defaults stable.** A change that alters dynamics or results must say
-  so in the README's change log and bump the version; results from different
-  versions are not comparable.
+  so in `CHANGELOG.md` and bump the version; results from different versions
+  are not comparable.
 * **Numbers in the README come from files.** Tables between `RESULTS` markers
   are copied from `results/` by `scripts/update_readme_results.py`; regenerate
   them instead of editing them by hand, and say which commands produced new
