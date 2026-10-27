@@ -91,7 +91,10 @@ or `qa/`.
 8. **Git:** work on a branch and open a pull request; CI
    (`.github/workflows/tests.yml`, Python 3.10-3.14 on Linux and Windows) must
    pass. Do not rewrite published history.
-9. **Report honestly.** State where learned policies lose as clearly as where
+9. **Docs in `docs/` are dated records** of how each choice and result was
+   made. Do not rewrite their findings; add a dated update at the top or
+   bottom when something changes, as the existing banners do.
+10. **Report honestly.** State where learned policies lose as clearly as where
    they win, and use paired comparisons on the same test seeds.
 
 ## Known limitations (keep them in mind)
