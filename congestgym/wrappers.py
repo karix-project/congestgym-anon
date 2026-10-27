@@ -1,8 +1,8 @@
 """
-carla_gym/wrappers.py
+congestgym/wrappers.py
 
 Action wrappers for ablation studies: let an agent control only one half of
-CarlaGymEnv's action (bandwidth or routing) while the other half is held at a
+CongestGymEnv's action (bandwidth or routing) while the other half is held at a
 fixed, uninformed default.
 """
 

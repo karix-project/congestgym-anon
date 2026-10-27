@@ -17,8 +17,8 @@ import numpy as np
 from stable_baselines3 import PPO
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from carla_gym.baselines import POLICIES, policy_rng           # noqa: E402
-from carla_gym.utils.stats import ci95                         # noqa: E402
+from congestgym.baselines import POLICIES, policy_rng           # noqa: E402
+from congestgym.utils.stats import ci95                         # noqa: E402
 from examples.train_agent import make_env, parse_args          # noqa: E402
 from scripts.run_training_matrix import known_configurations   # noqa: E402
 

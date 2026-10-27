@@ -21,7 +21,7 @@ import os
 
 import pandas as pd
 
-from carla_gym.utils.stats import ci95
+from congestgym.utils.stats import ci95
 from scripts.run_training_matrix import ABLATIONS, ABLATIONS_E3, SCENARIOS
 
 R = os.path.join("results", "rl")
@@ -54,7 +54,7 @@ def main():
     note = ("Delivered % of offered traffic, test seeds 2000-2009, steps 20..199, mean ± 95% CI "
             "(agents: over 5 training seeds; rule-based: over test episodes). The best rule-based "
             "policy is picked per row on the test seeds. Ablation rows: PPO controls one half of the "
-            "action, the rule-based policies both. Flow bound: carla_gym/bounds.py, an upper limit "
+            "action, the rule-based policies both. Flow bound: congestgym/bounds.py, an upper limit "
             "that is loose (see docs/RL_RESULTS_0.4.0.md, section 2.6).\n\n")
     with open(os.path.join(R, "overview.md"), "w", encoding="utf-8") as f:
         f.write(note + "\n".join(lines) + "\n")

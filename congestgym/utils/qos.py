@@ -1,4 +1,4 @@
-"""carla_gym/utils/qos.py -- episode-level QoS figures from per-step `info` dicts.
+"""congestgym/utils/qos.py -- episode-level QoS figures from per-step `info` dicts.
 
 The reward terms are per-step ratios (delivered / offered in that step,
 clipped at 1). Averaging them over an episode does NOT give the fraction of

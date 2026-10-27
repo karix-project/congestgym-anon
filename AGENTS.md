@@ -5,27 +5,27 @@ before editing code, results or documentation.
 
 ## What this project is
 
-CarlaGym is a Gymnasium environment for reinforcement learning on congested
+CongestGym is a Gymnasium environment for reinforcement learning on congested
 packet networks. At every step an agent sets a bandwidth weight and a routing
 weight for each link, under a total bandwidth budget, and is rewarded for
 delivered traffic minus delay, loss and missed deadlines. The repository also
 holds six rule-based baselines, a fluid upper bound, scripts that train and
 evaluate PPO/SAC, and the committed results reported in the README and in the
-project's paper. The name is unrelated to the CARLA driving simulator.
+project's paper.
 
 ## Layout
 
 | Path | Contents |
 |---|---|
-| `carla_gym/env.py` | `CarlaGymEnv`: spaces, `reset()`, `step()`, bandwidth budget |
-| `carla_gym/marl_env.py` | PettingZoo parallel env (one agent per node) |
-| `carla_gym/core/network.py` | topologies (incl. `abilene`), buffers, per-link FIFO queues, routing (Floyd-Warshall, random ECMP) |
-| `carla_gym/core/step.py` | one simulation step, shared by both envs |
-| `carla_gym/core/traffic.py`, `trace_traffic.py` | Poisson QoS traffic; trace replay with `random_start` |
-| `carla_gym/utils/reward.py` | `R = T - k*D - c*L - m*M` |
-| `carla_gym/baselines.py` | rule-based policies and `make_policy` (tunable constants) |
-| `carla_gym/wrappers.py` | `ControlSubsetWrapper` for the bandwidth-only / routing-only ablations |
-| `carla_gym/bounds.py` | multi-commodity-flow LP upper bound (SciPy) |
+| `congestgym/env.py` | `CongestGymEnv`: spaces, `reset()`, `step()`, bandwidth budget |
+| `congestgym/marl_env.py` | PettingZoo parallel env (one agent per node) |
+| `congestgym/core/network.py` | topologies (incl. `abilene`), buffers, per-link FIFO queues, routing (Floyd-Warshall, random ECMP) |
+| `congestgym/core/step.py` | one simulation step, shared by both envs |
+| `congestgym/core/traffic.py`, `trace_traffic.py` | Poisson QoS traffic; trace replay with `random_start` |
+| `congestgym/utils/reward.py` | `R = T - k*D - c*L - m*M` |
+| `congestgym/baselines.py` | rule-based policies and `make_policy` (tunable constants) |
+| `congestgym/wrappers.py` | `ControlSubsetWrapper` for the bandwidth-only / routing-only ablations |
+| `congestgym/bounds.py` | multi-commodity-flow LP upper bound (SciPy) |
 | `examples/train_agent.py` | training entry point (PPO/SAC/TD3), held-out evaluation |
 | `examples/demo.py` | side-by-side animation of two policies |
 | `scripts/` | benchmark matrix, training queue, saved-model evaluation, bound, README table generation, SNDlib trace preparation |

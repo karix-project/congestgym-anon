@@ -1,8 +1,8 @@
 """
-carla_gym/bounds.py
+congestgym/bounds.py
 
 Fluid multi-commodity-flow upper bound on the fraction of offered traffic any
-policy can deliver in a scenario. Needs SciPy (`pip install carla-gym[bounds]`).
+policy can deliver in a scenario. Needs SciPy (`pip install congestgym[bounds]`).
 
 The linear program, for the scenario's expected traffic matrix d (units per
 step for each source-destination pair):
@@ -31,8 +31,8 @@ from __future__ import annotations
 import networkx as nx
 import numpy as np
 
-from carla_gym.core.trace_traffic import TraceTrafficGenerator
-from carla_gym.core.traffic import TrafficGenerator
+from congestgym.core.trace_traffic import TraceTrafficGenerator
+from congestgym.core.traffic import TrafficGenerator
 
 
 def expected_demand(traffic, num_nodes: int) -> np.ndarray:
@@ -65,7 +65,7 @@ def flow_bound(network, demand: np.ndarray, budget: float | None,
         from scipy.optimize import linprog
         from scipy.sparse import coo_matrix
     except ImportError as e:  # pragma: no cover
-        raise ImportError("flow_bound needs SciPy: pip install carla-gym[bounds]") from e
+        raise ImportError("flow_bound needs SciPy: pip install congestgym[bounds]") from e
     if routing not in ("free", "shortest"):
         raise ValueError(f"routing must be 'free' or 'shortest', got {routing!r}")
 
@@ -142,7 +142,7 @@ def flow_bound(network, demand: np.ndarray, budget: float | None,
 
 
 def scenario_bound(env, routing: str = "free") -> dict:
-    """flow_bound for a CarlaGymEnv as built (its network, traffic and budget)."""
+    """flow_bound for a CongestGymEnv as built (its network, traffic and budget)."""
     base = env.unwrapped
     d = expected_demand(base.traffic, base.num_nodes)
     return flow_bound(base.network, d, base.bandwidth_budget, routing)

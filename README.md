@@ -1,11 +1,11 @@
-# CarlaGym
+# CongestGym
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/spaciouskarter78/carla-gym/main/.github/carla-logo.png" height="auto" width="150"> <br>
+  <img src="https://raw.githubusercontent.com/spaciouskarter78/congestgym/main/.github/congestgym-logo.png" height="auto" width="150"> <br>
    A Gymnasium environment for reinforcement learning on congested network traffic
 </p>
 
-CarlaGym is a Python reinforcement-learning framework built on the standard
+CongestGym is a Python reinforcement-learning framework built on the standard
 [Gymnasium](https://gymnasium.farama.org/) API. An agent controls a congested
 packet network: every step it decides **how much bandwidth each link gets** and
 **how traffic is routed**, and it is rewarded on QoS metrics (throughput, delay,
@@ -21,9 +21,9 @@ can be replaced independently.
 ## Layout
 
 ```
-carla_gym/
-  env.py                  # CarlaGymEnv(gymnasium.Env): spaces, step()/reset()
-  marl_env.py             # MultiAgentCarlaGymEnv (PettingZoo ParallelEnv)
+congestgym/
+  env.py                  # CongestGymEnv(gymnasium.Env): spaces, step()/reset()
+  marl_env.py             # MultiAgentCongestGymEnv (PettingZoo ParallelEnv)
   baselines.py            # rule-based reference policies (bandwidth and routing-aware)
   wrappers.py             # ControlSubsetWrapper: ablations controlling one action half
   bounds.py               # fluid multi-commodity-flow upper bound (needs SciPy)
@@ -96,9 +96,9 @@ python scripts/run_benchmark.py --quick
 
 ```python
 import gymnasium as gym
-import carla_gym  # registers CarlaGym-v0
+import congestgym  # registers CongestGym-v0
 
-env = gym.make("CarlaGym-v0", topology="grid", num_nodes=9, bandwidth_budget=0.8)
+env = gym.make("CongestGym-v0", topology="grid", num_nodes=9, bandwidth_budget=0.8)
 obs, info = env.reset(seed=0)
 for _ in range(200):
     obs, reward, terminated, truncated, info = env.step(env.action_space.sample())
@@ -115,7 +115,7 @@ and the simulator options `topology_seed`, `queueing`, `tie_break`,
 
 ## Demo
 
-![Side-by-side demo: the best rule-based policy and the trained PPO agent on the same traffic](https://raw.githubusercontent.com/spaciouskarter78/carla-gym/main/docs/demo.gif)
+![Side-by-side demo: the best rule-based policy and the trained PPO agent on the same traffic](https://raw.githubusercontent.com/spaciouskarter78/congestgym/main/docs/demo.gif)
 
 ```
 python examples/demo.py                                   # live window
@@ -202,7 +202,7 @@ Every term is normalized to [0, 1] per step:
 The reward is therefore in [-2, 1]. `info` reports every term and the raw
 counters. The terms are per-step quantities; for the fraction of traffic
 delivered or dropped over an episode, aggregate the raw counters
-(`carla_gym.utils.qos.EpisodeQoS`).
+(`congestgym.utils.qos.EpisodeQoS`).
 
 ### Traffic
 
@@ -224,7 +224,7 @@ around the degraded node or prioritise its links.
 
 ### Multi-agent
 
-`MultiAgentCarlaGymEnv` exposes the same simulator through the PettingZoo
+`MultiAgentCongestGymEnv` exposes the same simulator through the PettingZoo
 parallel API. Each link is controlled by exactly one of its endpoint nodes;
 nodes that control no link are not agents. Agents share the global
 observation and a cooperative reward. `step()` needs one action for every
@@ -232,7 +232,7 @@ live agent and raises otherwise. It needs the `marl` extra.
 
 ## Baselines
 
-All in `carla_gym/baselines.py`:
+All in `congestgym/baselines.py`:
 
 | Policy | Bandwidth | Routing |
 |---|---|---|
@@ -279,7 +279,7 @@ checks that its rewards equal those recorded at the end of training.
 All folders, delivered traffic:
 
 <!-- RESULTS:rl_overview:start -->
-Delivered % of offered traffic, test seeds 2000-2009, steps 20..199, mean ± 95% CI (agents: over 5 training seeds; rule-based: over test episodes). The best rule-based policy is picked per row on the test seeds. Ablation rows: PPO controls one half of the action, the rule-based policies both. Flow bound: carla_gym/bounds.py, an upper limit that is loose (see docs/RL_RESULTS_0.4.0.md, section 2.6).
+Delivered % of offered traffic, test seeds 2000-2009, steps 20..199, mean ± 95% CI (agents: over 5 training seeds; rule-based: over test episodes). The best rule-based policy is picked per row on the test seeds. Ablation rows: PPO controls one half of the action, the rule-based policies both. Flow bound: congestgym/bounds.py, an upper limit that is loose (see docs/RL_RESULTS_0.4.0.md, section 2.6).
 
 | Training folder | Flags | PPO | SAC | Best rule-based policy | Flow bound |
 |---|---|---:|---:|---|---:|
@@ -346,7 +346,7 @@ the `throughput` and `loss` terms in the reward are ratios within a single
 step (and throughput is clipped at 1), so their average over an episode is
 not the fraction of traffic delivered.
 
-**Flow upper bound.** `carla_gym/bounds.py` (optional extra `bounds`, SciPy)
+**Flow upper bound.** `congestgym/bounds.py` (optional extra `bounds`, SciPy)
 solves a fluid multi-commodity-flow LP: the expected traffic matrix, link
 capacities and the budget, with the allocation chosen optimally. No policy
 can exceed it in the long run. It is loose: it ignores queueing and lets the
@@ -354,7 +354,7 @@ optimiser drop the longest-distance traffic first, which no policy here can
 do. Read the room below it as an upper limit, not as headroom.
 
 <!-- RESULTS:bounds:start -->
-Fluid flow upper bound on the delivered fraction (%), from carla_gym/bounds.py: the expected traffic matrix, link capacities and the bandwidth budget, with the allocation chosen optimally. No policy can exceed it in the long run; a finite window can exceed it slightly through backlog carried in. Policy figures: delivered % on test seeds 2000-2009, steps 20..199. The bound is loose (docs/RL_RESULTS_0.4.0.md, section 2.6): the room below it is an upper limit on what any policy could gain, not a measure of it. The trace row's bound uses the trace's mean matrix over the week and ignores its daily cycle, so it is looser still.
+Fluid flow upper bound on the delivered fraction (%), from congestgym/bounds.py: the expected traffic matrix, link capacities and the bandwidth budget, with the allocation chosen optimally. No policy can exceed it in the long run; a finite window can exceed it slightly through backlog carried in. Policy figures: delivered % on test seeds 2000-2009, steps 20..199. The bound is loose (docs/RL_RESULTS_0.4.0.md, section 2.6): the room below it is an upper limit on what any policy could gain, not a measure of it. The trace row's bound uses the trace's mean matrix over the week and ignores its daily cycle, so it is looser still.
 
 | Scenario | Bound, free routing | Bound, shortest paths | Best heuristic | PPO | SAC |
 |---|---:|---:|---|---:|---:|

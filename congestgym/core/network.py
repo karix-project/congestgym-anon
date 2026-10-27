@@ -1,5 +1,5 @@
 """
-carla_gym/core/network.py
+congestgym/core/network.py
 
 Store-and-forward network simulator on a NetworkX graph.
 
@@ -43,7 +43,7 @@ from __future__ import annotations
 import networkx as nx
 import numpy as np
 
-from carla_gym.core.traffic import Packet
+from congestgym.core.traffic import Packet
 
 
 # The Abilene research backbone as distributed by SNDlib (network "abilene":

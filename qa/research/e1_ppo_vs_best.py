@@ -12,7 +12,7 @@ import sys
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from carla_gym.utils.stats import ci95                     # noqa: E402
+from congestgym.utils.stats import ci95                     # noqa: E402
 from scripts.run_training_matrix import SCENARIOS          # noqa: E402
 
 HEUR = ["max_bandwidth", "queue_proportional", "load_aware_routing", "congestion_aware"]

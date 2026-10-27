@@ -1,8 +1,8 @@
 """
 scripts/flow_bound.py
 
-Fluid flow upper bound (carla_gym/bounds.py) on the delivered fraction, next
-to what the policies achieved. Needs SciPy (`pip install carla-gym[bounds]`).
+Fluid flow upper bound (congestgym/bounds.py) on the delivered fraction, next
+to what the policies achieved. Needs SciPy (`pip install congestgym[bounds]`).
 
     $env:PYTHONPATH = "."        (bash: export PYTHONPATH=.)
     python scripts/flow_bound.py
@@ -23,8 +23,8 @@ import os
 
 import pandas as pd
 
-from carla_gym.bounds import scenario_bound
-from carla_gym.env import CarlaGymEnv
+from congestgym.bounds import scenario_bound
+from congestgym.env import CongestGymEnv
 from examples.train_agent import make_env, parse_args
 from scripts.run_benchmark import scenarios as benchmark_scenarios
 from scripts.run_training_matrix import SCENARIOS
@@ -66,7 +66,7 @@ def benchmark():
     for sc in benchmark_scenarios(False):
         if sc["family"] == "trace":
             continue
-        env = CarlaGymEnv(topology=sc["topology"], num_nodes=sc["num_nodes"], load_scale=sc["load_scale"],
+        env = CongestGymEnv(topology=sc["topology"], num_nodes=sc["num_nodes"], load_scale=sc["load_scale"],
                           bandwidth_budget=sc["budget"], bottlenecks=sc.get("bottlenecks"), seed=0)
         free, short = scenario_bound(env, "free"), scenario_bound(env, "shortest")
         s = summ[(summ.scenario == sc["name"]) & summ.policy.isin(HEUR)]
@@ -86,7 +86,7 @@ def benchmark():
 
 def main():
     os.makedirs(OUT, exist_ok=True)
-    head = ("Fluid flow upper bound on the delivered fraction (%), from carla_gym/bounds.py: the "
+    head = ("Fluid flow upper bound on the delivered fraction (%), from congestgym/bounds.py: the "
             "expected traffic matrix, link capacities and the bandwidth budget, with the allocation "
             "chosen optimally. No policy can exceed it in the long run; a finite window can exceed it "
             "slightly through backlog carried in. Policy figures: delivered % on test seeds 2000-2009, "

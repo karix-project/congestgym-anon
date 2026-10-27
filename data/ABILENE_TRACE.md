@@ -3,7 +3,7 @@
 One week (Monday 1 March to Sunday 7 March 2004) of measured traffic on the
 Abilene research backbone, as 2,016 five-minute traffic matrices between its
 12 routers, in Mbit/s. Format: `step,src,dst,volume`; node ids follow
-`carla_gym.core.network.ABILENE_NODES` (the `abilene` topology).
+`congestgym.core.network.ABILENE_NODES` (the `abilene` topology).
 
 ## Source
 

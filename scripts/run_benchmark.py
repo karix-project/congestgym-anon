@@ -27,11 +27,11 @@ import os
 import numpy as np
 import pandas as pd
 
-from carla_gym.baselines import POLICIES, policy_rng
-from carla_gym.core.trace_traffic import TraceTrafficGenerator
-from carla_gym.env import CarlaGymEnv
-from carla_gym.utils.qos import EpisodeQoS
-from carla_gym.utils.stats import ci95
+from congestgym.baselines import POLICIES, policy_rng
+from congestgym.core.trace_traffic import TraceTrafficGenerator
+from congestgym.env import CongestGymEnv
+from congestgym.utils.qos import EpisodeQoS
+from congestgym.utils.stats import ci95
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data")
 # Per-step reward terms, averaged over the episode ...
@@ -76,7 +76,7 @@ def run_episode(sc: dict, policy, seed: int, steps: int, warmup: int) -> dict:
                                         os.path.join(DATA, sc["trace"]),
                                         target_load=sc["target_load"], seed=seed,
                                         random_start=sc.get("random_start", False))
-    env = CarlaGymEnv(topology=sc["topology"], num_nodes=sc["num_nodes"],
+    env = CongestGymEnv(topology=sc["topology"], num_nodes=sc["num_nodes"],
                       load_scale=sc["load_scale"], bandwidth_budget=sc["budget"],
                       bottlenecks=sc.get("bottlenecks"), max_steps=steps,
                       traffic=traffic, seed=seed)

@@ -2,7 +2,7 @@
 scripts/prepare_sndlib_trace.py
 
 Convert SNDlib's Abilene dynamic traffic matrices (5-minute demand matrices,
-Mar-Sep 2004, measured by Yin Zhang) into a CarlaGym trace for the "abilene"
+Mar-Sep 2004, measured by Yin Zhang) into a CongestGym trace for the "abilene"
 topology: one row per (time bin, source, destination) with the demand in
 Mbit/s.
 
@@ -14,7 +14,7 @@ Mbit/s.
         --start 20040301 --days 7 --out data/abilene_trace_20040301_7d.csv.gz
 
 The archive is read directly; nothing is extracted to disk. Node ids follow
-carla_gym.core.network.ABILENE_NODES. Rows with zero demand are dropped
+congestgym.core.network.ABILENE_NODES. Rows with zero demand are dropped
 (TraceTrafficGenerator treats missing rows as zero).
 
 When using this data, cite SNDlib and its dynamic-traffic references; see
@@ -29,7 +29,7 @@ import tarfile
 
 import pandas as pd
 
-from carla_gym.core.network import ABILENE_NODES
+from congestgym.core.network import ABILENE_NODES
 
 NAME = re.compile(r"demandMatrix-abilene-zhang-5min-(\d{8})-(\d{4})\.txt$")
 DEMAND = re.compile(r"^\s*\S+\s*\(\s*(\S+)\s+(\S+)\s*\)\s+\S+\s+([0-9.eE+-]+)")

@@ -1,4 +1,4 @@
-# Related work: CarlaGym against existing RL environments for networking
+# Related work: CongestGym against existing RL environments for networking
 
 Researcher role, 16 Oct 2026. Compiled from the papers themselves, not from
 search summaries (section 4 says how deeply each was read). Every claim
@@ -9,7 +9,7 @@ it is cited; in particular, nothing here was run or installed.
 
 | Project | Simulator, fidelity | What the agent controls | Scale used in the paper | Install effort | Licence |
 |---|---|---|---|---|---|
-| **CarlaGym** (this work) | Own slotted store-and-forward packet simulator, pure Python; one hop per step, no TCP | **Per-link bandwidth allocation under a budget and per-link routing weights**, jointly or one half at a time | 9 and 16 nodes | `pip install`; NumPy, NetworkX, Gymnasium | BSD 2-clause |
+| **CongestGym** (this work) | Own slotted store-and-forward packet simulator, pure Python; one hop per step, no TCP | **Per-link bandwidth allocation under a budget and per-link routing weights**, jointly or one half at a time | 9 and 16 nodes | `pip install`; NumPy, NetworkX, Gymnasium | BSD 2-clause |
 | PackeRL (Boltres et al., TMLR 2024) | ns-3, packet level, UDP and TCP | Routing only: link weights for shortest paths (M-Slim) or next-hop ratings per destination (FieldLines); link rates fixed | Trained on up to 10 nodes and NSFNet/GEANT2; evaluated up to 101-250 nodes | ns-3 build | Paper CC BY 4.0; code licence not checked |
 | PRISMA (Alliche et al., IFIP Networking 2022) | ns-3, packet level, ZeroMQ to Python | Routing only: per-packet next hop, one agent per node (multi-agent) | Abilene (11 nodes), GEANT (23 nodes) | ns-3 build, ZeroMQ | Code at github.com/rapariciopardo/PRISMA; licence not checked |
 | ns3-gym (Gawlowicz and Zubow, 2018/19) | ns-3, full stack | A bridge, not a task: examples control 802.11 contention windows and channel selection; no routing or bandwidth environment shipped | n/a | ns-3 build, ZeroMQ, Protocol Buffers | GPL |
@@ -19,7 +19,7 @@ it is cited; in particular, nothing here was run or installed.
 | NetSimGym (Cha et al., EuCNC/6G Summit 2025) | NetSim (a commercial simulator), Protocol Buffers bridge | A bridge; its two examples are cellular: downlink power control and base-station load balancing | n/a | NetSim 14.1 and a NetSim licence file; Python 3.12+ | Wrapper: licence file in the repository, not read; NetSim is not open source |
 | MAGNNETO (Bernardez et al., IEEE TCCN 2023) | An RL method, not an environment; its training environment computes link utilisation analytically from one traffic matrix per episode and Dijkstra over the link weights (no packet simulation) | Raises OSPF link weights, one agent per link; objective: minimise maximum link utilisation; capacities fixed | 82 topologies, largest 153 nodes and 354 links | n/a | Code and data released (github.com/BNN-UPC/Papers/wiki/MAGNNETO-TE); licence not checked |
 
-## 2. Where CarlaGym sits
+## 2. Where CongestGym sits
 
 **What no project in this list does.** None of the environments lets an
 agent control per-link **bandwidth allocation**: PackeRL and PRISMA fix the
@@ -29,16 +29,16 @@ search on 16 Oct for an open-source Gymnasium environment that jointly
 controls routing and bandwidth allocation found none. A search is not proof
 of absence, and the paper should say "to our knowledge".
 
-**What CarlaGym gives up.** Fidelity. It is a slotted abstraction (one hop per
+**What CongestGym gives up.** Fidelity. It is a slotted abstraction (one hop per
 step, no TCP, no propagation delay), against ns-3's packet- and
 protocol-level models in PackeRL, PRISMA, ns3-gym and NetworkGym. PackeRL
 argues directly that packet-level dynamics are required for sub-second
 routing and reports that policies trained in a fluid model generalise
-poorly to packet level. CarlaGym is not a fluid model (it moves discrete
+poorly to packet level. CongestGym is not a fluid model (it moves discrete
 packets through finite buffers), but it is much simpler than ns-3, so the
-same concern applies to transfer: **no CarlaGym result says anything about
+same concern applies to transfer: **no CongestGym result says anything about
 behaviour in ns-3 or in a real network** until it is validated (readiness
-plan item 8). CarlaGym is also small: 9 and 16 nodes, against PackeRL's
+plan item 8). CongestGym is also small: 9 and 16 nodes, against PackeRL's
 evaluation on up to 250 nodes and MAGNNETO's 153.
 
 **What it offers in exchange.**
@@ -57,7 +57,7 @@ or PRISMA would add bandwidth control to a high-fidelity routing
 environment, which is a legitimate alternative design. The case for a
 separate environment is the use case: fast iteration on joint
 bandwidth-and-routing control without an ns-3 toolchain, at the price of
-fidelity. The paper should make that trade explicit, and position CarlaGym
+fidelity. The paper should make that trade explicit, and position CongestGym
 as a lightweight testbed for developing and comparing policies, not as a
 substitute for packet-level validation.
 
@@ -67,7 +67,7 @@ substitute for packet-level validation.
 level in ns-3 (PRISMA, PackeRL), control access-network traffic splitting
 (NetworkGym), or bridge a general simulator without defining a task
 (ns3-gym, NetSimGym). To our knowledge none lets an agent allocate per-link
-bandwidth under a budget together with routing. CarlaGym provides this in a
+bandwidth under a budget together with routing. CongestGym provides this in a
 lightweight pure-Python simulator, at lower fidelity than ns-3, with tested
 baselines, an upper bound and a reproducible evaluation protocol."
 
@@ -101,7 +101,7 @@ matrix per episode and fixed capacities, confirmed from the paper rather than
 from PackeRL's description; NetSimGym's shipped examples are cellular power
 control and load balancing, and it needs a NetSim licence; mobile-env is the
 closest project in design philosophy (lightweight, pip-installable, Gym
-interface; CarlaGym's architecture follows it), in a different domain
+interface; CongestGym's architecture follows it), in a different domain
 (wireless access). The conclusion is unchanged: none controls per-link
 bandwidth or routing together with it.
 

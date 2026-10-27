@@ -32,7 +32,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from carla_gym.utils.stats import ci95  # noqa: E402
+from congestgym.utils.stats import ci95  # noqa: E402
 
 
 def load(root: str):

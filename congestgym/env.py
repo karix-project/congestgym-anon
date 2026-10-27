@@ -1,5 +1,5 @@
 """
-carla_gym/env.py
+congestgym/env.py
 
 The Core. Thin by design: it owns the spaces and the step()/reset()
 sequencing, and delegates everything else. If queueing math or topology
@@ -12,13 +12,13 @@ import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 
-from carla_gym.core.network import NetworkModel
-from carla_gym.core.step import advance
-from carla_gym.core.traffic import TrafficGenerator
-from carla_gym.utils.reward import RewardCalculator
+from congestgym.core.network import NetworkModel
+from congestgym.core.step import advance
+from congestgym.core.traffic import TrafficGenerator
+from congestgym.utils.reward import RewardCalculator
 
 
-class CarlaGymEnv(gym.Env):
+class CongestGymEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     def __init__(self, topology: str = "grid", num_nodes: int = 9,
@@ -128,7 +128,7 @@ class CarlaGymEnv(gym.Env):
     def render(self):
         if self.render_mode is None:
             return None
-        from carla_gym.utils.visualization import NetworkVisualizer
+        from congestgym.utils.visualization import NetworkVisualizer
         if self._visualizer is None:
             self._visualizer = NetworkVisualizer(self.network)
         if self.render_mode == "rgb_array":

@@ -42,9 +42,9 @@ import numpy as np
 import pandas as pd
 from stable_baselines3 import PPO, SAC, TD3
 
-from carla_gym.baselines import POLICIES, policy_rng
-from carla_gym.utils.qos import EpisodeQoS
-from carla_gym.utils.stats import ci95
+from congestgym.baselines import POLICIES, policy_rng
+from congestgym.utils.qos import EpisodeQoS
+from congestgym.utils.stats import ci95
 from examples.train_agent import make_env, parse_args as train_args
 from scripts.run_training_matrix import known_configurations
 

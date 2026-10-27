@@ -1,7 +1,7 @@
 # Everything needed to run the tests, examples and notebooks.
 # For the exact versions this release was tested with, add:  -c constraints.txt
 
-# core (the carla_gym package itself)
+# core (the congestgym package itself)
 gymnasium>=1.0
 networkx>=3.0
 numpy>=1.24
@@ -15,10 +15,10 @@ pytest>=7.4
 torch>=2.0
 stable-baselines3>=2.3
 
-# multi-agent env: carla_gym/marl_env.py
+# multi-agent env: congestgym/marl_env.py
 pettingzoo>=1.24
 
-# flow upper bound: carla_gym/bounds.py, scripts/flow_bound.py
+# flow upper bound: congestgym/bounds.py, scripts/flow_bound.py
 scipy>=1.10
 
 # notebooks

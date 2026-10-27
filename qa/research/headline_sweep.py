@@ -35,8 +35,8 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from carla_gym.baselines import POLICIES          # noqa: E402
-from carla_gym.utils.stats import ci95            # noqa: E402
+from congestgym.baselines import POLICIES          # noqa: E402
+from congestgym.utils.stats import ci95            # noqa: E402
 from scripts.run_benchmark import run_episode     # noqa: E402
 
 SEEDS = range(1000, 1010)

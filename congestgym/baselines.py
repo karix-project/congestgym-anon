@@ -1,5 +1,5 @@
 """
-carla_gym/baselines.py
+congestgym/baselines.py
 
 Rule-based reference policies. Each maps (env, obs) -> action in the env's
 native [0, 1] action space: E bandwidth weights followed by E routing weights.

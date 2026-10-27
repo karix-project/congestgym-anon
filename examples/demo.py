@@ -14,7 +14,7 @@ warm-up.
     python examples/demo.py --left max_bandwidth --right queue_proportional
     python examples/demo.py --seed 2005 --steps 300 --bottleneck none
 
---left / --right take a rule-based policy name (see carla_gym/baselines.py),
+--left / --right take a rule-based policy name (see congestgym/baselines.py),
 or `ppo` / `sac` for an agent saved by examples/train_agent.py (--model picks
 the file). The default scenario is the degraded-node grid (3x3 grid, centre
 node at half capacity, budget 0.8), with the PPO agent trained on it
@@ -28,8 +28,8 @@ import os
 
 import numpy as np
 
-from carla_gym.baselines import POLICIES
-from carla_gym.env import CarlaGymEnv
+from congestgym.baselines import POLICIES
+from congestgym.env import CongestGymEnv
 
 LABELS = {
     "ppo": "Trained RL agent (PPO)", "sac": "Trained RL agent (SAC)",
@@ -60,7 +60,7 @@ def make_policy(name: str, model_path: str | None):
 def simulate(name: str, seed: int, steps: int, budget: float, bottlenecks=None, model_path=None) -> dict:
     """Run one episode and record everything the animation needs."""
     act, _ = make_policy(name, model_path)
-    env = CarlaGymEnv(bandwidth_budget=budget, max_steps=steps, bottlenecks=bottlenecks, seed=seed)
+    env = CongestGymEnv(bandwidth_budget=budget, max_steps=steps, bottlenecks=bottlenecks, seed=seed)
     obs, _ = env.reset(seed=seed)
     net = env.network
     rec = {"name": name, "graph": net.graph, "edges": net.edge_list(), "util": [], "occ": [],
@@ -105,7 +105,7 @@ def build_animation(left: dict, right: dict, every: int = 1, interval: int = 100
                             top=0.86, bottom=0.11, left=0.06, right=0.97)
     ax_net = {"left": fig.add_subplot(grid[0, 0]), "right": fig.add_subplot(grid[0, 1])}
     ax_del, ax_drop = fig.add_subplot(grid[1, 0]), fig.add_subplot(grid[1, 1])
-    fig.suptitle("CarlaGym demo: the same traffic, two controllers", fontsize=14, fontweight="bold")
+    fig.suptitle("CongestGym demo: the same traffic, two controllers", fontsize=14, fontweight="bold")
     caption = fig.text(0.5, 0.02, "", ha="center", fontsize=9.5, color="dimgray")
 
     lines = {}

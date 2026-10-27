@@ -6,9 +6,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from carla_gym.core.network import ABILENE_LINKS, ABILENE_NODES, NetworkModel
-from carla_gym.core.trace_traffic import TraceTrafficGenerator
-from carla_gym.env import CarlaGymEnv
+from congestgym.core.network import ABILENE_LINKS, ABILENE_NODES, NetworkModel
+from congestgym.core.trace_traffic import TraceTrafficGenerator
+from congestgym.env import CongestGymEnv
 
 TRACE = os.path.join("data", "abilene_trace_20040301_7d.csv.gz")
 
@@ -66,7 +66,7 @@ def test_default_trace_generator_still_starts_at_zero():
 
 def test_env_runs_on_abilene_with_the_trace():
     traffic = TraceTrafficGenerator(list(range(12)), TRACE, target_load=40, seed=0, random_start=True)
-    env = CarlaGymEnv(topology="abilene", num_nodes=12, traffic=traffic, bandwidth_budget=0.6, max_steps=50, seed=0)
+    env = CongestGymEnv(topology="abilene", num_nodes=12, traffic=traffic, bandwidth_budget=0.6, max_steps=50, seed=0)
     obs, _ = env.reset(seed=2000)
     offered = 0.0
     for _ in range(50):
@@ -89,7 +89,7 @@ def test_random_start_stamps_packets_with_the_simulator_step():
 
 def test_delays_are_positive_on_a_random_start_trace():
     traffic = TraceTrafficGenerator(list(range(12)), TRACE, target_load=120, seed=0, random_start=True)
-    env = CarlaGymEnv(topology="abilene", num_nodes=12, traffic=traffic, bandwidth_budget=0.7, max_steps=60, seed=0)
+    env = CongestGymEnv(topology="abilene", num_nodes=12, traffic=traffic, bandwidth_budget=0.7, max_steps=60, seed=0)
     env.reset(seed=2000)
     lat = []
     for _ in range(60):

@@ -1,5 +1,5 @@
 """
-carla_gym/core/trace_traffic.py
+congestgym/core/trace_traffic.py
 
 Dataset-driven traffic. Drop-in replacement for TrafficGenerator: same
 `generate(step)` / `reset(seed)` interface, but demand comes from a real
@@ -23,7 +23,7 @@ replaying its first bins. A seeded reset gives the same start every time.
 from __future__ import annotations
 import numpy as np
 import pandas as pd
-from carla_gym.core.traffic import Packet, QoSClass, DEFAULT_QOS_PROFILES
+from congestgym.core.traffic import Packet, QoSClass, DEFAULT_QOS_PROFILES
 
 
 class TraceTrafficGenerator:

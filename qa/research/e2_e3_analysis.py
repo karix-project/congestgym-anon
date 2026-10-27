@@ -22,7 +22,7 @@ import sys
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from carla_gym.utils.stats import ci95                                    # noqa: E402
+from congestgym.utils.stats import ci95                                    # noqa: E402
 
 HEUR = ["max_bandwidth", "queue_proportional", "load_aware_routing", "congestion_aware"]
 SEL = open("results/rl_hp/SELECTED.txt", encoding="utf-8").readline().strip()

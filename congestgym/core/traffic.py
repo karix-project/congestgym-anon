@@ -1,5 +1,5 @@
 """
-carla_gym/core/traffic.py
+congestgym/core/traffic.py
 
 Volatile data-load generator: emits demand only. It knows the node IDs and
 nothing else about the network -- it never inspects queues or topology, so

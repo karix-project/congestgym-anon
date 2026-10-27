@@ -4,7 +4,7 @@
 
 * Repository cleanup: removed the 0.3.0 training runs (`results/grid_b08/`),
   the withdrawn pcap scenario (`results/rl/pcap40_grid16_b05/`), the raw-dataset
-  adapters for the withdrawn traces (`carla_gym/core/dataset_adapters.py`,
+  adapters for the withdrawn traces (`congestgym/core/dataset_adapters.py`,
   `scripts/prepare_trace.py`), `examples/train_ppo.py` and
   `examples/random_agent_test.py`, run logs, early QA rounds (`qa/baseline`,
   `qa/after`, `qa/repro`, `qa/retest`) and process documents (handoffs,
@@ -14,6 +14,12 @@
   trained on it against the best rule there (`--bottleneck none` for the plain
   grid).
 * Added `AGENTS.md` (guide for contributors and coding agents) and this file.
+* Renamed the project from CarlaGym to **CongestGym** to avoid confusion with
+  the CARLA driving simulator: package `carla_gym` -> `congestgym`, classes
+  `CarlaGymEnv` -> `CongestGymEnv` and `MultiAgentCarlaGymEnv` ->
+  `MultiAgentCongestGymEnv`, Gymnasium id `CarlaGym-v0` -> `CongestGym-v0`,
+  PettingZoo name `congestgym_marl_v0`, distribution name `congestgym`.
+  Saved models and committed results are unaffected.
 
 ## 0.4.0
 
@@ -37,7 +43,7 @@ measurements are in `docs/CODE_REVIEW_FOR_PUBLICATION.md` at tag v0.4.0 (F1 to F
   grid under equal split (`qa/retest/qa_pr5.log` at tag v0.4.0).
 * Routing distances use vectorised Floyd-Warshall instead of networkx.
 * Tie-breaks and service order, and the `random` baseline in the benchmark
-  scripts (`carla_gym.baselines.policy_rng`), draw from their own streams
+  scripts (`congestgym.baselines.policy_rng`), draw from their own streams
   derived from the episode seed, independent of the traffic generator.
 
 ## 0.3.0

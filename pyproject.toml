@@ -3,7 +3,7 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "carla-gym"
+name = "congestgym"
 version = "0.4.0"
 description = "Gymnasium environment for reinforcement learning on congested network traffic: bandwidth allocation and routing with QoS-aware reward"
 readme = "README.md"
@@ -38,16 +38,16 @@ marl = ["pettingzoo>=1.24"]
 bounds = ["scipy>=1.10"]
 notebooks = ["jupyter>=1.0", "nbformat>=5.9", "nbconvert>=7.0", "ipykernel>=6.25"]
 dev = ["pytest>=7.4"]
-all = ["carla-gym[rl,marl,bounds,notebooks,dev]"]
+all = ["congestgym[rl,marl,bounds,notebooks,dev]"]
 
 [project.urls]
-Homepage = "https://github.com/spaciouskarter78/carla-gym"
-Repository = "https://github.com/spaciouskarter78/carla-gym"
-Issues = "https://github.com/spaciouskarter78/carla-gym/issues"
-Changelog = "https://github.com/spaciouskarter78/carla-gym/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/spaciouskarter78/congestgym"
+Repository = "https://github.com/spaciouskarter78/congestgym"
+Issues = "https://github.com/spaciouskarter78/congestgym/issues"
+Changelog = "https://github.com/spaciouskarter78/congestgym/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
-include = ["carla_gym*"]
+include = ["congestgym*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

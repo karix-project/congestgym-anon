@@ -1,5 +1,5 @@
 """
-carla_gym/utils/visualization.py
+congestgym/utils/visualization.py
 
 Renders the network: link colour/width encodes utilization (green healthy
 -> red congested), node colour/size encodes buffer occupancy. Pure
@@ -44,7 +44,7 @@ class NetworkVisualizer:
         nx.draw_networkx_labels(g, self._pos, font_size=8, ax=ax)
 
         fig.colorbar(nodes, ax=ax, label="node buffer occupancy", shrink=0.8)
-        title = "CarlaGym network state"
+        title = "CongestGym network state"
         if step is not None:
             title += f"  (step {step})"
         ax.set_title(title)

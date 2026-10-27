@@ -1,5 +1,5 @@
 """
-examples/train_agent.py  --  train an RL agent on CarlaGym and benchmark it
+examples/train_agent.py  --  train an RL agent on CongestGym and benchmark it
 against the rule-based baselines on held-out seeds.
 
     $env:PYTHONPATH = "."        (bash: export PYTHONPATH=.)
@@ -34,10 +34,10 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.noise import NormalActionNoise
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
-from carla_gym.baselines import POLICIES
-from carla_gym.core.trace_traffic import TraceTrafficGenerator
-from carla_gym.env import CarlaGymEnv
-from carla_gym.wrappers import ControlSubsetWrapper
+from congestgym.baselines import POLICIES
+from congestgym.core.trace_traffic import TraceTrafficGenerator
+from congestgym.env import CongestGymEnv
+from congestgym.wrappers import ControlSubsetWrapper
 
 ALGOS = {"ppo": PPO, "sac": SAC, "td3": TD3}
 VALIDATION_SEED0 = 1000
@@ -55,7 +55,7 @@ def make_env(args, seed, rescale=True, monitor_file=None):
             traffic = TraceTrafficGenerator(list(range(args.nodes)), args.trace,
                                             target_load=args.load, seed=seed,
                                             random_start=getattr(args, "trace_random_start", False))
-        env = CarlaGymEnv(topology=args.topology, num_nodes=args.nodes,
+        env = CongestGymEnv(topology=args.topology, num_nodes=args.nodes,
                           max_steps=args.steps, bandwidth_budget=args.budget,
                           load_scale=getattr(args, "load_scale", 1.0),
                           bottlenecks=parse_bottlenecks(getattr(args, "bottleneck", None)),

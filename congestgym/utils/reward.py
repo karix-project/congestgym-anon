@@ -1,5 +1,5 @@
 """
-carla_gym/utils/reward.py
+congestgym/utils/reward.py
 
     R = Throughput - k * Delay - c * PacketLoss - m * DeadlineMiss
 

@@ -5,9 +5,9 @@ order : 'id' = nodes served in id order (as shipped); 'shuffle' = new random ord
 """
 import inspect, textwrap
 import numpy as np
-import carla_gym.core.network as nm
-from carla_gym.env import CarlaGymEnv
-from carla_gym.utils.qos import EpisodeQoS
+import congestgym.core.network as nm
+from congestgym.env import CongestGymEnv
+from congestgym.utils.qos import EpisodeQoS
 
 src = textwrap.dedent(inspect.getsource(nm.NetworkModel.forward))
 old = "for node in self.graph.nodes():\n        blocked = False"
@@ -22,7 +22,7 @@ for tie in ["fixed", "random"]:
     for order in ["id", "shuffle"]:
         frac_off = np.zeros(9); frac_del = np.zeros(9); tot = EpisodeQoS()
         for s in SEEDS:
-            env = CarlaGymEnv(topology="grid", num_nodes=9, bandwidth_budget=0.8, seed=s)
+            env = CongestGymEnv(topology="grid", num_nodes=9, bandwidth_budget=0.8, seed=s)
             net = env.network
             rng = np.random.default_rng(s + 77)
             nodes = list(net.graph.nodes())

@@ -1,7 +1,7 @@
 """
-carla_gym/marl_env.py
+congestgym/marl_env.py
 
-Multi-agent version of CarlaGymEnv using PettingZoo ParallelEnv API.
+Multi-agent version of CongestGymEnv using PettingZoo ParallelEnv API.
 Each agent is a node controlling the bandwidth and routing weights of the
 links assigned to it. Every link has exactly one controlling agent; nodes that
 control no link are not agents. All agents share the global observation and a
@@ -17,21 +17,21 @@ try:
     from pettingzoo import ParallelEnv
     _HAS_PETTINGZOO = True
 except ImportError:
-    # Keeps `import carla_gym` working without the optional dependency; the
+    # Keeps `import congestgym` working without the optional dependency; the
     # multi-agent env itself refuses to build without it (see __init__).
     _HAS_PETTINGZOO = False
 
     class ParallelEnv:
         pass
 
-from carla_gym.core.network import NetworkModel
-from carla_gym.core.step import advance
-from carla_gym.core.traffic import TrafficGenerator
-from carla_gym.utils.reward import RewardCalculator
+from congestgym.core.network import NetworkModel
+from congestgym.core.step import advance
+from congestgym.core.traffic import TrafficGenerator
+from congestgym.utils.reward import RewardCalculator
 
 
-class MultiAgentCarlaGymEnv(ParallelEnv):
-    metadata = {"render_modes": ["human"], "name": "carla_marl_v0"}
+class MultiAgentCongestGymEnv(ParallelEnv):
+    metadata = {"render_modes": ["human"], "name": "congestgym_marl_v0"}
 
     def __init__(self, topology: str = "grid", num_nodes: int = 9,
                  link_capacity: float = 30.0, node_buffer: float = 120.0,
@@ -44,8 +44,8 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
                  seed: int | None = None):
         if not _HAS_PETTINGZOO:
             raise ImportError(
-                "MultiAgentCarlaGymEnv needs PettingZoo. Install it with "
-                "`pip install pettingzoo` or `pip install carla-gym[marl]`.")
+                "MultiAgentCongestGymEnv needs PettingZoo. Install it with "
+                "`pip install pettingzoo` or `pip install congestgym[marl]`.")
         super().__init__()
         if bandwidth_budget is not None and not 0.0 < bandwidth_budget <= 1.0:
             raise ValueError(f"bandwidth_budget must be None or in (0, 1], got {bandwidth_budget}")
@@ -106,7 +106,7 @@ class MultiAgentCarlaGymEnv(ParallelEnv):
     def reset(self, seed=None, options=None):
         self.agents = self.possible_agents[:]
         self.network.reset(seed=seed)
-        # Re-seed only on an explicit seed; see CarlaGymEnv.reset().
+        # Re-seed only on an explicit seed; see CongestGymEnv.reset().
         self.traffic.reset(seed=seed)
         self._step_count = 0
         self._pending = np.zeros(self.network.num_edges(), dtype=np.float32)

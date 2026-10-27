@@ -1,4 +1,4 @@
-"""carla_gym/utils/stats.py -- small statistics helpers for reporting results."""
+"""congestgym/utils/stats.py -- small statistics helpers for reporting results."""
 
 from __future__ import annotations
 

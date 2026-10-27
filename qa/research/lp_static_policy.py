@@ -1,6 +1,6 @@
 """Researcher, 15 Oct 2026: how loose is the fluid flow bound?
 
-Takes the bound's own optimal link allocation (carla_gym/bounds.py, routing
+Takes the bound's own optimal link allocation (congestgym/bounds.py, routing
 "shortest") and plays it as a fixed policy in the simulator: that bandwidth
 allocation every step, uniform routing weights (hop-count shortest paths,
 random ties). Delivered fraction on test seeds 2000-2009, steps 20..199, as
@@ -22,9 +22,9 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from carla_gym.bounds import scenario_bound              # noqa: E402
-from carla_gym.utils.qos import EpisodeQoS               # noqa: E402
-from carla_gym.utils.stats import ci95                   # noqa: E402
+from congestgym.bounds import scenario_bound              # noqa: E402
+from congestgym.utils.qos import EpisodeQoS               # noqa: E402
+from congestgym.utils.stats import ci95                   # noqa: E402
 from examples.train_agent import make_env, parse_args    # noqa: E402
 from scripts.run_training_matrix import SCENARIOS        # noqa: E402
 

@@ -2,7 +2,7 @@
 tests/test_dataset_pipeline.py
 
 Covers the trace-data integration: the committed Abilene trace ->
-TraceTrafficGenerator -> CarlaGymEnv, and the script that rebuilds the trace
+TraceTrafficGenerator -> CongestGymEnv, and the script that rebuilds the trace
 from SNDlib's archive (run only where the archive exists in data/raw/).
 
 A regression specifically guarded against: packet units leaking when traffic
@@ -16,8 +16,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from carla_gym.core.trace_traffic import TraceTrafficGenerator
-from carla_gym.env import CarlaGymEnv
+from congestgym.core.trace_traffic import TraceTrafficGenerator
+from congestgym.env import CongestGymEnv
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data")
 RAW = os.path.join(DATA, "raw")
@@ -33,7 +33,7 @@ def test_trace_driven_env_conserves_packet_units(tmp_path):
     care where packets came from."""
     traffic = TraceTrafficGenerator(nodes=list(range(12)), csv_path=ABILENE_TRACE,
                                     target_load=100.0, seed=0, random_start=True)
-    env = CarlaGymEnv(topology="abilene", num_nodes=12, bandwidth_budget=0.5,
+    env = CongestGymEnv(topology="abilene", num_nodes=12, bandwidth_budget=0.5,
                       max_steps=50, traffic=traffic, seed=0)
     env.reset(seed=0)
     rng = np.random.default_rng(0)
@@ -51,9 +51,9 @@ def test_reference_policies_callable_with_and_without_rng():
     """Regression guard: train_agent.py's rollout() calls policy functions as
     fn(env, obs) (no rng), while the benchmark calls them as fn(env, obs, rng).
     Both call sites must work."""
-    from carla_gym.baselines import policy_max, policy_min, policy_queue_proportional, policy_random
+    from congestgym.baselines import policy_max, policy_min, policy_queue_proportional, policy_random
 
-    env = CarlaGymEnv(topology="grid", num_nodes=16, max_steps=5, seed=0)
+    env = CongestGymEnv(topology="grid", num_nodes=16, max_steps=5, seed=0)
     obs, _ = env.reset(seed=0)
     rng = np.random.default_rng(0)
     for fn in (policy_max, policy_min, policy_queue_proportional, policy_random):
@@ -70,10 +70,10 @@ def test_rollout_works_with_monitor_wrapped_env():
     unwrapped env instead."""
     sb3 = pytest.importorskip("stable_baselines3")
     from stable_baselines3.common.monitor import Monitor
-    from carla_gym.baselines import policy_queue_proportional
+    from congestgym.baselines import policy_queue_proportional
     from examples.train_agent import rollout
 
-    env = Monitor(CarlaGymEnv(topology="grid", num_nodes=16, max_steps=40, seed=0))
+    env = Monitor(CongestGymEnv(topology="grid", num_nodes=16, max_steps=40, seed=0))
     m, sd = rollout(env, policy_queue_proportional, seeds=[0, 1], steps=40)  # > default warmup=20
     assert np.isfinite(m) and np.isfinite(sd)
 
@@ -85,7 +85,7 @@ def test_bandwidth_budget_changes_outcome_on_real_trace():
     def run(policy_weight_fn, budget):
         traffic = TraceTrafficGenerator(nodes=list(range(12)), csv_path=ABILENE_TRACE,
                                         target_load=120.0, seed=0, random_start=True)
-        env = CarlaGymEnv(topology="abilene", num_nodes=12, bandwidth_budget=budget,
+        env = CongestGymEnv(topology="abilene", num_nodes=12, bandwidth_budget=budget,
                           max_steps=100, traffic=traffic, seed=0)
         obs, _ = env.reset(seed=0)
         total = 0.0
@@ -164,7 +164,7 @@ def test_committed_trace_is_well_formed_and_anonymous():
 def test_committed_trace_drives_the_env():
     traffic = TraceTrafficGenerator(nodes=list(range(12)), csv_path=ABILENE_TRACE, target_load=100.0,
                                     seed=0, random_start=True)
-    env = CarlaGymEnv(topology="abilene", num_nodes=12, bandwidth_budget=0.5, max_steps=30,
+    env = CongestGymEnv(topology="abilene", num_nodes=12, bandwidth_budget=0.5, max_steps=30,
                       traffic=traffic, seed=0)
     obs, _ = env.reset(seed=0)
     for _ in range(30):

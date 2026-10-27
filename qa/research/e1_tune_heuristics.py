@@ -25,8 +25,8 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from carla_gym.baselines import make_policy, policy_rng              # noqa: E402
-from carla_gym.utils.stats import ci95                                # noqa: E402
+from congestgym.baselines import make_policy, policy_rng              # noqa: E402
+from congestgym.utils.stats import ci95                                # noqa: E402
 from examples.train_agent import parse_args                           # noqa: E402
 from scripts.evaluate_saved import episode                            # noqa: E402
 from scripts.run_training_matrix import SCENARIOS                     # noqa: E402
