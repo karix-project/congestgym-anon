@@ -11,21 +11,21 @@ import pytest
 pytest.importorskip("pettingzoo")
 from pettingzoo.test import parallel_api_test  # noqa: E402
 
-from carla_gym.env import CarlaGymEnv  # noqa: E402
-from carla_gym.marl_env import MultiAgentCarlaGymEnv  # noqa: E402
+from congestgym.env import CongestGymEnv  # noqa: E402
+from congestgym.marl_env import MultiAgentCongestGymEnv  # noqa: E402
 
 TOPOLOGIES = ["grid", "random", "star", "mesh", "ring"]
 
 
 @pytest.mark.parametrize("topology", TOPOLOGIES)
 def test_parallel_api_conformance(topology):
-    env = MultiAgentCarlaGymEnv(topology=topology, max_steps=20, seed=0)
+    env = MultiAgentCongestGymEnv(topology=topology, max_steps=20, seed=0)
     parallel_api_test(env, num_cycles=50)
 
 
 @pytest.mark.parametrize("topology", TOPOLOGIES)
 def test_every_link_has_exactly_one_owner_and_no_agent_is_empty(topology):
-    env = MultiAgentCarlaGymEnv(topology=topology, seed=0)
+    env = MultiAgentCongestGymEnv(topology=topology, seed=0)
     owned = [e for edges in env.agent_edges.values() for e in edges]
     assert sorted(owned) == list(range(env.network.num_edges()))
     for agent in env.possible_agents:
@@ -34,14 +34,14 @@ def test_every_link_has_exactly_one_owner_and_no_agent_is_empty(topology):
 
 
 def test_star_hub_is_not_an_agent():
-    env = MultiAgentCarlaGymEnv(topology="star", num_nodes=9, seed=0)
+    env = MultiAgentCongestGymEnv(topology="star", num_nodes=9, seed=0)
     assert len(env.possible_agents) == 8 and "node_0" not in env.possible_agents
 
 
 def test_matches_single_agent_env_for_equivalent_actions():
     """The same global action must give the same reward in both envs."""
-    single = CarlaGymEnv(max_steps=30, seed=3)
-    multi = MultiAgentCarlaGymEnv(max_steps=30, seed=3)
+    single = CongestGymEnv(max_steps=30, seed=3)
+    multi = MultiAgentCongestGymEnv(max_steps=30, seed=3)
     single.reset(seed=3)
     multi.reset(seed=3)
     rng = np.random.default_rng(3)
@@ -57,7 +57,7 @@ def test_matches_single_agent_env_for_equivalent_actions():
 
 
 def test_episode_truncates_and_clears_agents():
-    env = MultiAgentCarlaGymEnv(max_steps=5, seed=0)
+    env = MultiAgentCongestGymEnv(max_steps=5, seed=0)
     env.reset(seed=0)
     for _ in range(5):
         acts = {a: env.action_space(a).sample() for a in env.agents}
@@ -69,19 +69,19 @@ def test_episode_truncates_and_clears_agents():
 
 def test_invalid_budget_rejected():
     with pytest.raises(ValueError, match="bandwidth_budget"):
-        MultiAgentCarlaGymEnv(bandwidth_budget=1.5)
+        MultiAgentCongestGymEnv(bandwidth_budget=1.5)
 
 
 def test_missing_pettingzoo_fails_loudly(monkeypatch):
-    import carla_gym.marl_env as marl
+    import congestgym.marl_env as marl
     monkeypatch.setattr(marl, "_HAS_PETTINGZOO", False)
     with pytest.raises(ImportError, match="pettingzoo"):
-        MultiAgentCarlaGymEnv()
+        MultiAgentCongestGymEnv()
 
 
 @pytest.mark.parametrize("bad", [np.nan, np.inf])
 def test_non_finite_agent_action_rejected(bad):
-    env = MultiAgentCarlaGymEnv(max_steps=5, seed=0)
+    env = MultiAgentCongestGymEnv(max_steps=5, seed=0)
     env.reset(seed=0)
     acts = {a: np.full(env.action_space(a).shape, 0.5, dtype=np.float32) for a in env.agents}
     first = env.agents[0]
@@ -91,7 +91,7 @@ def test_non_finite_agent_action_rejected(bad):
 
 
 def test_wrong_shape_agent_action_rejected():
-    env = MultiAgentCarlaGymEnv(max_steps=5, seed=0)
+    env = MultiAgentCongestGymEnv(max_steps=5, seed=0)
     env.reset(seed=0)
     acts = {a: np.full(env.action_space(a).shape, 0.5, dtype=np.float32) for a in env.agents}
     acts[env.agents[0]] = np.ones(1, dtype=np.float32)
@@ -101,7 +101,7 @@ def test_wrong_shape_agent_action_rejected():
 
 def test_step_requires_an_action_for_every_live_agent():
     """Regression guard: a missing agent's links silently got zero bandwidth."""
-    env = MultiAgentCarlaGymEnv(max_steps=5, seed=0)
+    env = MultiAgentCongestGymEnv(max_steps=5, seed=0)
     env.reset(seed=0)
     acts = {a: env.action_space(a).sample() for a in env.agents}
     partial = dict(list(acts.items())[:-1])

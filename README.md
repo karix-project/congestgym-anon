@@ -1,11 +1,11 @@
-# CarlaGym
+# CongestGym
 
 <p align="center">
-  <img src=".github/carla-logo.png" height="auto" width="150"> <br>
+  <img src="https://raw.githubusercontent.com/spaciouskarter78/congestgym/main/.github/congestgym-logo.png" height="auto" width="150"> <br>
    A Gymnasium environment for reinforcement learning on congested network traffic
 </p>
 
-CarlaGym is a Python reinforcement-learning framework built on the standard
+CongestGym is a Python reinforcement-learning framework built on the standard
 [Gymnasium](https://gymnasium.farama.org/) API. An agent controls a congested
 packet network: every step it decides **how much bandwidth each link gets** and
 **how traffic is routed**, and it is rewarded on QoS metrics (throughput, delay,
@@ -21,9 +21,9 @@ can be replaced independently.
 ## Layout
 
 ```
-carla_gym/
-  env.py                  # CarlaGymEnv(gymnasium.Env): spaces, step()/reset()
-  marl_env.py             # MultiAgentCarlaGymEnv (PettingZoo ParallelEnv)
+congestgym/
+  env.py                  # CongestGymEnv(gymnasium.Env): spaces, step()/reset()
+  marl_env.py             # MultiAgentCongestGymEnv (PettingZoo ParallelEnv)
   baselines.py            # rule-based reference policies (bandwidth and routing-aware)
   wrappers.py             # ControlSubsetWrapper: ablations controlling one action half
   bounds.py               # fluid multi-commodity-flow upper bound (needs SciPy)
@@ -32,19 +32,16 @@ carla_gym/
     step.py               # one simulation step, shared by both envs
     traffic.py            # Poisson QoS traffic (voice / gaming / video / best-effort)
     trace_traffic.py      # dataset-driven traffic: TraceTrafficGenerator
-    dataset_adapters.py   # raw dataset -> (step, src, dst, volume) trace
   utils/
     reward.py             # R = Throughput - k*Delay - c*PacketLoss - m*DeadlineMiss
     stats.py              # 95% confidence intervals
     qos.py                # episode-aggregate delivered / dropped / delay
     visualization.py      # Matplotlib congestion rendering
 examples/
-  random_agent_test.py    # sanity run: all baselines, pandas log, six checks
   train_agent.py          # train PPO / SAC / TD3, held-out evaluation vs baselines
-  train_ppo.py            # shortcut for train_agent.py --algo ppo
   demo.py                 # animated side-by-side comparison of two policies
 scripts/
-  prepare_trace.py        # raw dataset -> trace CSV
+  prepare_sndlib_trace.py # SNDlib archive -> data/abilene_trace_*.csv.gz
   run_benchmark.py        # baseline scenario matrix with confidence intervals
   summarize_training.py   # aggregate multi-seed training runs
   evaluate_saved.py       # delivered / dropped / delay table for saved agents
@@ -56,8 +53,8 @@ notebooks/                # four executed notebooks (see below)
 data/                     # dataset-derived traces (raw sources are not distributed)
 results/                  # outputs of the runs reported below
 tests/                    # pytest suite
-qa/                       # reproduction scripts and logs for the QA round
-docs/                     # reviews, QA reports, scenario choice and results readings
+qa/research/              # analysis scripts and logs behind the reported numbers
+docs/                     # scenario choices (rules fixed in advance), result readings, related work
 ```
 
 ## Install
@@ -91,7 +88,6 @@ The commands below are the same in both shells once `PYTHONPATH` is set.
 
 ```
 python -m pytest -q
-python examples/random_agent_test.py --episodes 3 --steps 150 --budget 0.8
 python examples/train_agent.py --algo ppo --timesteps 500000 --seed 0
 python scripts/run_benchmark.py --quick
 ```
@@ -100,9 +96,9 @@ python scripts/run_benchmark.py --quick
 
 ```python
 import gymnasium as gym
-import carla_gym  # registers CarlaGym-v0
+import congestgym  # registers CongestGym-v0
 
-env = gym.make("CarlaGym-v0", topology="grid", num_nodes=9, bandwidth_budget=0.8)
+env = gym.make("CongestGym-v0", topology="grid", num_nodes=9, bandwidth_budget=0.8)
 obs, info = env.reset(seed=0)
 for _ in range(200):
     obs, reward, terminated, truncated, info = env.step(env.action_space.sample())
@@ -119,22 +115,24 @@ and the simulator options `topology_seed`, `queueing`, `tie_break`,
 
 ## Demo
 
-![Side-by-side demo: the best rule-based policy and the trained PPO agent on the same traffic](docs/demo.gif)
+![Side-by-side demo: the best rule-based policy and the trained PPO agent on the same traffic](https://raw.githubusercontent.com/spaciouskarter78/congestgym/main/docs/demo.gif)
 
 ```
 python examples/demo.py                                   # live window
 python examples/demo.py --save demo.gif                   # write the animation to a file
 python examples/demo.py --left max_bandwidth --right queue_proportional
-python examples/demo.py --seed 2005 --bottleneck 4:0.5
+python examples/demo.py --seed 2005 --bottleneck none    # plain grid, no degraded node
 ```
 
 Two controllers receive exactly the same traffic. Links are coloured from
 green (idle) to red (saturated), nodes by how full their buffers are, and
 the charts track the share of offered traffic each side has delivered and
 dropped so far. `--left` and `--right` take any baseline name, or `ppo` /
-`sac` for an agent saved by `examples/train_agent.py`. The saved agents were
-trained on the default scenario (3x3 grid, budget 0.8); `--seed` values from
-2000 upwards are traffic they never saw. The percentages cover the whole
+`sac` for an agent saved by `examples/train_agent.py`. By default the demo
+runs the degraded-node grid (centre node at half capacity, budget 0.8) with
+the PPO agent trained on it (`results/rl/grid_bottleneck_b08/ppo_seed0`)
+against the best rule there, `load_aware_routing`; `--seed` values from
+2000 upwards are traffic the agent never saw. The percentages cover the whole
 episode from step 0, so they differ slightly from the tables below, which
 skip a 20-step warm-up.
 
@@ -204,7 +202,7 @@ Every term is normalized to [0, 1] per step:
 The reward is therefore in [-2, 1]. `info` reports every term and the raw
 counters. The terms are per-step quantities; for the fraction of traffic
 delivered or dropped over an episode, aggregate the raw counters
-(`carla_gym.utils.qos.EpisodeQoS`).
+(`congestgym.utils.qos.EpisodeQoS`).
 
 ### Traffic
 
@@ -226,7 +224,7 @@ around the degraded node or prioritise its links.
 
 ### Multi-agent
 
-`MultiAgentCarlaGymEnv` exposes the same simulator through the PettingZoo
+`MultiAgentCongestGymEnv` exposes the same simulator through the PettingZoo
 parallel API. Each link is controlled by exactly one of its endpoint nodes;
 nodes that control no link are not agents. Agents share the global
 observation and a cooperative reward. `step()` needs one action for every
@@ -234,7 +232,7 @@ live agent and raises otherwise. It needs the `marl` extra.
 
 ## Baselines
 
-All in `carla_gym/baselines.py`:
+All in `congestgym/baselines.py`:
 
 | Policy | Bandwidth | Routing |
 |---|---|---|
@@ -281,7 +279,7 @@ checks that its rewards equal those recorded at the end of training.
 All folders, delivered traffic:
 
 <!-- RESULTS:rl_overview:start -->
-Delivered % of offered traffic, test seeds 2000-2009, steps 20..199, mean ± 95% CI (agents: over 5 training seeds; rule-based: over test episodes). The best rule-based policy is picked per row on the test seeds. Ablation rows: PPO controls one half of the action, the rule-based policies both. Flow bound: carla_gym/bounds.py, an upper limit that is loose (see docs/RL_RESULTS_0.4.0.md, section 2.6).
+Delivered % of offered traffic, test seeds 2000-2009, steps 20..199, mean ± 95% CI (agents: over 5 training seeds; rule-based: over test episodes). The best rule-based policy is picked per row on the test seeds. Ablation rows: PPO controls one half of the action, the rule-based policies both. Flow bound: congestgym/bounds.py, an upper limit that is loose (see docs/RL_RESULTS_0.4.0.md, section 2.6).
 
 | Training folder | Flags | PPO | SAC | Best rule-based policy | Flow bound |
 |---|---|---:|---:|---|---:|
@@ -307,7 +305,7 @@ on the headline compared with bandwidth alone. The Abilene scenario replaces
 an earlier trace scenario whose data was withdrawn (`docs/ABILENE_SCENARIO.md`,
 which also records a bug found and fixed while choosing it). Paired
 statistics, convergence and the ablations for the other scenarios are in
-`docs/RL_RESULTS_0.4.0.md`; QA checks in `docs/QA_RL_RESULTS_REPORT.md`.
+`docs/RL_RESULTS_0.4.0.md`.
 
 Headline scenario (3x3 grid, load x1.25, budget 0.6), reward:
 
@@ -348,16 +346,15 @@ the `throughput` and `loss` terms in the reward are ratios within a single
 step (and throughput is clipped at 1), so their average over an episode is
 not the fraction of traffic delivered.
 
-**Flow upper bound.** `carla_gym/bounds.py` (optional extra `bounds`, SciPy)
+**Flow upper bound.** `congestgym/bounds.py` (optional extra `bounds`, SciPy)
 solves a fluid multi-commodity-flow LP: the expected traffic matrix, link
 capacities and the budget, with the allocation chosen optimally. No policy
 can exceed it in the long run. It is loose: it ignores queueing and lets the
 optimiser drop the longest-distance traffic first, which no policy here can
-do. Read the room below it as an upper limit, not as headroom
-(`docs/QA_BOUNDS_REPORT.md`).
+do. Read the room below it as an upper limit, not as headroom.
 
 <!-- RESULTS:bounds:start -->
-Fluid flow upper bound on the delivered fraction (%), from carla_gym/bounds.py: the expected traffic matrix, link capacities and the bandwidth budget, with the allocation chosen optimally. No policy can exceed it in the long run; a finite window can exceed it slightly through backlog carried in. Policy figures: delivered % on test seeds 2000-2009, steps 20..199. The bound is loose (docs/RL_RESULTS_0.4.0.md, section 2.6): the room below it is an upper limit on what any policy could gain, not a measure of it. The trace row's bound uses the trace's mean matrix over the week and ignores its daily cycle, so it is looser still.
+Fluid flow upper bound on the delivered fraction (%), from congestgym/bounds.py: the expected traffic matrix, link capacities and the bandwidth budget, with the allocation chosen optimally. No policy can exceed it in the long run; a finite window can exceed it slightly through backlog carried in. Policy figures: delivered % on test seeds 2000-2009, steps 20..199. The bound is loose (docs/RL_RESULTS_0.4.0.md, section 2.6): the room below it is an upper limit on what any policy could gain, not a measure of it. The trace row's bound uses the trace's mean matrix over the week and ignores its daily cycle, so it is looser still.
 
 | Scenario | Bound, free routing | Bound, shortest paths | Best heuristic | PPO | SAC |
 |---|---:|---:|---|---:|---:|
@@ -374,8 +371,7 @@ dynamic (spreading load as queues change), not extra capacity.
 ### Follow-up experiments (E1 to E4)
 
 Planned in `docs/NEXT_EXPERIMENTS.md` with every decision rule fixed before
-the runs; results in `docs/E1_E4_RESULTS.md` and `docs/E2_E3_RESULTS.md`,
-QA in `docs/QA_E1_E4_REPORT.md` and `docs/QA_E2_E3_REPORT.md`.
+the runs; results in `docs/E1_E4_RESULTS.md` and `docs/E2_E3_RESULTS.md`.
 
 * **E1, tuned rule-based policies.** The heuristics' constants were tuned on
   validation seeds. PPO's wins on the bottleneck and the random graph hold
@@ -411,9 +407,6 @@ Scenario `g0.99_lr3e-4_ent0.01` (--load-scale 1.25 --budget 0.6 --gamma 0.99 --l
 * **E4, detours.** On the bottleneck no policy detours more than about 1% of
   packets; on the random graph the routing heuristics detour far more often
   than PPO, which almost never does.
-
-The 0.3.0 runs (`results/grid_b08/`) are kept as a record. They were trained
-on the 0.3.0 simulator and are not comparable with anything above.
 
 ### Baseline scenario matrix
 
@@ -544,26 +537,16 @@ python examples/train_agent.py --algo ppo --topology abilene --nodes 12 --trace 
 * `random_start=True` (`--trace-random-start`) starts each episode at a
   random time bin, drawn from the episode's seed, so a week-long trace is
   covered across episodes. Real traffic follows a daily cycle (the total
-  roughly doubles from night to afternoon), so rewards vary with the time an
+  roughly doubles between the quietest and the busiest hour), so rewards vary with the time an
   episode samples; compare policies on the same seeds.
 * `scripts/prepare_sndlib_trace.py` rebuilds the trace from SNDlib's archive
   (another week: change `--start`).
 
-**Two earlier traces were removed** (a packet capture and a course
-flow-count dataset): their origin and licence could not be established. The
-adapters that built them are still in `carla_gym/core/dataset_adapters.py`
-for converting your own data:
-
-```
-python scripts/prepare_trace.py --in data/raw/my_capture.csv --out data/raw/my_trace.csv --bin-seconds 5
-```
-
-Supported inputs: a flow-count table with columns `date, l_ipn, r_asn, f`; or
-a packet-capture export with `Timestamp, Source IP, Destination IP, Length`
-(numeric) or `Time, Source, Destination, Length` (Wireshark text export).
-Addresses and ASNs are bucketed into node ids with a stable MD5-based hash,
-and the busiest buckets are placed on the best-connected nodes. Keep raw and
-private captures outside version control (`data/raw/` is git-ignored).
+**Your own data:** any CSV with columns `step, src, dst, volume`, where `src` and
+`dst` are node ids `0..N-1`, can be passed with `--trace` (gzip is fine). Keep raw
+and private captures outside version control (`data/raw/` is git-ignored). Two
+earlier traces were removed in 0.4.0 because their origin and licence could
+not be established.
 
 ## Notebooks
 
@@ -588,7 +571,7 @@ python -m pytest -q
 ```
 
 <!-- RESULTS:tests:start -->
-Last run: **210 passed**.
+Last run: **197 passed**.
 <!-- RESULTS:tests:end -->
 
 The suite covers Gymnasium API conformance (`check_env`, including rendering),
@@ -639,46 +622,10 @@ datasets in `data/raw/` and are skipped otherwise.
   small grid (discount, learning rate, entropy; not network or batch size),
   and still does not beat the best rule-based policy there. The flow bound
   is too loose to say how far any policy is from the optimum.
-* Tested on Python 3.14 (Windows 11). The code parses under the Python 3.10
-  grammar but has not been run on 3.10 to 3.13.
 
-## Changes in 0.4.0
+## Changes
 
-Dynamics changed, so results from 0.3.0 are not comparable. The reasons and
-measurements are in `docs/CODE_REVIEW_FOR_PUBLICATION.md` (F1 to F3).
-
-* Equal-cost paths are chosen at random, and nodes are served in a random
-  order each step. In 0.3.0 the four corners of the 3x3 grid delivered 72%
-  to 96% of their traffic under hop-count routing; the gap is now under 4
-  points.
-* One FIFO per outgoing link replaces one FIFO per node. In 0.3.0, 16% to 20%
-  of allocated link bandwidth went unused while traffic waited for it.
-* The `random` topology comes from `topology_seed`, not the episode seed.
-  In 0.3.0 its edge count, and so the action space, changed with the seed.
-* New options on both envs and `NetworkModel`: `topology_seed`,
-  `queueing`, `tie_break`, `service_order`. The 0.3.0-style behaviour is
-  `queueing="shared_fifo", tie_break="first", service_order="id"`.
-  It reproduces 0.3.0 exactly where shortest paths are unique (e.g. the
-  ring). Where paths tie, its lowest-id rule differs from the one networkx
-  used, and delivered traffic can differ by several points: 5.8 on the 3x3
-  grid under equal split (`qa/retest/qa_pr5.log`).
-* Routing distances use vectorised Floyd-Warshall instead of networkx.
-* Tie-breaks and service order, and the `random` baseline in the benchmark
-  scripts (`carla_gym.baselines.policy_rng`), draw from their own streams
-  derived from the episode seed, independent of the traffic generator.
-
-## Changes in 0.3.0
-
-Dynamics and reward changed in this release, so results from 0.2.0 are not
-comparable.
-
-* `reset()` without a seed no longer replays the same traffic.
-* Fractional link service replaces all-or-nothing packet service.
-* Node buffers are enforced while traffic is moving.
-* Delay and deadline terms now include packets still waiting in queues.
-* Added: routing-aware baselines, node bottlenecks, SAC/TD3 training,
-  scenario-matrix benchmark, input validation, `rgb_array` rendering.
-* Multi-agent env: every agent controls at least one link.
+See `CHANGELOG.md`.
 
 ## Contributing and citing
 

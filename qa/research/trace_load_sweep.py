@@ -3,11 +3,11 @@ overloaded, and where do the heuristics separate? Reads committed traces only.""
 import warnings
 import numpy as np
 warnings.filterwarnings("ignore")
-from carla_gym.baselines import policy_max, policy_queue_proportional, policy_congestion_aware
-from carla_gym.core.trace_traffic import TraceTrafficGenerator
-from carla_gym.env import CarlaGymEnv
-from carla_gym.utils.qos import EpisodeQoS
-from carla_gym.utils.stats import ci95
+from congestgym.baselines import policy_max, policy_queue_proportional, policy_congestion_aware
+from congestgym.core.trace_traffic import TraceTrafficGenerator
+from congestgym.env import CongestGymEnv
+from congestgym.utils.qos import EpisodeQoS
+from congestgym.utils.stats import ci95
 
 POL = {"max": policy_max, "qp": policy_queue_proportional, "cong": policy_congestion_aware}
 for trace in ("pcap", "cs448b"):
@@ -19,7 +19,7 @@ for trace in ("pcap", "cs448b"):
             r, d, x = [], [], []
             for seed in range(2000, 2005):
                 gen = TraceTrafficGenerator(list(range(16)), f"data/{trace}_trace.csv", target_load=float(load), seed=seed)
-                env = CarlaGymEnv(topology="grid", num_nodes=16, bandwidth_budget=0.5, max_steps=200, traffic=gen, seed=seed)
+                env = CongestGymEnv(topology="grid", num_nodes=16, bandwidth_budget=0.5, max_steps=200, traffic=gen, seed=seed)
                 obs, _ = env.reset(seed=seed); q = EpisodeQoS(); rr = []
                 for t in range(200):
                     obs, rw, _, _, info = env.step(fn(env, obs))

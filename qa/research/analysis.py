@@ -12,8 +12,8 @@ warnings.filterwarnings("ignore")
 import gymnasium as gym  # noqa: E402
 from stable_baselines3 import PPO, SAC  # noqa: E402
 
-from carla_gym.env import CarlaGymEnv  # noqa: E402
-from carla_gym.utils.stats import ci95  # noqa: E402
+from congestgym.env import CongestGymEnv  # noqa: E402
+from congestgym.utils.stats import ci95  # noqa: E402
 
 TEST = list(range(2000, 2010))
 allf = pd.concat(pd.read_csv(p).assign(run=p.replace("\\", "/").split("/")[-2]) for p in glob.glob("results/grid_b08/*_seed*/final_eval.csv"))
@@ -37,7 +37,7 @@ for a, b in (("PPO", "queue_proportional"), ("PPO", "max_bandwidth"), ("SAC", "m
 
 
 def rollout(policy_fn, seed, rescale=True):
-    base_env = CarlaGymEnv(bandwidth_budget=0.8, max_steps=200, seed=0)
+    base_env = CongestGymEnv(bandwidth_budget=0.8, max_steps=200, seed=0)
     env = gym.wrappers.RescaleAction(base_env, np.float32(-1), np.float32(1)) if rescale else base_env
     obs, _ = env.reset(seed=seed)
     r, acts, infos = [], [], []
@@ -76,14 +76,14 @@ for w in (0.7, 0.8, 0.9, 1.0):
     print(f"  uniform bandwidth {w:.1f}, uniform routing: {np.mean([rollout(lambda o: a, t, rescale=False)[0] for t in TEST]):+.3f}")
 
 print("\n== 5. Reward decomposition on test seeds (which term carries the PPO gain?)")
-from carla_gym.baselines import policy_queue_proportional, policy_max  # noqa: E402
+from congestgym.baselines import policy_queue_proportional, policy_max  # noqa: E402
 model = PPO.load("results/grid_b08/ppo_seed0/model.zip", device="cpu")
 
 
 def terms(kind):
     out = []
     for t in TEST:
-        base_env = CarlaGymEnv(bandwidth_budget=0.8, max_steps=200, seed=0)
+        base_env = CongestGymEnv(bandwidth_budget=0.8, max_steps=200, seed=0)
         env = gym.wrappers.RescaleAction(base_env, np.float32(-1), np.float32(1)) if kind == "ppo" else base_env
         obs, _ = env.reset(seed=t)
         for i in range(200):

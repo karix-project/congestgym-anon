@@ -49,7 +49,7 @@ def test_unknown_policy_and_missing_model_fail_clearly(tmp_path):
 
 def test_saved_agent_runs_in_the_demo_and_cli_writes_gif(tmp_path):
     pytest.importorskip("stable_baselines3")
-    if not os.path.exists(os.path.join("results", "grid_b08", "ppo_seed0", "model.zip")):
+    if not os.path.exists(os.path.join("results", "rl", "grid_bottleneck_b08", "ppo_seed0", "model.zip")):
         pytest.skip("saved PPO model not present")
     rec = simulate("ppo", seed=2000, steps=25, budget=0.8)
     assert np.isfinite(rec["reward"]).all() and rec["delivered_pct"][-1] > 0

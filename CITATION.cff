@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
-title: "CarlaGym: a Gymnasium environment for joint bandwidth allocation and routing in congested packet networks"
+title: "CongestGym: a Gymnasium environment for joint bandwidth allocation and routing in congested packet networks"
 abstract: >-
   A lightweight, pure-Python store-and-forward packet network simulator with a
   Gymnasium interface, in which an agent allocates per-link bandwidth under a
@@ -19,7 +19,7 @@ authors:
     given-names: Karthik Kumar
 version: 0.4.0
 license: BSD-2-Clause
-repository-code: "https://github.com/spaciouskarter78/carla-gym"
+repository-code: "https://github.com/spaciouskarter78/congestgym"
 keywords:
   - reinforcement learning
   - gymnasium

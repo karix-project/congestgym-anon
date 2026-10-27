@@ -9,9 +9,9 @@ numbers are close to, not identical with, probe_model.log.
 """
 import time
 import numpy as np
-from carla_gym.env import CarlaGymEnv
-from carla_gym.baselines import POLICIES
-from carla_gym.utils.qos import EpisodeQoS
+from congestgym.env import CongestGymEnv
+from congestgym.baselines import POLICIES
+from congestgym.utils.qos import EpisodeQoS
 
 STEPS, WARM, SEEDS = 200, 20, range(2000, 2010)
 LEGACY = dict(queueing="shared_fifo", tie_break="first", service_order="id")
@@ -24,7 +24,7 @@ def run(policy_name, opts):
     waste = budget_total = 0.0
     qos = EpisodeQoS()
     for s in SEEDS:
-        env = CarlaGymEnv(topology="grid", num_nodes=9, bandwidth_budget=0.8, seed=s, **opts)
+        env = CongestGymEnv(topology="grid", num_nodes=9, bandwidth_budget=0.8, seed=s, **opts)
         born = []
         gen = env.traffic.generate
         def record(t, _g=gen):
@@ -61,7 +61,7 @@ for name in ["max_bandwidth", "queue_proportional", "congestion_aware"]:
 
 print("\nspeed: grid, load scaled with N/9, equal split, 300 steps, new defaults")
 for n in [9, 16, 25, 36, 49, 64]:
-    env = CarlaGymEnv(topology="grid", num_nodes=n, load_scale=n / 9, bandwidth_budget=0.8,
+    env = CongestGymEnv(topology="grid", num_nodes=n, load_scale=n / 9, bandwidth_budget=0.8,
                       max_steps=10_000, seed=0)
     env.reset(seed=0)
     a = np.ones(env.action_space.shape, dtype=np.float32)
@@ -71,4 +71,4 @@ for n in [9, 16, 25, 36, 49, 64]:
     print(f"N={n:3d}  {300/(time.perf_counter()-t0):7.1f} steps/s", flush=True)
 
 print("\nrandom topology, 9 nodes, edges for env seeds 0-7:",
-      [CarlaGymEnv(topology="random", num_nodes=9, seed=s).num_edges for s in range(8)])
+      [CongestGymEnv(topology="random", num_nodes=9, seed=s).num_edges for s in range(8)])

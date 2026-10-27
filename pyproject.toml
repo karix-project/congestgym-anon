@@ -1,13 +1,34 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "carla-gym"
+name = "congestgym"
 version = "0.4.0"
 description = "Gymnasium environment for reinforcement learning on congested network traffic: bandwidth allocation and routing with QoS-aware reward"
 readme = "README.md"
 requires-python = ">=3.10"
+license = "BSD-2-Clause"
+license-files = ["LICENSE"]
+authors = [
+    {name = "Yeshwanth Goparaju"},
+    {name = "Aryan Karamtoth"},
+    {name = "Sai Akshay Katakam"},
+    {name = "Varshitha Teegala"},
+    {name = "Karthik Kumar Dande"},
+]
+keywords = ["reinforcement learning", "gymnasium", "network simulation", "routing",
+            "bandwidth allocation", "traffic engineering"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: System :: Networking",
+]
 dependencies = ["gymnasium>=1.0", "networkx>=3.0", "numpy>=1.24",
                 "pandas>=2.0", "matplotlib>=3.7"]
 
@@ -17,10 +38,16 @@ marl = ["pettingzoo>=1.24"]
 bounds = ["scipy>=1.10"]
 notebooks = ["jupyter>=1.0", "nbformat>=5.9", "nbconvert>=7.0", "ipykernel>=6.25"]
 dev = ["pytest>=7.4"]
-all = ["carla-gym[rl,marl,bounds,notebooks,dev]"]
+all = ["congestgym[rl,marl,bounds,notebooks,dev]"]
+
+[project.urls]
+Homepage = "https://github.com/spaciouskarter78/congestgym"
+Repository = "https://github.com/spaciouskarter78/congestgym"
+Issues = "https://github.com/spaciouskarter78/congestgym/issues"
+Changelog = "https://github.com/spaciouskarter78/congestgym/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
-include = ["carla_gym*"]
+include = ["congestgym*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

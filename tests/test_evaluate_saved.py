@@ -21,7 +21,7 @@ def test_explicit_scenario_overrides_directory_and_extra_flags_are_appended():
 
 
 def test_unknown_directory_falls_back_to_given_flags():
-    found, flags = scenario_flags("results/grid_b08", None, ["--budget", "0.5"])
+    found, flags = scenario_flags("results/some_old_run", None, ["--budget", "0.5"])
     assert found is None and flags == ["--budget", "0.5"]
     assert train_args(flags).budget == 0.5
 

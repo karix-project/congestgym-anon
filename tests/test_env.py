@@ -11,27 +11,27 @@ import numpy as np
 import pytest
 from gymnasium.utils.env_checker import check_env
 
-from carla_gym.core.network import NetworkModel
-from carla_gym.core.traffic import TrafficGenerator
-from carla_gym.env import CarlaGymEnv
-from carla_gym.utils.reward import RewardCalculator
+from congestgym.core.network import NetworkModel
+from congestgym.core.traffic import TrafficGenerator
+from congestgym.env import CongestGymEnv
+from congestgym.utils.reward import RewardCalculator
 
 
 # ---------------------------------------------------------------- API and seeding basics
 def test_gymnasium_api_conformance():
-    env = CarlaGymEnv(max_steps=20, seed=0)
+    env = CongestGymEnv(max_steps=20, seed=0)
     check_env(env.unwrapped, skip_render_check=True)
 
 
 def test_reset_returns_valid_observation():
-    env = CarlaGymEnv(seed=0)
+    env = CongestGymEnv(seed=0)
     obs, info = env.reset(seed=0)
     assert env.observation_space.contains(obs)
 
 
 def test_reset_is_deterministic_given_seed():
-    a = CarlaGymEnv(seed=0); a.reset(seed=7)
-    b = CarlaGymEnv(seed=0); b.reset(seed=7)
+    a = CongestGymEnv(seed=0); a.reset(seed=7)
+    b = CongestGymEnv(seed=0); b.reset(seed=7)
     act = np.full(2 * a.num_edges, 0.5, dtype=np.float32)
     for _ in range(10):
         oa, ra, *_ = a.step(act)
@@ -42,7 +42,7 @@ def test_reset_is_deterministic_given_seed():
 # ---------------------------------------------------------------- topologies, conservation, buffers
 @pytest.mark.parametrize("topology", ["grid", "random", "star", "mesh", "ring"])
 def test_all_topologies_build_and_step(topology):
-    env = CarlaGymEnv(topology=topology, num_nodes=9, max_steps=5, seed=0)
+    env = CongestGymEnv(topology=topology, num_nodes=9, max_steps=5, seed=0)
     env.reset(seed=0)
     obs, reward, term, trunc, info = env.step(env.action_space.sample())
     assert env.observation_space.contains(obs) and np.isfinite(reward)
@@ -56,7 +56,7 @@ def test_unknown_topology_rejected():
 def test_packet_units_are_conserved():
     """Every offered unit must end up delivered, dropped, or still in a
     buffer. A leak here means throughput/loss stats are lying."""
-    env = CarlaGymEnv(max_steps=60, seed=3)
+    env = CongestGymEnv(max_steps=60, seed=3)
     env.reset(seed=3)
     offered = delivered = dropped = 0.0
     rng = np.random.default_rng(3)
@@ -70,7 +70,7 @@ def test_packet_units_are_conserved():
 
 
 def test_node_buffers_never_exceed_capacity():
-    env = CarlaGymEnv(max_steps=80, seed=4)
+    env = CongestGymEnv(max_steps=80, seed=4)
     env.reset(seed=4)
     for _ in range(80):
         env.step(np.zeros(2 * env.num_edges, dtype=np.float32))  # worst case
@@ -82,7 +82,7 @@ def test_node_buffers_never_exceed_capacity():
 def test_node_occupancy_is_a_live_observable():
     """Regression guard: node queues were previously always zero, silently
     wasting a third of the observation vector."""
-    env = CarlaGymEnv(max_steps=40, seed=5)
+    env = CongestGymEnv(max_steps=40, seed=5)
     obs, _ = env.reset(seed=5)
     for _ in range(40):
         obs, *_ = env.step(np.full(2 * env.num_edges, 0.2, dtype=np.float32))
@@ -93,7 +93,7 @@ def test_node_occupancy_is_a_live_observable():
 def test_reward_terms_are_commensurate():
     """Regression guard: raw-unit throughput once dwarfed the QoS penalties
     (~100 vs ~0.002), making k and c meaningless."""
-    env = CarlaGymEnv(max_steps=40, seed=6)
+    env = CongestGymEnv(max_steps=40, seed=6)
     env.reset(seed=6)
     rng = np.random.default_rng(6)
     t, d, l = [], [], []
@@ -113,7 +113,7 @@ def test_reward_penalties_reduce_reward():
 
 
 def test_observation_always_within_bounds_under_stress():
-    env = CarlaGymEnv(load_scale=4.0, max_steps=60, seed=7)
+    env = CongestGymEnv(load_scale=4.0, max_steps=60, seed=7)
     obs, _ = env.reset(seed=7)
     for _ in range(60):
         obs, *_ = env.step(np.zeros(2 * env.num_edges, dtype=np.float32))
@@ -124,7 +124,7 @@ def test_observation_always_within_bounds_under_stress():
 def test_more_bandwidth_yields_no_worse_throughput():
     """The central premise of the benchmark: the action must actually matter."""
     def run(weight):
-        env = CarlaGymEnv(max_steps=60, seed=8)
+        env = CongestGymEnv(max_steps=60, seed=8)
         env.reset(seed=8)
         tput = 0.0
         for _ in range(60):
@@ -136,7 +136,7 @@ def test_more_bandwidth_yields_no_worse_throughput():
 
 
 def test_starved_network_builds_backlog():
-    env = CarlaGymEnv(max_steps=50, seed=9)
+    env = CongestGymEnv(max_steps=50, seed=9)
     env.reset(seed=9)
     for _ in range(50):
         env.step(np.zeros(2 * env.num_edges, dtype=np.float32))
@@ -144,7 +144,7 @@ def test_starved_network_builds_backlog():
 
 
 def test_bandwidth_budget_is_enforced():
-    env = CarlaGymEnv(bandwidth_budget=0.5, seed=10)
+    env = CongestGymEnv(bandwidth_budget=0.5, seed=10)
     env.reset(seed=10)
     capped = env._apply_budget(np.ones(env.num_edges, dtype=np.float32))
     assert capped.sum() <= 0.5 * env.num_edges + 1e-6
@@ -169,7 +169,7 @@ def test_unseeded_resets_draw_fresh_traffic():
     """Regression guard: reset() without a seed used to re-seed the traffic
     RNG with the constructor seed, so every training episode replayed one
     fixed traffic realisation."""
-    env = CarlaGymEnv(max_steps=15, seed=0)
+    env = CongestGymEnv(max_steps=15, seed=0)
     first = _offered_trace(env, seed=0)
     second = _offered_trace(env)
     third = _offered_trace(env)
@@ -177,7 +177,7 @@ def test_unseeded_resets_draw_fresh_traffic():
 
 
 def test_seeded_reset_replays_identical_traffic():
-    env = CarlaGymEnv(max_steps=15, seed=0)
+    env = CongestGymEnv(max_steps=15, seed=0)
     a = _offered_trace(env, seed=123)
     _offered_trace(env)                      # advance the stream in between
     b = _offered_trace(env, seed=123)
@@ -185,21 +185,21 @@ def test_seeded_reset_replays_identical_traffic():
 
 
 def test_constructor_seed_fixes_first_unseeded_episode():
-    a = _offered_trace(CarlaGymEnv(max_steps=15, seed=5))
-    b = _offered_trace(CarlaGymEnv(max_steps=15, seed=5))
-    c = _offered_trace(CarlaGymEnv(max_steps=15, seed=6))
+    a = _offered_trace(CongestGymEnv(max_steps=15, seed=5))
+    b = _offered_trace(CongestGymEnv(max_steps=15, seed=5))
+    c = _offered_trace(CongestGymEnv(max_steps=15, seed=6))
     assert a == b and a != c
 
 
 def test_trace_traffic_unseeded_resets_differ(tmp_path):
     import pandas as pd
-    from carla_gym.core.trace_traffic import TraceTrafficGenerator
+    from congestgym.core.trace_traffic import TraceTrafficGenerator
 
     csv = tmp_path / "trace.csv"
     pd.DataFrame({"step": [0, 0, 1, 1], "src": [0, 1, 2, 3],
                   "dst": [4, 5, 6, 7], "volume": [50.0, 60.0, 40.0, 70.0]}).to_csv(csv, index=False)
     traffic = TraceTrafficGenerator(list(range(9)), str(csv), target_load=100.0, seed=0)
-    env = CarlaGymEnv(max_steps=15, traffic=traffic, seed=0)
+    env = CongestGymEnv(max_steps=15, traffic=traffic, seed=0)
     first = _offered_trace(env, seed=0)
     second = _offered_trace(env)
     assert first != second
@@ -208,7 +208,7 @@ def test_trace_traffic_unseeded_resets_differ(tmp_path):
 
 def test_multi_agent_unseeded_resets_draw_fresh_traffic():
     pytest.importorskip("pettingzoo")
-    from carla_gym.marl_env import MultiAgentCarlaGymEnv
+    from congestgym.marl_env import MultiAgentCongestGymEnv
 
     def episode(env, seed=None):
         obs, _ = env.reset(seed=seed)
@@ -220,7 +220,7 @@ def test_multi_agent_unseeded_resets_draw_fresh_traffic():
             out.append(obs[env.possible_agents[0]].tolist())
         return out
 
-    env = MultiAgentCarlaGymEnv(max_steps=15, seed=0)
+    env = MultiAgentCongestGymEnv(max_steps=15, seed=0)
     first = episode(env, seed=0)
     second = episode(env)
     assert first != second
@@ -229,7 +229,7 @@ def test_multi_agent_unseeded_resets_draw_fresh_traffic():
 
 # ---------------------------------------------------------------- link service (M2) / buffers (N1)
 def _single_packet_net(size=12.0, deadline=8):
-    from carla_gym.core.traffic import Packet, QoSClass
+    from congestgym.core.traffic import Packet, QoSClass
     net = NetworkModel("ring", 4, link_capacity=30.0, node_buffer=1000.0, seed=0)
     net.update_routing(np.ones(net.num_edges()))
     net.admit([Packet(0, 1, QoSClass.VIDEO, size, 1.5, deadline, 0)])
@@ -256,7 +256,7 @@ def test_zero_allocation_moves_nothing():
 
 
 def test_link_never_serves_more_than_its_allocation():
-    env = CarlaGymEnv(max_steps=60, bandwidth_budget=None, seed=12)
+    env = CongestGymEnv(max_steps=60, bandwidth_budget=None, seed=12)
     env.reset(seed=12)
     rng = np.random.default_rng(12)
     for _ in range(60):
@@ -268,7 +268,7 @@ def test_link_never_serves_more_than_its_allocation():
 
 def test_reward_increases_with_bandwidth_without_a_dead_zone():
     def run(weight):
-        env = CarlaGymEnv(max_steps=100, bandwidth_budget=None, seed=13)
+        env = CongestGymEnv(max_steps=100, bandwidth_budget=None, seed=13)
         env.reset(seed=13)
         a = np.full(2 * env.num_edges, weight, dtype=np.float32)
         return float(np.mean([env.step(a)[1] for _ in range(100)][20:]))
@@ -281,7 +281,7 @@ def test_reward_increases_with_bandwidth_without_a_dead_zone():
 def test_node_buffers_bounded_while_traffic_moves(weight, load):
     """Regression guard: downstream space was checked against a partial view
     of the buffer, so nodes held several times `node_buffer` under load."""
-    env = CarlaGymEnv(max_steps=80, bandwidth_budget=None, load_scale=load, seed=14)
+    env = CongestGymEnv(max_steps=80, bandwidth_budget=None, load_scale=load, seed=14)
     env.reset(seed=14)
     a = np.full(2 * env.num_edges, weight, dtype=np.float32)
     for _ in range(80):
@@ -302,7 +302,7 @@ def test_packet_stuck_in_queue_counts_as_deadline_miss_once():
 def test_starved_network_is_penalised_for_delay_and_deadlines():
     """Regression guard: with nothing delivered, the delay and deadline terms
     used to read 0, so a fully stalled network looked free of latency."""
-    env = CarlaGymEnv(max_steps=40, seed=15)
+    env = CongestGymEnv(max_steps=40, seed=15)
     env.reset(seed=15)
     infos = [env.step(np.zeros(2 * env.num_edges, dtype=np.float32))[4] for _ in range(40)]
     assert infos[-1]["reward_delay"] == pytest.approx(1.0)
@@ -312,7 +312,7 @@ def test_starved_network_is_penalised_for_delay_and_deadlines():
 
 def test_deadline_coefficient_is_configurable():
     def total(m):
-        env = CarlaGymEnv(max_steps=40, m=m, seed=16)
+        env = CongestGymEnv(max_steps=40, m=m, seed=16)
         env.reset(seed=16)
         a = np.full(2 * env.num_edges, 0.4, dtype=np.float32)
         return sum(env.step(a)[1] for _ in range(40))
@@ -324,19 +324,19 @@ def test_deadline_coefficient_is_configurable():
 @pytest.mark.parametrize("budget", [-0.5, 0.0, 1.5])
 def test_invalid_bandwidth_budget_rejected(budget):
     with pytest.raises(ValueError, match="bandwidth_budget"):
-        CarlaGymEnv(bandwidth_budget=budget)
+        CongestGymEnv(bandwidth_budget=budget)
 
 
 @pytest.mark.parametrize("budget", [None, 0.5, 0.8, 1.0])
 def test_valid_bandwidth_budgets_run(budget):
-    env = CarlaGymEnv(bandwidth_budget=budget, max_steps=5, seed=0)
+    env = CongestGymEnv(bandwidth_budget=budget, max_steps=5, seed=0)
     env.reset(seed=0)
     _, reward, *_ = env.step(env.action_space.sample())
     assert np.isfinite(reward)
 
 
 def test_wrong_length_action_gives_clear_error():
-    env = CarlaGymEnv(seed=0)
+    env = CongestGymEnv(seed=0)
     env.reset(seed=0)
     with pytest.raises(ValueError, match="action must have shape"):
         env.step(np.ones(5, dtype=np.float32))
@@ -345,11 +345,11 @@ def test_wrong_length_action_gives_clear_error():
 @pytest.mark.parametrize("n", [7, 10])
 def test_grid_rejects_non_square_node_count(n):
     with pytest.raises(ValueError, match="perfect-square"):
-        CarlaGymEnv(topology="grid", num_nodes=n)
+        CongestGymEnv(topology="grid", num_nodes=n)
 
 
 def test_step_after_truncation_requires_reset():
-    env = CarlaGymEnv(max_steps=3, seed=0)
+    env = CongestGymEnv(max_steps=3, seed=0)
     env.reset(seed=0)
     for _ in range(3):
         *_, truncated, _ = env.step(env.action_space.sample())
@@ -363,9 +363,9 @@ def test_step_after_truncation_requires_reset():
 @pytest.mark.parametrize("max_steps", [50, 500])
 def test_gym_make_honours_max_steps(max_steps):
     import gymnasium as gym
-    import carla_gym  # noqa: F401 - registers CarlaGym-v0
+    import congestgym  # noqa: F401 - registers CongestGym-v0
 
-    env = gym.make("CarlaGym-v0", max_steps=max_steps)
+    env = gym.make("CongestGym-v0", max_steps=max_steps)
     env.reset(seed=0)
     steps = 0
     truncated = False
@@ -378,7 +378,7 @@ def test_gym_make_honours_max_steps(max_steps):
 def test_render_rgb_array_returns_image():
     import matplotlib
     matplotlib.use("Agg")
-    env = CarlaGymEnv(render_mode="rgb_array", max_steps=5, seed=0)
+    env = CongestGymEnv(render_mode="rgb_array", max_steps=5, seed=0)
     env.reset(seed=0)
     env.step(env.action_space.sample())
     frame = env.render()
@@ -389,7 +389,7 @@ def test_render_rgb_array_returns_image():
 
 
 def test_render_without_mode_returns_none():
-    env = CarlaGymEnv(max_steps=5, seed=0)
+    env = CongestGymEnv(max_steps=5, seed=0)
     env.reset(seed=0)
     assert env.render() is None
 
@@ -397,14 +397,14 @@ def test_render_without_mode_returns_none():
 def test_gymnasium_api_conformance_with_render():
     import matplotlib
     matplotlib.use("Agg")
-    env = CarlaGymEnv(max_steps=20, render_mode="rgb_array", seed=0)
+    env = CongestGymEnv(max_steps=20, render_mode="rgb_array", seed=0)
     check_env(env.unwrapped)
 
 
 # ---------------------------------------------------------------- node bottlenecks
 def test_default_env_is_unchanged_by_bottleneck_support():
-    a = CarlaGymEnv(max_steps=30, seed=17)
-    b = CarlaGymEnv(max_steps=30, seed=17, bottlenecks={})
+    a = CongestGymEnv(max_steps=30, seed=17)
+    b = CongestGymEnv(max_steps=30, seed=17, bottlenecks={})
     assert np.all(a.network.get_edge_capacities() == a.network.link_capacity)
     assert np.all(a.network.get_node_buffers() == a.network.node_buffer)
     a.reset(seed=17); b.reset(seed=17)
@@ -423,7 +423,7 @@ def test_bottleneck_scales_incident_links_and_buffer():
 
 def test_bottleneck_hurts_and_is_respected():
     def run(bottlenecks):
-        env = CarlaGymEnv(max_steps=100, bandwidth_budget=None, bottlenecks=bottlenecks, seed=18)
+        env = CongestGymEnv(max_steps=100, bandwidth_budget=None, bottlenecks=bottlenecks, seed=18)
         obs, _ = env.reset(seed=18)
         act = np.ones(2 * env.num_edges, dtype=np.float32)
         rewards = []
@@ -441,14 +441,14 @@ def test_bottleneck_hurts_and_is_respected():
 @pytest.mark.parametrize("bad", [{99: 0.5}, {4: 0.0}, {4: 1.5}])
 def test_invalid_bottleneck_rejected(bad):
     with pytest.raises(ValueError, match="bottleneck"):
-        CarlaGymEnv(bottlenecks=bad)
+        CongestGymEnv(bottlenecks=bad)
 
 
 # ---------------------------------------------------------------- baselines / stats
 def test_all_baselines_emit_valid_actions_on_every_topology():
-    from carla_gym.baselines import POLICIES
+    from congestgym.baselines import POLICIES
     for topology in ["grid", "random", "star", "mesh", "ring"]:
-        env = CarlaGymEnv(topology=topology, max_steps=10, seed=0)
+        env = CongestGymEnv(topology=topology, max_steps=10, seed=0)
         obs, _ = env.reset(seed=0)
         rng = np.random.default_rng(0)
         for _ in range(5):
@@ -459,8 +459,8 @@ def test_all_baselines_emit_valid_actions_on_every_topology():
 
 
 def test_load_aware_routing_raises_cost_of_congested_links():
-    from carla_gym.baselines import policy_load_aware_routing
-    env = CarlaGymEnv(max_steps=10, seed=0)
+    from congestgym.baselines import policy_load_aware_routing
+    env = CongestGymEnv(max_steps=10, seed=0)
     env.reset(seed=0)
     obs = np.zeros(env.observation_space.shape, dtype=np.float32)
     obs[env.num_edges + 3] = 1.0                 # link 3 has a full queue
@@ -469,7 +469,7 @@ def test_load_aware_routing_raises_cost_of_congested_links():
 
 
 def test_ci95_matches_hand_computed_interval():
-    from carla_gym.utils.stats import ci95
+    from congestgym.utils.stats import ci95
     assert ci95([1.0, 2.0, 3.0, 4.0, 5.0]) == pytest.approx(2.776 * np.std([1, 2, 3, 4, 5], ddof=1) / np.sqrt(5))
     assert np.isnan(ci95([1.0]))
 
@@ -481,7 +481,7 @@ def test_non_finite_action_rejected(bad, position):
     """Regression guard: NaN survived clipping and compared false against the
     link budget, so a NaN action got unlimited bandwidth (79.9 units through a
     30-unit link) and scored above any valid policy."""
-    env = CarlaGymEnv(seed=0)
+    env = CongestGymEnv(seed=0)
     env.reset(seed=0)
     action = np.full(2 * env.num_edges, 0.5, dtype=np.float32)
     action[position] = bad
@@ -511,11 +511,11 @@ def test_network_rejects_non_finite_allocation_and_routing():
 ])
 def test_invalid_reward_and_load_parameters_rejected(kwargs):
     with pytest.raises(ValueError):
-        CarlaGymEnv(**kwargs)
+        CongestGymEnv(**kwargs)
 
 
 def test_zero_coefficients_and_zero_load_are_valid():
-    env = CarlaGymEnv(k=0.0, c=0.0, m=0.0, load_scale=0.0, max_steps=5, seed=0)
+    env = CongestGymEnv(k=0.0, c=0.0, m=0.0, load_scale=0.0, max_steps=5, seed=0)
     env.reset(seed=0)
     _, reward, _, _, info = env.step(env.action_space.sample())
     assert reward == 0.0 and info["offered_units"] == 0.0
@@ -523,8 +523,8 @@ def test_zero_coefficients_and_zero_load_are_valid():
 
 # ---------------------------------------------------------------- episode-aggregate QoS
 def test_episode_qos_matches_raw_totals_and_differs_from_mean_of_step_ratios():
-    from carla_gym.utils.qos import EpisodeQoS
-    env = CarlaGymEnv(max_steps=120, bandwidth_budget=0.8, seed=21)
+    from congestgym.utils.qos import EpisodeQoS
+    env = CongestGymEnv(max_steps=120, bandwidth_budget=0.8, seed=21)
     obs, _ = env.reset(seed=21)
     qos, off, dlv, drp, step_tput = EpisodeQoS(), 0.0, 0.0, 0.0, []
     for _ in range(120):
@@ -542,7 +542,7 @@ def test_episode_qos_matches_raw_totals_and_differs_from_mean_of_step_ratios():
 
 
 def test_episode_qos_empty_is_finite():
-    from carla_gym.utils.qos import EpisodeQoS
+    from congestgym.utils.qos import EpisodeQoS
     s = EpisodeQoS().summary()
     assert all(np.isfinite(v) for v in s.values()) and s["delivered_fraction"] == 0.0
 
@@ -550,8 +550,8 @@ def test_episode_qos_empty_is_finite():
 # ---------------------------------------------------------------- ablation wrapper
 @pytest.mark.parametrize("control,fixed_slice", [("bandwidth", slice(12, 24)), ("routing", slice(0, 12))])
 def test_control_subset_wrapper_fixes_the_other_half(control, fixed_slice):
-    from carla_gym.wrappers import ControlSubsetWrapper
-    env = ControlSubsetWrapper(CarlaGymEnv(max_steps=10, seed=0), control)
+    from congestgym.wrappers import ControlSubsetWrapper
+    env = ControlSubsetWrapper(CongestGymEnv(max_steps=10, seed=0), control)
     assert env.action_space.shape == (12,)
     agent_action = np.linspace(0.1, 0.9, 12, dtype=np.float32)
     full = env.action(agent_action)
@@ -564,18 +564,18 @@ def test_control_subset_wrapper_fixes_the_other_half(control, fixed_slice):
 
 
 def test_control_subset_wrapper_matches_manual_action_and_rejects_bad_mode():
-    from carla_gym.wrappers import ControlSubsetWrapper
-    a = ControlSubsetWrapper(CarlaGymEnv(max_steps=20, seed=3), "bandwidth")
-    b = CarlaGymEnv(max_steps=20, seed=3)
+    from congestgym.wrappers import ControlSubsetWrapper
+    a = ControlSubsetWrapper(CongestGymEnv(max_steps=20, seed=3), "bandwidth")
+    b = CongestGymEnv(max_steps=20, seed=3)
     a.reset(seed=3); b.reset(seed=3)
     act = np.full(12, 0.6, dtype=np.float32)
     ra = [a.step(act)[1] for _ in range(20)]
     rb = [b.step(np.concatenate([act, np.ones(12, dtype=np.float32)]))[1] for _ in range(20)]
     assert ra == rb
-    same = ControlSubsetWrapper(CarlaGymEnv(seed=0), "both")
+    same = ControlSubsetWrapper(CongestGymEnv(seed=0), "both")
     assert same.action_space.shape == (24,)
     with pytest.raises(ValueError, match="control"):
-        ControlSubsetWrapper(CarlaGymEnv(seed=0), "neither")
+        ControlSubsetWrapper(CongestGymEnv(seed=0), "neither")
 
 
 def test_train_agent_parses_bottleneck_spec():

@@ -1,4 +1,0 @@
-(a) constant weight 0.30: mean reward -1.119, final backlog 824 / 1080, fullest node 120/120, deadline misses 1029
-(a) constant weight 0.45: mean reward -0.629, final backlog 638 / 1080, fullest node 120/120, deadline misses 742
-(a) constant weight 1.00: mean reward +0.625, final backlog 166 / 1080, fullest node 51/120, deadline misses 129
-(b) raw delivered/offered > 1 on 40 of 120 steps (reward clips it to 1)

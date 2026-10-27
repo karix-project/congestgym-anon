@@ -1,4 +1,0 @@
-C:\Users\aryan\Downloads\carla-gym\carla-gym\carla_gym\utils\visualization.py:56: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
-  plt.show()
-render_mode='rgb_array': returned NoneType, shape=None
-render_mode='human': returned NoneType, shape=None

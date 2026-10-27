@@ -4,13 +4,13 @@ import warnings
 import numpy as np
 warnings.filterwarnings("ignore")
 from stable_baselines3 import PPO
-from carla_gym.env import CarlaGymEnv
-from carla_gym.baselines import policy_queue_proportional
-from carla_gym.utils.stats import ci95
+from congestgym.env import CongestGymEnv
+from congestgym.baselines import policy_queue_proportional
+from congestgym.utils.stats import ci95
 
 E = 12
 def run(model, mode, seed):
-    env = CarlaGymEnv(bandwidth_budget=0.8, max_steps=200, seed=0)
+    env = CongestGymEnv(bandwidth_budget=0.8, max_steps=200, seed=0)
     obs, _ = env.reset(seed=seed); r = []; changed = 0; prev = None
     for _ in range(200):
         a = (np.clip(model.predict(obs, deterministic=True)[0], -1, 1) + 1) / 2      # agent action in native [0, 1]

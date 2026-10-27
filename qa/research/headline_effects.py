@@ -11,7 +11,7 @@ import sys
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from carla_gym.utils.stats import ci95  # noqa: E402
+from congestgym.utils.stats import ci95  # noqa: E402
 
 PAIRS = {"bandwidth (queue_prop - max_bw)": ("queue_proportional", "max_bandwidth"),
          "bandwidth (congestion - load_aware)": ("congestion_aware", "load_aware_routing"),

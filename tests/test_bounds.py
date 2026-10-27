@@ -1,12 +1,12 @@
-"""carla_gym/bounds.py: the fluid flow upper bound."""
+"""congestgym/bounds.py: the fluid flow upper bound."""
 import numpy as np
 import pytest
 
 pytest.importorskip("scipy")
 
-from carla_gym.bounds import expected_demand, flow_bound, scenario_bound   # noqa: E402
-from carla_gym.core.network import NetworkModel                            # noqa: E402
-from carla_gym.env import CarlaGymEnv                                       # noqa: E402
+from congestgym.bounds import expected_demand, flow_bound, scenario_bound   # noqa: E402
+from congestgym.core.network import NetworkModel                            # noqa: E402
+from congestgym.env import CongestGymEnv                                       # noqa: E402
 
 
 def _demand(n, pairs):
@@ -37,19 +37,19 @@ def test_budget_limits_total_allocation():
 
 def test_free_routing_is_never_below_shortest_routing():
     for topo, n in [("grid", 9), ("ring", 9), ("random", 9), ("mesh", 6)]:
-        env = CarlaGymEnv(topology=topo, num_nodes=n, load_scale=2.0, bandwidth_budget=0.5, seed=0)
+        env = CongestGymEnv(topology=topo, num_nodes=n, load_scale=2.0, bandwidth_budget=0.5, seed=0)
         free, short = scenario_bound(env, "free"), scenario_bound(env, "shortest")
         assert free["delivered_fraction"] >= short["delivered_fraction"] - 1e-9
         assert 0.0 < short["delivered_fraction"] <= 1.0 + 1e-9
 
 
 def test_light_load_is_fully_deliverable():
-    env = CarlaGymEnv(load_scale=0.1, bandwidth_budget=0.8, seed=0)
+    env = CongestGymEnv(load_scale=0.1, bandwidth_budget=0.8, seed=0)
     assert scenario_bound(env)["delivered_fraction"] == pytest.approx(1.0)
 
 
 def test_synthetic_expected_demand_matches_the_generator():
-    env = CarlaGymEnv(load_scale=1.25, seed=0)
+    env = CongestGymEnv(load_scale=1.25, seed=0)
     d = expected_demand(env.traffic, env.num_nodes)
     assert d.sum() == pytest.approx(104.5 * 1.25) and np.all(np.diag(d) == 0)
     env.reset(seed=5)
@@ -60,9 +60,9 @@ def test_synthetic_expected_demand_matches_the_generator():
 
 def test_bound_is_above_what_the_simulator_delivers():
     """The best of several fixed policies, over a long run, stays below the bound."""
-    from carla_gym.baselines import POLICIES
-    from carla_gym.utils.qos import EpisodeQoS
-    env = CarlaGymEnv(load_scale=1.25, bandwidth_budget=0.6, max_steps=400, seed=0)
+    from congestgym.baselines import POLICIES
+    from congestgym.utils.qos import EpisodeQoS
+    env = CongestGymEnv(load_scale=1.25, bandwidth_budget=0.6, max_steps=400, seed=0)
     bound = scenario_bound(env)["delivered_fraction"]
     best = 0.0
     for name in ("queue_proportional", "congestion_aware", "max_bandwidth"):

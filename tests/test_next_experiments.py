@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from carla_gym import baselines as B
-from carla_gym.env import CarlaGymEnv
+from congestgym import baselines as B
+from congestgym.env import CongestGymEnv
 
 
 # ---------------------------------------------------------------- E1 heuristics
@@ -31,7 +31,7 @@ def _old_routing(env, obs):                        # 0.4.0 code, copied verbatim
 
 @pytest.mark.parametrize("topology", ["grid", "ring", "random", "star", "mesh"])
 def test_default_heuristics_are_bit_identical_to_0_4_0(topology):
-    env = CarlaGymEnv(topology=topology, num_nodes=9, seed=0)
+    env = CongestGymEnv(topology=topology, num_nodes=9, seed=0)
     rng = np.random.default_rng(1)
     for _ in range(20):
         obs = rng.uniform(0, 1, env.observation_space.shape).astype(np.float32)
@@ -60,7 +60,7 @@ def test_committed_benchmark_episodes_reproduce_with_defaults():
 
 
 def test_heuristic_parameters_take_effect():
-    env = CarlaGymEnv(seed=0)
+    env = CongestGymEnv(seed=0)
     obs = np.random.default_rng(2).uniform(0, 1, env.observation_space.shape).astype(np.float32)
     e = env.num_edges
     obs[e] = 1e-3                                                     # one link with almost no demand
@@ -76,7 +76,7 @@ def test_heuristic_parameters_take_effect():
 def test_make_policy_rejects_bad_input():
     with pytest.raises(ValueError):
         B.make_policy("no_such_policy")
-    env = CarlaGymEnv(seed=0)
+    env = CongestGymEnv(seed=0)
     with pytest.raises(ValueError):
         B.make_policy("congestion_aware", signal="median")(env, np.zeros(env.observation_space.shape))
 

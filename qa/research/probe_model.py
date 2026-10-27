@@ -9,8 +9,8 @@
 """
 import time, sys
 import numpy as np
-from carla_gym.env import CarlaGymEnv
-from carla_gym.baselines import POLICIES
+from congestgym.env import CongestGymEnv
+from congestgym.baselines import POLICIES
 
 STEPS, WARM, SEEDS = 200, 20, range(2000, 2010)
 
@@ -20,7 +20,7 @@ def run(policy_name, seeds=SEEDS, **kw):
     by_src_off = np.zeros(9); by_src_del = np.zeros(9)
     waste = budget_total = 0.0
     for s in seeds:
-        env = CarlaGymEnv(topology="grid", num_nodes=9, bandwidth_budget=0.8, seed=s, **kw)
+        env = CongestGymEnv(topology="grid", num_nodes=9, bandwidth_budget=0.8, seed=s, **kw)
         obs, _ = env.reset(seed=s)
         net = env.network
         cap = net._edge_capacity
@@ -60,9 +60,9 @@ for name in ["max_bandwidth", "queue_proportional", "congestion_aware"]:
 sys.stdout.flush()
 
 print("\n== 3: speed vs size (grid, max_bandwidth, load scaled with N/9, 300 steps)")
-import carla_gym.core.network as nm
+import congestgym.core.network as nm
 for n in [9, 16, 25, 36, 49, 64]:
-    env = CarlaGymEnv(topology="grid", num_nodes=n, load_scale=n / 9, bandwidth_budget=0.8,
+    env = CongestGymEnv(topology="grid", num_nodes=n, load_scale=n / 9, bandwidth_budget=0.8,
                       max_steps=10_000, seed=0)
     obs, _ = env.reset(seed=0)
     a = np.ones(env.action_space.shape, dtype=np.float32)
@@ -80,4 +80,4 @@ for n in [9, 16, 25, 36, 49, 64]:
     sys.stdout.flush()
 
 print("\n== 4: random topology edge count by seed (9 nodes)")
-print([CarlaGymEnv(topology="random", num_nodes=9, seed=s).num_edges for s in range(8)])
+print([CongestGymEnv(topology="random", num_nodes=9, seed=s).num_edges for s in range(8)])

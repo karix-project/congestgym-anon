@@ -4,9 +4,9 @@ import networkx as nx
 import numpy as np
 import pytest
 
-from carla_gym.core.network import NetworkModel
-from carla_gym.core.traffic import Packet, QoSClass
-from carla_gym.env import CarlaGymEnv
+from congestgym.core.network import NetworkModel
+from congestgym.core.traffic import Packet, QoSClass
+from congestgym.env import CongestGymEnv
 
 
 def _pkt(src, dst, size=10.0):
@@ -23,7 +23,7 @@ def _alloc(net, per_edge):
 
 # ---------------------------------------------------------------- F3 topology seed
 def test_random_topology_does_not_change_with_the_episode_seed():
-    edges = {s: CarlaGymEnv(topology="random", num_nodes=9, seed=s).network.edge_list()
+    edges = {s: CongestGymEnv(topology="random", num_nodes=9, seed=s).network.edge_list()
              for s in range(8)}
     assert all(e == edges[0] for e in edges.values())
 
@@ -38,7 +38,7 @@ def test_topology_seed_selects_the_random_graph():
 
 def test_episode_seed_still_changes_traffic_on_the_random_topology():
     def offered(seed):
-        env = CarlaGymEnv(topology="random", num_nodes=9, max_steps=10, seed=seed)
+        env = CongestGymEnv(topology="random", num_nodes=9, max_steps=10, seed=seed)
         env.reset(seed=seed)
         a = np.ones(env.action_space.shape, dtype=np.float32)
         return [env.step(a)[4]["offered_units"] for _ in range(10)]
@@ -113,7 +113,7 @@ def test_symmetric_corners_get_similar_service():
     the four grid corners delivered 0.72 to 0.96 of their traffic (0.3.0)."""
     off, dlv = np.zeros(9), np.zeros(9)
     for s in range(6):
-        env = CarlaGymEnv(topology="grid", num_nodes=9, bandwidth_budget=0.8, seed=s)
+        env = CongestGymEnv(topology="grid", num_nodes=9, bandwidth_budget=0.8, seed=s)
         born = []
         gen = env.traffic.generate
         env.traffic.generate = lambda t, _g=gen: _record(born, _g, t)
@@ -161,11 +161,11 @@ def test_per_link_queues_keep_fifo_order_within_a_link():
 @pytest.mark.parametrize("kw", [{"queueing": "voq"}, {"tie_break": "hash"}, {"service_order": "rr"}])
 def test_invalid_model_options_rejected(kw):
     with pytest.raises(ValueError):
-        CarlaGymEnv(**kw)
+        CongestGymEnv(**kw)
 
 
 def test_shipped_defaults():
-    net = CarlaGymEnv().network
+    net = CongestGymEnv().network
     assert (net.queueing, net.tie_break, net.service_order, net.topology_seed) == \
         ("per_link", "random", "random", 0)
 
@@ -173,8 +173,8 @@ def test_shipped_defaults():
 # ---------------------------------------------------------------- RNG streams (QA Q1)
 def test_network_and_traffic_streams_are_independent():
     """Regression guard: both generators were seeded with default_rng(seed)
-    and drew identical raw numbers (docs/QA_PR5_REPORT.md, Q1)."""
-    env = CarlaGymEnv(seed=7)
+    and drew identical raw numbers (QA review of PR #5, finding Q1)."""
+    env = CongestGymEnv(seed=7)
     for _ in range(2):                                   # after construction, then after reset
         a = env.network.rng.integers(0, 2**62, 5)
         b = env.traffic.rng.integers(0, 2**62, 5)
@@ -192,8 +192,8 @@ def test_network_stream_is_reproducible_from_the_seed():
 def test_random_policy_stream_is_independent_of_traffic():
     """Regression guard: the benchmark seeded the random policy with
     default_rng(seed), replaying the traffic's draws (QA R2-2)."""
-    from carla_gym.baselines import policy_rng
-    env = CarlaGymEnv(seed=7)
+    from congestgym.baselines import policy_rng
+    env = CongestGymEnv(seed=7)
     env.reset(seed=7)
     a = policy_rng(7).integers(0, 2**62, 5)
     b = env.traffic.rng.integers(0, 2**62, 5)

@@ -17,7 +17,7 @@ import sys
 import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-from carla_gym.utils.stats import ci95                    # noqa: E402
+from congestgym.utils.stats import ci95                    # noqa: E402
 from scripts.run_training_matrix import HP_SWEEP          # noqa: E402
 
 ROOT = os.path.join("results", "rl_hp")

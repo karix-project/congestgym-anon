@@ -27,7 +27,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.dirname(__file__))
-from carla_gym.utils.stats import ci95                 # noqa: E402
+from congestgym.utils.stats import ci95                 # noqa: E402
 from headline_sweep import HEUR, POLS, cells, job, kendall  # noqa: E402
 
 SEEDS = range(1000, 1030)

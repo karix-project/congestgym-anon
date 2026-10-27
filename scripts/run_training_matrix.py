@@ -10,8 +10,7 @@ docs/HEADLINE_SCENARIO.md):
     grid_l125_b06        headline: 3x3 grid, load x1.25, budget 0.6
     grid_bottleneck_b08  3x3 grid, centre node at half capacity, budget 0.8
     abilene_l120_b08     SNDlib Abilene topology and one-week traffic trace,
-                         mean load 120, budget 0.8 (replaces pcap40_grid16_b05,
-                         whose trace had no established provenance)
+                         mean load 120, budget 0.8 (data/ABILENE_TRACE.md)
     random9_l15_b06      fixed random graph (topology_seed 0), load x1.5,
                          budget 0.6; bandwidth-dominated, not a replication
                          of the headline

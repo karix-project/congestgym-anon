@@ -1,8 +1,0 @@
-weight 0.3 load x1: fullest node  120.0 / 120  ok
-weight 0.3 load x2: fullest node  120.0 / 120  ok
-weight 0.6 load x1: fullest node  287.4 / 120  OVERFLOW
-weight 0.6 load x2: fullest node  951.6 / 120  OVERFLOW
-weight 0.8 load x1: fullest node  262.4 / 120  OVERFLOW
-weight 0.8 load x2: fullest node  532.0 / 120  OVERFLOW
-weight 1.0 load x1: fullest node  232.8 / 120  OVERFLOW
-weight 1.0 load x2: fullest node  988.3 / 120  OVERFLOW
