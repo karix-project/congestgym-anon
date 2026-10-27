@@ -5,7 +5,7 @@ Aggregate the per-seed outputs of examples/train_agent.py into one table and
 one learning-curve figure.
 
     $env:PYTHONPATH = "."        (bash: export PYTHONPATH=.)
-    python scripts/summarize_training.py results/grid_b08
+    python scripts/summarize_training.py results/rl/grid_l125_b06
 
 Expects <dir>/<algo>_seed<N>/{eval_curve.csv, final_eval.csv}. Writes:
     summary.csv / summary.md   test-seed reward, mean and 95% CI

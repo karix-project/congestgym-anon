@@ -1,9 +1,0 @@
-policy,kind,reward_mean,reward_ci95,n,ci_over,per_seed
-PPO,RL agent,0.2936182198414329,0.006400100721570708,5,training seeds,+0.286 +0.291 +0.296 +0.300 +0.295
-queue_proportional,baseline,0.2376290023598422,0.017330690658563287,10,test episodes,
-SAC,RL agent,0.21376964420567832,0.013240592330582243,5,training seeds,+0.219 +0.202 +0.213 +0.229 +0.206
-congestion_aware,baseline,0.12504417183525096,0.01911571866959671,10,test episodes,
-load_aware_routing,baseline,0.12487162903917762,0.020231133171369355,10,test episodes,
-max_bandwidth,baseline,-0.00489526825634644,0.01589635210605297,10,test episodes,
-random,baseline,-0.08446799194081293,0.018020396869376086,10,test episodes,
-min_bandwidth,baseline,-0.9670563166619562,0.019907663052342973,10,test episodes,

@@ -12,12 +12,14 @@ warm-up.
     python examples/demo.py                          # live window: best rule vs trained PPO
     python examples/demo.py --save demo.gif          # write an animation instead
     python examples/demo.py --left max_bandwidth --right queue_proportional
-    python examples/demo.py --seed 2005 --steps 300 --bottleneck 4:0.5
+    python examples/demo.py --seed 2005 --steps 300 --bottleneck none
 
 --left / --right take a rule-based policy name (see carla_gym/baselines.py),
 or `ppo` / `sac` for an agent saved by examples/train_agent.py (--model picks
-the file). The saved agents were trained on the default scenario: 3x3 grid,
-synthetic traffic, bandwidth budget 0.8.
+the file). The default scenario is the degraded-node grid (3x3 grid, centre
+node at half capacity, budget 0.8), with the PPO agent trained on it
+(results/rl/grid_bottleneck_b08) against the best rule there,
+load_aware_routing. `--bottleneck none` gives the plain grid.
 """
 from __future__ import annotations
 
@@ -35,7 +37,7 @@ LABELS = {
     "load_aware_routing": "Rule: load-aware routing", "congestion_aware": "Rule: congestion-aware",
     "random": "Random actions", "min_bandwidth": "Rule: minimum bandwidth",
 }
-DEFAULT_MODEL = os.path.join("results", "grid_b08", "{algo}_seed0", "model.zip")
+DEFAULT_MODEL = os.path.join("results", "rl", "grid_bottleneck_b08", "{algo}_seed0", "model.zip")
 
 
 def make_policy(name: str, model_path: str | None):
@@ -154,20 +156,20 @@ def build_animation(left: dict, right: dict, every: int = 1, interval: int = 100
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    p.add_argument("--left", default="queue_proportional", help="policy on the left panel")
+    p.add_argument("--left", default="load_aware_routing", help="policy on the left panel")
     p.add_argument("--right", default="ppo", help="policy on the right panel")
-    p.add_argument("--model", default=None, help="path to a saved agent (default: results/grid_b08/<algo>_seed0/model.zip)")
+    p.add_argument("--model", default=None, help="path to a saved agent (default: results/rl/grid_bottleneck_b08/<algo>_seed0/model.zip)")
     p.add_argument("--seed", type=int, default=2000, help="traffic seed (2000+ were never used in training)")
     p.add_argument("--steps", type=int, default=200)
     p.add_argument("--budget", type=float, default=0.8)
-    p.add_argument("--bottleneck", default=None, help="degraded nodes, e.g. 4:0.5")
+    p.add_argument("--bottleneck", default="4:0.5", help="degraded nodes, e.g. 4:0.5, or none")
     p.add_argument("--save", default=None, help="write a .gif instead of opening a window")
     p.add_argument("--every", type=int, default=1, help="draw every Nth step (smaller files, faster playback)")
     p.add_argument("--fps", type=int, default=10)
     a = p.parse_args(argv)
 
     bottlenecks = None
-    if a.bottleneck:
+    if a.bottleneck and a.bottleneck.lower() != "none":
         bottlenecks = {int(n): float(s) for n, s in (item.split(":") for item in a.bottleneck.split(","))}
     if a.save:
         import matplotlib

@@ -173,7 +173,7 @@ def test_shipped_defaults():
 # ---------------------------------------------------------------- RNG streams (QA Q1)
 def test_network_and_traffic_streams_are_independent():
     """Regression guard: both generators were seeded with default_rng(seed)
-    and drew identical raw numbers (docs/QA_PR5_REPORT.md, Q1)."""
+    and drew identical raw numbers (QA review of PR #5, finding Q1)."""
     env = CarlaGymEnv(seed=7)
     for _ in range(2):                                   # after construction, then after reset
         a = env.network.rng.integers(0, 2**62, 5)
