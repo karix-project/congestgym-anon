@@ -11,11 +11,11 @@ requires-python = ">=3.10"
 license = "BSD-2-Clause"
 license-files = ["LICENSE"]
 authors = [
-    {name = "Yeshwanth Goparaju"},
-    {name = "Aryan Karamtoth"},
-    {name = "Sai Akshay Katakam"},
-    {name = "Varshitha Teegala"},
-    {name = "Karthik Kumar Dande"},
+    {name = "First Author"},
+    {name = "Second Author"},
+    {name = "Third Author"},
+    {name = "Fourth Author"},
+    {name = "Fifth Author"},
 ]
 keywords = ["reinforcement learning", "gymnasium", "network simulation", "routing",
             "bandwidth allocation", "traffic engineering"]
@@ -41,10 +41,10 @@ dev = ["pytest>=7.4"]
 all = ["congestgym[rl,marl,bounds,notebooks,dev]"]
 
 [project.urls]
-Homepage = "https://github.com/spaciouskarter78/congestgym"
-Repository = "https://github.com/spaciouskarter78/congestgym"
-Issues = "https://github.com/spaciouskarter78/congestgym/issues"
-Changelog = "https://github.com/spaciouskarter78/congestgym/blob/main/CHANGELOG.md"
+Homepage = ""
+Repository = ""
+Issues = ""
+Changelog = ""
 
 [tool.setuptools.packages.find]
 include = ["congestgym*"]
