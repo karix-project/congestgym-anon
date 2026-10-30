@@ -7,7 +7,6 @@ and working rules in more detail; read it before a larger change.
 ## Reporting a problem or asking a question
 
 Open an issue on GitHub:
-https://github.com/spaciouskarter78/congestgym/issues
 
 For a bug, please include: what you ran (the command or a short script), what
 you expected, what happened (the full error or the numbers), and your Python
@@ -16,7 +15,7 @@ version and operating system. A seed that reproduces the problem helps most.
 ## Setting up
 
 ```bash
-git clone https://github.com/spaciouskarter78/congestgym.git
+git clone 
 cd congestgym
 python -m venv .venv
 # Windows: .\.venv\Scripts\Activate.ps1    Linux/macOS: source .venv/bin/activate
