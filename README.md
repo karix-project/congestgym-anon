@@ -68,13 +68,13 @@ Python 3.10 or newer.
 **From GitHub**, as a package:
 
 ```bash
-pip install "congestgym[rl] @ git+https://github.com/spaciouskarter78/congestgym"
+pip install congestgym
 ```
 
 **For development**, to run the scripts, notebooks and tests:
 
 ```bash
-git clone https://github.com/spaciouskarter78/congestgym.git
+git clone 
 cd congestgym
 python -m venv .venv
 source .venv/bin/activate              # Windows PowerShell: .\.venv\Scripts\Activate.ps1
